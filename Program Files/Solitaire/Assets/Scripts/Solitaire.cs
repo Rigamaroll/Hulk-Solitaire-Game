@@ -35,22 +35,19 @@ public class Solitaire : MonoBehaviour
 
     // Start is called before the first frame update
     void Start() {
+        // Initialize the bottoms array with each of the piles
         bottoms = new List<string>[] { bottom0, bottom1, bottom2, bottom3, bottom4, bottom5, bottom6 };
-        PlayCards();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
         
-    }
-
-    public void PlayCards(){
         // Generate the deck and shuffle it
         deck = GenerateDeck();
  
-        // deal the card onto the board and display them
+        // Deal the card onto the board and display them
         DealCards();
+    }
+
+    // Update is called once per frame
+    void Update(){
+        
     }
 
     // Owen/Jenne Refactored 31-01-22 
@@ -100,6 +97,7 @@ public class Solitaire : MonoBehaviour
         deck = shuffledDeck;
     }
 
+    // Owen/Jenne Refactored 31-01-22 
     // Deal the cards onto the bottom display piles
    public void DealCards(){
        // define offsets in y and z axis
@@ -135,7 +133,7 @@ public class Solitaire : MonoBehaviour
             }
 
             // Increase the offset with each card added
-            yOffset = yOffset + 0.3f;
+            yOffset = yOffset + 0.4f;
             zOffset = zOffset + 0.03f;
         }
     }

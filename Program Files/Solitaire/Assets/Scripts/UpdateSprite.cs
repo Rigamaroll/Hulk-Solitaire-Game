@@ -2,19 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UpdateSprite : MonoBehaviour
-{
-
+public class UpdateSprite : MonoBehaviour{
+    //Define Sprites and Selectable Objects
     public Sprite cardFace;
     public Sprite cardBack;
     private SpriteRenderer spriteRenderer;
     private Selectable selectable;
     private Solitaire solitaire;
 
-
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
         List<string> deck = Solitaire.GenerateDeck();
         solitaire = FindObjectOfType<Solitaire>();
 
@@ -39,6 +36,5 @@ public class UpdateSprite : MonoBehaviour
         else{
             spriteRenderer.sprite = cardBack;
         }
-        
     }
 }
