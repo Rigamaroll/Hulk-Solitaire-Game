@@ -10,8 +10,11 @@ public class Solitaire : MonoBehaviour
     public GameObject[] bottomPos;
     public GameObject[] topPos;
     
+    // Suits Clubs / Diamonds / Hearts / Spades
     public static string[] suits = new string[] {"C", "D", "H", "S"};
+    // Values Ace through King
     public static string[] values = new string[] {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+   
     public List<string>[] bottoms;
     public List<string>[] tops;
 
@@ -43,71 +46,97 @@ public class Solitaire : MonoBehaviour
     }
 
     public void PlayCards(){
+        // Generate the deck and shuffle it
         deck = GenerateDeck();
-        Shuffle(deck);
-
-        foreach (string card in deck)
-        {
-            print(card);
-        }
-        SolitaireSort();
-        SolitaireDeal();
+ 
+        // deal the card onto the board and display them
+        DealCards();
     }
 
+    // Owen/Jenne Refactored 31-01-22 
+    // Generate the deck from the two array lists
     public static List<string> GenerateDeck() {
-        List<string> newDeck = new List<string>();
-        foreach (string s in suits)
-        {
-             foreach (string v in values)
-             {
-                 newDeck.Add(s + v);
+        // Create a list to store the card (Suit/Value) in
+        List<string> deck = new List<string>();
+        // for each suit
+        for (int s = 0; s < suits.Length; s++){
+            // for each value
+             for(int v = 0; v < values.Length; v++){
+                 // adding the current suit/value to the deck
+                 deck.Add(suits[s] + values[v]);
              }
         }
-        return newDeck;
+        // Call shuffle the deck
+        Shuffle(deck);
+        // Return the shuffled deck
+        return deck;
     }
 
-    public static void Shuffle<T>(List<T> list){
+    // Owen/Jenne Refactored 31-01-22 
+    // Shuffle the deck of cards
+    public static void Shuffle<T>(List<T> deck){
+        // Random so that we don't get the same shuffle pattern each time
         System.Random random = new System.Random();
+        // Create a copy of the deck to put shuffled cards in
+        List<T> shuffledDeck = deck;
 
-        int n = list.Count;
-        while (n > 1) {
-            n--;
-            int k = random.Next(n+1);
-            T temp = list[k];
-            list[k] = list[n];
-            list[n] = temp;
+        // Cards left in deck to shuffle
+        int cardsLeft = deck.Count;
+
+        // While there are still cards left to shuffle
+        while(cardsLeft > 0){
+            // Get the index of the randomly selected card to move
+            int cardIndex =  random.Next(deck.Count);
+            // Get the card
+            T cardToAdd = deck[cardIndex];
+            // Add the card to the shuffled deck
+            shuffledDeck.Add(cardToAdd);
+            // Remove the card from the original deck
+            deck.RemoveAt(cardIndex);
+            // decrement the number of cards left
+            cardsLeft--;
         }
+        // Assign the deck back to the newly shuffled deck
+        deck = shuffledDeck;
     }
 
-    public void SolitaireDeal(){
-
-        for (int i = 0; i < 7; i++){
-
+    // Deal the cards onto the bottom display piles
+   public void DealCards(){
+       // define offsets in y and z axis
         float yOffset = 0;
         float zOffset = 0.03f;
 
-        foreach (string card in bottoms[i]){
-            GameObject newCard = Instantiate(cardPrefab, 
-                new Vector3(bottomPos[i].transform.position.x, bottomPos[i].transform.position.y - yOffset, bottomPos[i].transform.position.z - zOffset), 
-                Quaternion.identity, bottomPos[i].transform);
-            newCard.name = card;
-            if (card == bottoms[i][bottoms[i].Count -1]){
-                newCard.GetComponent<Selectable>().faceUp = true;
-            }
-            
+        // define Game object newCard
+        GameObject newCard = null;
 
+       // for each card position, deal a card
+        for (int row = 0; row < 7; row++){
+            // remove the first pile from the list until there are no more piles
+            for (int pile = row; pile < 7; pile++){
+                // Add card to the pile
+                bottoms[pile].Add(deck.Last<string>());
+                // remove card from the deck of cards remaining
+                deck.RemoveAt(deck.Count - 1);
+                // create a game object of the card and 
+                // assign it a position relative to the pile it is in
+                newCard = Instantiate(cardPrefab, 
+                    new Vector3(bottomPos[pile].transform.position.x, 
+                                bottomPos[pile].transform.position.y - yOffset, 
+                                bottomPos[pile].transform.position.z - zOffset), 
+                    Quaternion.identity, // rotation = 0
+                    bottomPos[pile].transform);
+                // Assign the value of the new card to the current card    
+                newCard.name = bottoms[pile][row];
+                // determine if card should be face up or face  
+                // (last card on pile is faceup)
+                if (pile == row){
+                    newCard.GetComponent<Selectable>().faceUp = true;
+                }
+            }
+
+            // Increase the offset with each card added
             yOffset = yOffset + 0.3f;
             zOffset = zOffset + 0.03f;
-        }
-    }
-    }
-
-   public void SolitaireSort(){
-        for (int i = 0; i < 7; i++){
-            for (int j = i; j < 7; j++){
-                bottoms[j].Add(deck.Last<string>());
-                deck.RemoveAt(deck.Count - 1);
-            }
         }
     }
 }
