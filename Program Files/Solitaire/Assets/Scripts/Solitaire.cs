@@ -13,7 +13,7 @@ public class Solitaire : MonoBehaviour
     // Suits Clubs / Diamonds / Hearts / Spades
     public static string[] suits = new string[] {"C", "D", "H", "S"};
     // Values Ace through King
-    public static string[] values = new string[] {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+    public static string[] values = new string[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"};
    
     public List<string>[] bottoms;
     public List<string>[] tops;
@@ -26,7 +26,7 @@ public class Solitaire : MonoBehaviour
     private List<string> bottom5 = new List<string>();
     private List<string> bottom6 = new List<string>();
 
-    //private List<string> top0 = new List<string>();
+    private List<string> top0 = new List<string>();
     //private List<string> top1 = new List<string>();
     //private List<string> top2 = new List<string>();
     //private List<string> top3 = new List<string>();
@@ -38,11 +38,19 @@ public class Solitaire : MonoBehaviour
         // Initialize the bottoms array with each of the piles
         bottoms = new List<string>[] { bottom0, bottom1, bottom2, bottom3, bottom4, bottom5, bottom6 };
         
-        // Generate the deck and shuffle it
+        // Generate the deck 
         deck = GenerateDeck();
+        // Call shuffle the deck
+        Shuffle(deck);
  
         // Deal the card onto the board and display them
         DealCards();
+
+        // TEST ZONE ///////////////////////////
+        print(GameRules.IsAlternating(bottom0, "D4"));
+        print(GameRules.IsRankGoood(bottom0, "D4", "bottom"));
+        print(GameRules.IsCardCorrect(bottom0[0], "bottom"));
+        ////////////////////////////////////////
     }
 
     // Update is called once per frame
@@ -63,8 +71,7 @@ public class Solitaire : MonoBehaviour
                  deck.Add(suits[s] + values[v]);
              }
         }
-        // Call shuffle the deck
-        Shuffle(deck);
+
         // Return the shuffled deck
         return deck;
     }
@@ -127,9 +134,9 @@ public class Solitaire : MonoBehaviour
                 newCard.name = bottoms[pile][row];
                 // determine if card should be face up or face  
                 // (last card on pile is faceup)
-                if (pile == row){
+                // if (pile == row){
                     newCard.GetComponent<Selectable>().faceUp = true;
-                }
+                // }
             }
 
             // Increase the offset with each card added
