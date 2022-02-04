@@ -134,9 +134,9 @@ public class Solitaire : MonoBehaviour
                 newCard.name = bottoms[pile][row];
                 // determine if card should be face up or face  
                 // (last card on pile is faceup)
-                // if (pile == row){
+                if (pile == row){
                     newCard.GetComponent<Selectable>().faceUp = true;
-                // }
+                }
             }
 
             // Increase the offset with each card added
