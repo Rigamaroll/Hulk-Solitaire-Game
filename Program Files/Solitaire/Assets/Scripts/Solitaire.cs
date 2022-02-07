@@ -42,32 +42,25 @@ public class Solitaire : MonoBehaviour
         deck = GenerateDeck();
         // Call shuffle the deck
         Shuffle(deck);
+
+        // Test Cards are shuffled
+        Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
         DealCards();
 
-        // TEST ZONE ///////////////////////////
-        // Alternating 
-        TheLogger.PrintLog("// SOL 12 - Tableau cards can only be stacked in alternating colors");
-        TheLogger.PrintLog("----- Test for alternating colours -----");
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "D4"));
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "H3"));
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "C1"));
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "S13"));
-        TheLogger.PrintLog("// SOL 9 - Rank of cards must be functional as per rules");
-        TheLogger.PrintLog("----- Test for rank -----");
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D4", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D6", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D8", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D10", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D4", "top"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D6", "top"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D8", "top"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D10", "top"));
-        TheLogger.PrintLog(GameRules.IsCardCorrect(bottom0[0], "bottom"));
+        // Test that cards are removed from deck when dealt out
+        Demo1.TestSol11(deck);
 
-   
-        ////////////////////////////////////////
+        // Test card rank against bottom/top of foundation/tableau
+        Demo1.TestSol9(bottom0); 
+        // Test that cards are alternating colours
+        Demo1.TestSol12(bottom0);
+        // Test that card is King for going in empty tableau spot
+        Demo1.TestSol13();
+        // Test that card is Ace for going into empty foundation spot
+        Demo1.TestSol14();
+
     }
 
     // Update is called once per frame
