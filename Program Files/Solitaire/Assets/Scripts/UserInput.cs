@@ -68,7 +68,7 @@ public class UserInput : MonoBehaviour
         // select the card for moving somewhere
         // if double clicked, and can go to top spot, go there
         print("Pick this card up to move it somewhere");
-        print("But if double clicked, and can go to top, move it there")
+        print("But if double clicked, and can go to top, move it there");
     }
 
     // Call algorithm for if top spot is selected
