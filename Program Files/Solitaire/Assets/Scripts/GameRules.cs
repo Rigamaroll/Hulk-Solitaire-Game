@@ -9,16 +9,18 @@ public class GameRules : MonoBehaviour
         
     }
     // SOL 9 - Rank of cards must be functional as per rules
-    public static bool IsRankGoood(List<string> stack, string card, string pos){
+    public static bool IsRankGoood(List<string> stack, string card, string pos)
+    {
         int cardRank = int.Parse(card.Substring(1, card.Length - 1));
         // print("card rank is: " + cardRank);
         string stackCard = stack[stack.Count - 1];
         int stackRank = int.Parse(stackCard.Substring(1, stackCard.Length - 1));
         // print("stack rank is: " + stackRank);
         // NOTE: HARDCODED IF TOP OR BOTTOM UNTIL WE FIGURE IT OUT
-        print("Card selected is: " + card);
-        print("Stack card is: " + stack[stack.Count - 1]);
-        switch (pos){
+        TheLogger.PrintLog("Card selected is: " + card);
+        TheLogger.PrintLog("Stack card is: " + stack[stack.Count - 1]);
+        switch (pos)
+        {
             case "top":
                 return (cardRank - stackRank == 1);
             case "bottom":
@@ -29,14 +31,16 @@ public class GameRules : MonoBehaviour
     }
 
     // SOL 12 - Tableau cards can only be stacked in alternating colors
-    public static bool IsAlternating(List<string> stack, string card){
-        string cardSuit = card.Substring(0,1);
-        print("Card selected is: " + card);
-        string stackSuit = stack[stack.Count - 1].Substring(0,1);
+    public static bool IsAlternating(List<string> stack, string card)
+    {
+        string cardSuit = card.Substring(0, 1);
+        TheLogger.PrintLog("Card selected is: " + card);
+        string stackSuit = stack[stack.Count - 1].Substring(0, 1);
         // print("stack suit is: " + stackSuit);
         // print("Stack count is: " + (stack.Count - 1));
-        print("Stack card is: " + stack[stack.Count - 1]);
-        switch(stackSuit){
+        TheLogger.PrintLog("Stack card is: " + stack[stack.Count - 1]);
+        switch (stackSuit)
+        {
             // Black suits need red underneath
             case "C":
             case "S":
@@ -48,7 +52,7 @@ public class GameRules : MonoBehaviour
         }
         // This is the bad place
         return false;
-    }    
+    }
 
     // Checks if the stack is empty (can be used for top or bottom)
     public static bool IsEmpty(List<string> stack){
