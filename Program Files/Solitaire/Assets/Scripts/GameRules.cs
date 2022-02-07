@@ -27,14 +27,16 @@ public class GameRules : MonoBehaviour
     }
 
     // SOL 12 - Tableau cards can only be stacked in alternating colors
-    public static bool IsAlternating(List<string> stack, string card){
-        string cardSuit = card.Substring(0,1);
-        // print("card suit is: " + cardSuit + " " + card);
-        string stackSuit = stack[stack.Count - 1].Substring(0,1);
+    public static bool IsAlternating(List<string> stack, string card)
+    {
+        string cardSuit = card.Substring(0, 1);
+        TheLogger.PrintLog("Card selected is: " + card);
+        string stackSuit = stack[stack.Count - 1].Substring(0, 1);
         // print("stack suit is: " + stackSuit);
         // print("Stack count is: " + (stack.Count - 1));
-        // print("Stack card is: " + stack[stack.Count - 1]);
-        switch(stackSuit){
+        TheLogger.PrintLog("Stack card is: " + stack[stack.Count - 1]);
+        switch (stackSuit)
+        {
             // Black suits need red underneath
             case "C":
             case "S":
@@ -46,7 +48,7 @@ public class GameRules : MonoBehaviour
         }
         // This is the bad place
         return false;
-    }    
+    }
 
     // Checks if the stack is empty (can be used for top or bottom)
     public static bool IsEmpty(List<string> stack){
