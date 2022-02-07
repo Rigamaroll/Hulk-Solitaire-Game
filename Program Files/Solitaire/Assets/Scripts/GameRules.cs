@@ -16,11 +16,13 @@ public class GameRules : MonoBehaviour
         int stackRank = int.Parse(stackCard.Substring(1, stackCard.Length - 1));
         // print("stack rank is: " + stackRank);
         // NOTE: HARDCODED IF TOP OR BOTTOM UNTIL WE FIGURE IT OUT
+        print("Card selected is: " + card);
+        print("Stack card is: " + stack[stack.Count - 1]);
         switch (pos){
             case "top":
-            return (cardRank - stackRank == 1);
+                return (cardRank - stackRank == 1);
             case "bottom":
-            return (stackRank - cardRank == 1);
+                return (stackRank - cardRank == 1);
         }
         // This is the bad place
         return false;
@@ -29,11 +31,11 @@ public class GameRules : MonoBehaviour
     // SOL 12 - Tableau cards can only be stacked in alternating colors
     public static bool IsAlternating(List<string> stack, string card){
         string cardSuit = card.Substring(0,1);
-        // print("card suit is: " + cardSuit + " " + card);
+        print("Card selected is: " + card);
         string stackSuit = stack[stack.Count - 1].Substring(0,1);
         // print("stack suit is: " + stackSuit);
         // print("Stack count is: " + (stack.Count - 1));
-        // print("Stack card is: " + stack[stack.Count - 1]);
+        print("Stack card is: " + stack[stack.Count - 1]);
         switch(stackSuit){
             // Black suits need red underneath
             case "C":
