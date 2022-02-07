@@ -9,18 +9,22 @@ public class GameRules : MonoBehaviour
         
     }
     // SOL 9 - Rank of cards must be functional as per rules
-    public static bool IsRankGoood(List<string> stack, string card, string pos){
+    public static bool IsRankGoood(List<string> stack, string card, string pos)
+    {
         int cardRank = int.Parse(card.Substring(1, card.Length - 1));
         // print("card rank is: " + cardRank);
         string stackCard = stack[stack.Count - 1];
         int stackRank = int.Parse(stackCard.Substring(1, stackCard.Length - 1));
         // print("stack rank is: " + stackRank);
         // NOTE: HARDCODED IF TOP OR BOTTOM UNTIL WE FIGURE IT OUT
-        switch (pos){
+        TheLogger.PrintLog("Card selected is: " + card);
+        TheLogger.PrintLog("Stack card is: " + stack[stack.Count - 1]);
+        switch (pos)
+        {
             case "top":
-            return (cardRank - stackRank == 1);
+                return (cardRank - stackRank == 1);
             case "bottom":
-            return (stackRank - cardRank == 1);
+                return (stackRank - cardRank == 1);
         }
         // This is the bad place
         return false;
