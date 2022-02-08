@@ -1237,7 +1237,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: aafde94e03cde9e42b4a707237eae91f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ca677a9f4f963404fbc479f924cd2395, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1265,7 +1265,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 7.68, y: 10.63}
+    oldSize: {x: 7.55, y: 10.57}
     newSize: {x: 7.68, y: 10.63}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -1433,6 +1433,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2715255414417302096, guid: 427d304a0b8aba74eb122f9bfedbf6e7,
+        type: 3}
+      propertyPath: cardBack
+      value: 
+      objectReference: {fileID: 21300000, guid: 3518312e62b95dc489e4e5c8dbde516a,
+        type: 3}
+    - target: {fileID: 4390230715830037928, guid: 427d304a0b8aba74eb122f9bfedbf6e7,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3518312e62b95dc489e4e5c8dbde516a,
+        type: 3}
     - target: {fileID: 4390230715830037929, guid: 427d304a0b8aba74eb122f9bfedbf6e7,
         type: 3}
       propertyPath: m_RootOrder
@@ -2119,7 +2131,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 7.68, y: 10.63}
+    oldSize: {x: 7.55, y: 10.57}
     newSize: {x: 7.68, y: 10.63}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
