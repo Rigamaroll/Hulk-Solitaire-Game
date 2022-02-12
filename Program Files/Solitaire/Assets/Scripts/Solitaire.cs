@@ -9,7 +9,8 @@ public class Solitaire : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject[] bottomPos;
     public GameObject[] topPos;
-    public GameObject visibleDeck;
+    public GameObject stockPile;
+    private List<GameObject> stockPileArray;
     
     // Suits Clubs / Diamonds / Hearts / Spades
     public static string[] suits = new string[] {"C", "D", "H", "S"};
@@ -43,13 +44,14 @@ public class Solitaire : MonoBehaviour
         deck = GenerateDeck();
         // Call shuffle the deck
         Shuffle(deck);
+        Shuffle(deck);
 
         // Test Cards are shuffled
         Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
         DealCards();
-        CreateTalonPile();
+        CreateStockPile();
 
         // Test that cards are removed from deck when dealt out
         Demo1.TestSol11(deck);
@@ -161,21 +163,40 @@ public class Solitaire : MonoBehaviour
         }
     }
 
-    public void CreateTalonPile()
+    public void CreateStockPile()
     {
+        TheLogger.PrintLog("CreateStockPile");
         float zOffset = 0.02f;
         float yOffset = 3f;
         GameObject newCard = null;
-        visibleDeck = GameObject.FindGameObjectWithTag("Deck");
+        stockPile = GameObject.FindGameObjectWithTag("Deck");
+        stockPileArray = new List<GameObject>();
+        
         for (int i = 0; i < deck.Count; i++)
         {
             newCard = Instantiate(cardPrefab, new Vector3(-5f, yOffset, zOffset), Quaternion.identity,
-                visibleDeck.transform);
+                stockPile.transform);
             newCard.name = deck[i];
             zOffset += 0.03f;
-            yOffset -= 0.01f;
+            //yOffset -= 0.005f;
+            stockPileArray.Add(newCard);
+            newCard.GetComponent<Selectable>().FlipCard();
+            //TheLogger.PrintLog(stockPileArray[i].name);
         }
 
+       
+    }
 
+    public List<GameObject> GetStockPileArray()
+    {
+
+        return stockPileArray;
+
+    }
+
+    public void SetStockPileArray (List<GameObject> newStockPile)
+    {
+
+        this.stockPileArray = newStockPile;
     }
 }

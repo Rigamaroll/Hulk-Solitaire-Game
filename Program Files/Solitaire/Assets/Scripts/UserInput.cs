@@ -5,6 +5,7 @@ using UnityEngine;
 public class UserInput : MonoBehaviour
 {
     Vector3 mousePosition;
+    Vector3 cardOrigin; //when card hit by mouseDown startLocation in case has to revert
     
     // Start is called before the first frame update
     void Start(){
@@ -32,7 +33,7 @@ public class UserInput : MonoBehaviour
         if (hit)
         {
             Rigidbody2D wasHit = hit.rigidbody;
-            if (wasHit.gameObject.name == "Deck")
+            if (wasHit.gameObject.tag == "Deck")
             {
 
                 TheLogger.PrintLog(wasHit.tag);
@@ -69,48 +70,73 @@ public class UserInput : MonoBehaviour
                 wasHit.transform.forward = Vector3.forward;
             
 
-                if (!cardFace.IsFaceUp())  
+               /* if (!cardFace.IsFaceUp())  
                 {
+                    
                     return;
                     //cardFace.FlipCard();
-                }
+                }*/
                 wasHit.position = mousePosition;
                 
 
-                //string whatHit = hit.collider.tag;
-                //print(whatHit);
+                string whatHit = hit.collider.tag;
+                print(whatHit);
 
-                /*switch(whatHit){
+                switch(whatHit){
                     case "Deck":
-                        Deck();
+                        StockPile();
                         break;
                     case "Card":
-                        Card();
+                        TalonPile();
                         break;
                     case "Top":
-                        Top();
+                        Foundation();
                         break;
                     case "Bottom":
-                        Bottom();
+                        Tableau();
                         break;
                     default:
                     //This is the bad place
                         print("You missed");
                         break;
-                }*/
+                }
             }
         //}
     }
 
     // This is where we will call the algorithm for if Deck is touched
-    void Deck(){
+    void StockPile(){
+
+        Solitaire solitaire = FindObjectOfType<Solitaire>();
+        List<GameObject> stockPile = solitaire.GetStockPileArray();
+        if (GameRules.IsEmpty(stockPile))
+        {
+
+            TheLogger.PrintLog("turn over Talons");
+
+        } else
+        {
+
+            TheLogger.PrintLog("Deal Card");
+            GameObject nextCard = stockPile[stockPile.Count - 1];
+            TheLogger.PrintLog(nextCard.name);
+            stockPile.RemoveAt(stockPile.Count - 1);
+
+            //add ^^Card to Talon Pile
+            solitaire.SetStockPileArray(stockPile);
+
+        }
+        
+        /*isMouseClick(0) ?
+        *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
+        */
         print("Hit Deck");
         // Deal cards
         print("Deal 1 or 3 more cards");
     }
 
     // This is where we will call the algorithm for if a card is selected
-    void Card(){
+    void TalonPile(){
         print("Hit Card");
         // select the card for moving somewhere
         // if double clicked, and can go to top spot, go there
@@ -119,14 +145,26 @@ public class UserInput : MonoBehaviour
     }
 
     // Call algorithm for if top spot is selected
-    void Top(){
+    void Foundation(){
+
+        /*
+         * isEmpty ? RETURN : dragCard
+         * !isMouseButton(0) ? LookForClosestElement
+         * canCardBePlaced ? TRUE (SWITCH ELEMENTS) : return cards to origin
+         */
         print("Hit Top");
         // cards on top can be moved back to the bottom
         print("Pick this card up to move it somewhere");
     }
 
     // Call algorithm for if bottom spot is selected
-    void Bottom(){
+    void Tableau(){
+        /*
+         *isCard Faceup ? getStackConnectedCardsBelow : return
+         *!isMouseButton(0) ? LookForClosestElement
+         *canCardBePlaced ? TRUE (SWITCH ELEMENTS) (isCardUncovered && faceDown ? flipCard : return): return cards to origin
+         */
+         
         print("Hit Bottom");
         // cards on the bottom can be picked up individually or as a stack
         print("Pick up this card (or cards if stack selected)");

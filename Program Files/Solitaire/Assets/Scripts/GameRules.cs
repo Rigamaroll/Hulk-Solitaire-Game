@@ -48,7 +48,7 @@ public class GameRules : MonoBehaviour
     }
 
     // Checks if the stack is empty (can be used for top or bottom)
-    public static bool IsEmpty(List<string> stack){
+    public static bool IsEmpty(List<GameObject> stack){
         return (stack.Count == 0);
     }
 
