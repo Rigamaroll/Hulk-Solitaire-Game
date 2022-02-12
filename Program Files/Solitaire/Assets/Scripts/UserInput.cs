@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UserInput : MonoBehaviour
 {
+    Vector3 mousePosition;
+    
     // Start is called before the first frame update
     void Start(){
         
@@ -11,29 +13,74 @@ public class UserInput : MonoBehaviour
 
     // Update is called once per frame
     void Update(){
-        GetMouseClick();
+       
+        if (Input.GetMouseButton(0))
+        {
+           GetMouseClick();
+        } 
     }
+
+    /*void OnMouseClick()
+    {
+
+        mousePosition = Camera.main.ScreenToWorldPoint(
+                               new Vector3(Input.mousePosition.x,
+                               Input.mousePosition.y, -10));
+        RaycastHit2D hit;
+        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+        if (hit)
+        {
+            Rigidbody2D wasHit = hit.rigidbody;
+            if (wasHit.gameObject.name == "Deck")
+            {
+
+                TheLogger.PrintLog(wasHit.tag);
+
+            }
+
+        }
+    }*/
 
     // Might want to change to on click down, need to investigate this
     void GetMouseClick(){
         //To store the mouse's position
-        Vector3 mousePosition;
+
+        mousePosition = Camera.main.ScreenToWorldPoint(
+                               new Vector3(Input.mousePosition.x,
+                               Input.mousePosition.y, -10));
         // https://docs.unity3d.com/ScriptReference/RaycastHit-collider.html 
         RaycastHit2D hit;
 
-        if (Input.GetMouseButtonDown(0)){
-            mousePosition = Camera.main.ScreenToWorldPoint(
-                                new Vector3(Input.mousePosition.x,
-                                Input.mousePosition.y, -10)
-            );
+       // if (Input.GetMouseButton(0)){
+            
+        
+
             hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            
             // What we will do depends on what has been clicked
             if (hit){
-                // The tag is associated with various game objects
-                string whatHit = hit.collider.tag;
-                print(whatHit);
 
-                switch(whatHit){
+                // The tag is associated with various game objects
+                
+                Rigidbody2D wasHit = hit.rigidbody;
+                Selectable cardFace = wasHit.GetComponent<Selectable>();
+            
+                wasHit.transform.forward = Vector3.forward;
+            
+
+                if (!cardFace.IsFaceUp())  
+                {
+                    return;
+                    //cardFace.FlipCard();
+                }
+                wasHit.position = mousePosition;
+                
+
+                //string whatHit = hit.collider.tag;
+                //print(whatHit);
+
+                /*switch(whatHit){
                     case "Deck":
                         Deck();
                         break;
@@ -50,9 +97,9 @@ public class UserInput : MonoBehaviour
                     //This is the bad place
                         print("You missed");
                         break;
-                }
+                }*/
             }
-        }
+        //}
     }
 
     // This is where we will call the algorithm for if Deck is touched

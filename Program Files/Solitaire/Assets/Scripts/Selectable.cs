@@ -17,4 +17,20 @@ public class Selectable : MonoBehaviour
     {
         
     }
+
+    public bool IsFaceUp()
+    {
+
+        return faceUp;
+
+
+    }
+
+    public void FlipCard()
+    {
+
+        faceUp = !faceUp;
+    }
+
+
 }

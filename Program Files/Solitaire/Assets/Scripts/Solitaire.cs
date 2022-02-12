@@ -9,6 +9,7 @@ public class Solitaire : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject[] bottomPos;
     public GameObject[] topPos;
+    public GameObject visibleDeck;
     
     // Suits Clubs / Diamonds / Hearts / Spades
     public static string[] suits = new string[] {"C", "D", "H", "S"};
@@ -48,6 +49,7 @@ public class Solitaire : MonoBehaviour
  
         // Deal the card onto the board and display them
         DealCards();
+        CreateTalonPile();
 
         // Test that cards are removed from deck when dealt out
         Demo1.TestSol11(deck);
@@ -140,12 +142,16 @@ public class Solitaire : MonoBehaviour
                                 bottomPos[pile].transform.position.z - zOffset), 
                     Quaternion.identity, // rotation = 0
                     bottomPos[pile].transform);
+                Rigidbody2D cardbody = newCard.GetComponent<Rigidbody2D>();
+                
                 // Assign the value of the new card to the current card    
                 newCard.name = bottoms[pile][row];
                 // determine if card should be face up or face  
                 // (last card on pile is faceup)
                 if (pile == row){
+
                     newCard.GetComponent<Selectable>().faceUp = true;
+                    
                 }
             }
 
@@ -153,5 +159,23 @@ public class Solitaire : MonoBehaviour
             yOffset = yOffset + 0.4f;
             zOffset = zOffset + 0.03f;
         }
+    }
+
+    public void CreateTalonPile()
+    {
+        float zOffset = 0.02f;
+        float yOffset = 3f;
+        GameObject newCard = null;
+        visibleDeck = GameObject.FindGameObjectWithTag("Deck");
+        for (int i = 0; i < deck.Count; i++)
+        {
+            newCard = Instantiate(cardPrefab, new Vector3(-5f, yOffset, zOffset), Quaternion.identity,
+                visibleDeck.transform);
+            newCard.name = deck[i];
+            zOffset += 0.03f;
+            yOffset -= 0.01f;
+        }
+
+
     }
 }
