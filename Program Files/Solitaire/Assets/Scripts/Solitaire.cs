@@ -29,9 +29,9 @@ public class Solitaire : MonoBehaviour
     private List<string> bottom6 = new List<string>();
 
     private List<string> top0 = new List<string>();
-    //private List<string> top1 = new List<string>();
-    //private List<string> top2 = new List<string>();
-    //private List<string> top3 = new List<string>();
+    private List<string> top1 = new List<string>();
+    private List<string> top2 = new List<string>();
+    private List<string> top3 = new List<string>();
 
     public List<string> deck;
 
@@ -39,7 +39,9 @@ public class Solitaire : MonoBehaviour
     void Start() {
         // Initialize the bottoms array with each of the piles
         bottoms = new List<string>[] { bottom0, bottom1, bottom2, bottom3, bottom4, bottom5, bottom6 };
-        
+        // Initialize the tops array with the empty top piles
+        tops = new List<string>[] { top0, top1, top2, top3 };
+
         // Generate the deck 
         deck = GenerateDeck();
         // Call shuffle the deck
@@ -187,16 +189,28 @@ public class Solitaire : MonoBehaviour
        
     }
 
-    public List<GameObject> GetStockPileArray()
-    {
-
+    // 
+    public List<GameObject> GetStockPileArray(){
         return stockPileArray;
-
     }
 
-    public void SetStockPileArray (List<GameObject> newStockPile)
-    {
-
+    public void SetStockPileArray (List<GameObject> newStockPile){
         this.stockPileArray = newStockPile;
+    }
+
+    public List<string>[] GetFoundations(){
+        return tops;
+    }
+
+    public void setFoundations (List<string>[] newFoundations){
+        this.tops = newFoundations;
+    }
+
+    public List<string>[] GetTableaus(){
+        return bottoms;
+    }
+
+    public void setTableaus (List<string>[] newTableaus){
+        this.bottoms = newTableaus;
     }
 }

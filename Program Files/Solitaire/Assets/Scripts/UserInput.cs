@@ -109,13 +109,9 @@ public class UserInput : MonoBehaviour
 
         Solitaire solitaire = FindObjectOfType<Solitaire>();
         List<GameObject> stockPile = solitaire.GetStockPileArray();
-        if (GameRules.IsEmpty(stockPile))
-        {
-
+        if (GameRules.IsEmpty(stockPile)){
             TheLogger.PrintLog("turn over Talons");
-
-        } else
-        {
+        } else {
 
             TheLogger.PrintLog("Deal Card");
             GameObject nextCard = stockPile[stockPile.Count - 1];
@@ -147,6 +143,55 @@ public class UserInput : MonoBehaviour
     // Call algorithm for if top spot is selected
     void Foundation(){
 
+        // NEED TO GET THE PILE SELECTED
+        int pileSelected = 2;
+
+
+        // Probably want one solitaire game object for whole class
+        Solitaire solitaire = FindObjectOfType<Solitaire>();
+        List<string>[] foundations = solitaire.GetFoundations();
+        List<string> foundationPile = foundations[pileSelected];
+        if (GameRules.IsEmpty(foundationPile)){
+            // You can't remove a card from an empty pile
+            TheLogger.PrintLog("No Action");
+        } else {
+            // Pick up the card
+            TheLogger.PrintLog("Grab Card");
+            GameObject topCard = foundationPile[foundationPile.Count - 1];
+            TheLogger.PrintLog(topCard.name);
+
+
+            //wait for mouse up
+            // get card pile we are trying to add it onto
+            int BottomPileSelected = 3;
+
+            //NOTE This should be the pile we are trying to add our card to
+            List<string>[] tableaus =solitaire.GetTableaus();
+            List<string> tableauPile = tableaus[BottomPileSelected];
+
+            // Check if suits are alternating and card is 1 rank lower than 
+            // bottom of stack card
+            if (GameRules.IsAlternating(tableauPile, topCard.name) &&
+                GameRules.IsRankGoood(tableauPile, topCard.name, "bottom")){
+                    
+                // if the card can go in the location selected remove it from the foundation pile
+                foundationPile.RemoveAt(foundationPile.Count - 1);
+                foundations[pileSelected] = foundationPile;
+                solitaire.setFoundations(foundations);
+
+                //add Card to Tableau Pile
+                tableauPile.Add(topCard);
+                tableaus[BottomPileSelected] = tableauPile;
+                solitaire.SetTableaus(tableaus);
+            }
+        }
+        
+        /*isMouseClick(0) ?
+        *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
+        */
+        print("Hit Deck");
+        // Deal cards
+        print("Deal 1 or 3 more cards");
         /*
          * isEmpty ? RETURN : dragCard
          * !isMouseButton(0) ? LookForClosestElement
