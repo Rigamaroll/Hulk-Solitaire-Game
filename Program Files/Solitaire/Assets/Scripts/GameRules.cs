@@ -52,6 +52,10 @@ public class GameRules : MonoBehaviour
         return (stack.Count == 0);
     }
 
+    public static bool IsEmpty(List<string> stack){
+        return (stack.Count == 0);
+    }
+
     // SOL 13 - Empty Tableau spots can only be filled with a king
     // SOL 14 - Foundations can only be filled starting with an ace
     public static bool IsCardCorrect(string card, string pos){

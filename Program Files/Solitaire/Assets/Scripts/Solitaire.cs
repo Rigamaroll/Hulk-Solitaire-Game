@@ -29,9 +29,9 @@ public class Solitaire : MonoBehaviour
     private List<string> bottom6 = new List<string>();
 
     private List<string> top0 = new List<string>();
-    //private List<string> top1 = new List<string>();
-    //private List<string> top2 = new List<string>();
-    //private List<string> top3 = new List<string>();
+    private List<string> top1 = new List<string>();
+    private List<string> top2 = new List<string>();
+    private List<string> top3 = new List<string>();
 
     public List<string> deck;
 
@@ -39,7 +39,9 @@ public class Solitaire : MonoBehaviour
     void Start() {
         // Initialize the bottoms array with each of the piles
         bottoms = new List<string>[] { bottom0, bottom1, bottom2, bottom3, bottom4, bottom5, bottom6 };
-        
+        // Initialize the tops array with the empty top piles
+        tops = new List<string>[] { top0, top1, top2, top3 };
+
         // Generate the deck 
         deck = GenerateDeck();
         // Call shuffle the deck
@@ -50,7 +52,8 @@ public class Solitaire : MonoBehaviour
         Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
-        DealCards();
+        //StartCoroutine is for enum out to deal one at a time
+        StartCoroutine(DealCards());
         CreateStockPile();
 
         // Test that cards are removed from deck when dealt out
@@ -120,7 +123,7 @@ public class Solitaire : MonoBehaviour
 
     // Owen/Jenne Refactored 31-01-22 
     // Deal the cards onto the bottom display piles
-   public void DealCards(){
+   public IEnumerator DealCards(){
        // define offsets in y and z axis
         float yOffset = 0;
         float zOffset = 0.03f;
@@ -132,12 +135,15 @@ public class Solitaire : MonoBehaviour
         for (int row = 0; row < 7; row++){
             // remove the first pile from the list until there are no more piles
             for (int pile = row; pile < 7; pile++){
+                // added some code from tutorial (this line plu return type enum)
+                // this will make the cards deal out one at a time so fancyyyy
                 // Add card to the pile
                 bottoms[pile].Add(deck.Last<string>());
                 // remove card from the deck of cards remaining
                 deck.RemoveAt(deck.Count - 1);
                 // create a game object of the card and 
                 // assign it a position relative to the pile it is in
+                yield return new WaitForSeconds(0.01f);
                 newCard = Instantiate(cardPrefab, 
                     new Vector3(bottomPos[pile].transform.position.x, 
                                 bottomPos[pile].transform.position.y - yOffset, 
@@ -187,16 +193,29 @@ public class Solitaire : MonoBehaviour
        
     }
 
-    public List<GameObject> GetStockPileArray()
-    {
-
+    // 
+    public List<GameObject> GetStockPileArray(){
         return stockPileArray;
-
     }
 
-    public void SetStockPileArray (List<GameObject> newStockPile)
-    {
-
+    public void SetStockPileArray (List<GameObject> newStockPile){
         this.stockPileArray = newStockPile;
     }
+
+    public List<string>[] GetFoundations(){
+        return tops;
+    }
+
+    public void setFoundations (List<string>[] newFoundations){
+        this.tops = newFoundations;
+    }
+
+    public List<string>[] GetTableaus(){
+        return bottoms;
+    }
+
+    public void setTableaus (List<string>[] newTableaus){
+        this.bottoms = newTableaus;
+    }
+
 }

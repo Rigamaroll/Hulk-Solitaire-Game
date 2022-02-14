@@ -2,35 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Selectable : MonoBehaviour
-{
+public class Selectable : MonoBehaviour{
     public bool faceUp = false;
     
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    void Start(){
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update(){
     }
 
-    public bool IsFaceUp()
-    {
-
+    public bool IsFaceUp(){
         return faceUp;
-
-
     }
 
-    public void FlipCard()
-    {
-
+    public void FlipCard(){
         faceUp = !faceUp;
     }
-
 
 }
