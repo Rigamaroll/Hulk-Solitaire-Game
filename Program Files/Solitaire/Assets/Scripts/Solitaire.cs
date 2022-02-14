@@ -9,6 +9,8 @@ public class Solitaire : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject[] bottomPos;
     public GameObject[] topPos;
+    public GameObject stockPile;
+    private List<GameObject> stockPileArray;
     
     // Suits Clubs / Diamonds / Hearts / Spades
     public static string[] suits = new string[] {"C", "D", "H", "S"};
@@ -27,9 +29,9 @@ public class Solitaire : MonoBehaviour
     private List<string> bottom6 = new List<string>();
 
     private List<string> top0 = new List<string>();
-    //private List<string> top1 = new List<string>();
-    //private List<string> top2 = new List<string>();
-    //private List<string> top3 = new List<string>();
+    private List<string> top1 = new List<string>();
+    private List<string> top2 = new List<string>();
+    private List<string> top3 = new List<string>();
 
     public List<string> deck;
 
@@ -37,37 +39,35 @@ public class Solitaire : MonoBehaviour
     void Start() {
         // Initialize the bottoms array with each of the piles
         bottoms = new List<string>[] { bottom0, bottom1, bottom2, bottom3, bottom4, bottom5, bottom6 };
-        
+        // Initialize the tops array with the empty top piles
+        tops = new List<string>[] { top0, top1, top2, top3 };
+
         // Generate the deck 
         deck = GenerateDeck();
         // Call shuffle the deck
         Shuffle(deck);
+        Shuffle(deck);
+
+        // Test Cards are shuffled
+        Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
-        DealCards();
+        //StartCoroutine is for enum out to deal one at a time
+        StartCoroutine(DealCards());
+        CreateStockPile();
 
-        // TEST ZONE ///////////////////////////
-        // Alternating 
-        TheLogger.PrintLog("// SOL 12 - Tableau cards can only be stacked in alternating colors");
-        TheLogger.PrintLog("----- Test for alternating colours -----");
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "D4"));
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "H3"));
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "C1"));
-        TheLogger.PrintLog("Cards are alternating suits: " + GameRules.IsAlternating(bottom0, "S13"));
-        TheLogger.PrintLog("// SOL 9 - Rank of cards must be functional as per rules");
-        TheLogger.PrintLog("----- Test for rank -----");
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D4", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D6", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D8", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: bottom: " + GameRules.IsRankGoood(bottom0, "D10", "bottom"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D4", "top"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D6", "top"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D8", "top"));
-        TheLogger.PrintLog("Cards can be stacked: top: " + GameRules.IsRankGoood(bottom0, "D10", "top"));
-        TheLogger.PrintLog(GameRules.IsCardCorrect(bottom0[0], "bottom"));
+        // Test that cards are removed from deck when dealt out
+        Demo1.TestSol11(deck);
 
-   
-        ////////////////////////////////////////
+        // Test card rank against bottom/top of foundation/tableau
+        Demo1.TestSol9(bottom0); 
+        // Test that cards are alternating colours
+        Demo1.TestSol12(bottom0);
+        // Test that card is King for going in empty tableau spot
+        Demo1.TestSol13();
+        // Test that card is Ace for going into empty foundation spot
+        Demo1.TestSol14();
+
     }
 
     // Update is called once per frame
@@ -123,7 +123,7 @@ public class Solitaire : MonoBehaviour
 
     // Owen/Jenne Refactored 31-01-22 
     // Deal the cards onto the bottom display piles
-   public void DealCards(){
+   public IEnumerator DealCards(){
        // define offsets in y and z axis
         float yOffset = 0;
         float zOffset = 0.03f;
@@ -135,24 +135,31 @@ public class Solitaire : MonoBehaviour
         for (int row = 0; row < 7; row++){
             // remove the first pile from the list until there are no more piles
             for (int pile = row; pile < 7; pile++){
+                // added some code from tutorial (this line plu return type enum)
+                // this will make the cards deal out one at a time so fancyyyy
                 // Add card to the pile
                 bottoms[pile].Add(deck.Last<string>());
                 // remove card from the deck of cards remaining
                 deck.RemoveAt(deck.Count - 1);
                 // create a game object of the card and 
                 // assign it a position relative to the pile it is in
+                yield return new WaitForSeconds(0.01f);
                 newCard = Instantiate(cardPrefab, 
                     new Vector3(bottomPos[pile].transform.position.x, 
                                 bottomPos[pile].transform.position.y - yOffset, 
                                 bottomPos[pile].transform.position.z - zOffset), 
                     Quaternion.identity, // rotation = 0
                     bottomPos[pile].transform);
+                Rigidbody2D cardbody = newCard.GetComponent<Rigidbody2D>();
+                
                 // Assign the value of the new card to the current card    
                 newCard.name = bottoms[pile][row];
                 // determine if card should be face up or face  
                 // (last card on pile is faceup)
                 if (pile == row){
+
                     newCard.GetComponent<Selectable>().faceUp = true;
+                    
                 }
             }
 
@@ -161,4 +168,54 @@ public class Solitaire : MonoBehaviour
             zOffset = zOffset + 0.03f;
         }
     }
+
+    public void CreateStockPile()
+    {
+        TheLogger.PrintLog("CreateStockPile");
+        float zOffset = 0.02f;
+        float yOffset = 3f;
+        GameObject newCard = null;
+        stockPile = GameObject.FindGameObjectWithTag("Deck");
+        stockPileArray = new List<GameObject>();
+        
+        for (int i = 0; i < deck.Count; i++)
+        {
+            newCard = Instantiate(cardPrefab, new Vector3(-5f, yOffset, zOffset), Quaternion.identity,
+                stockPile.transform);
+            newCard.name = deck[i];
+            zOffset += 0.03f;
+            //yOffset -= 0.005f;
+            stockPileArray.Add(newCard);
+            newCard.GetComponent<Selectable>().FlipCard();
+            //TheLogger.PrintLog(stockPileArray[i].name);
+        }
+
+       
+    }
+
+    // 
+    public List<GameObject> GetStockPileArray(){
+        return stockPileArray;
+    }
+
+    public void SetStockPileArray (List<GameObject> newStockPile){
+        this.stockPileArray = newStockPile;
+    }
+
+    public List<string>[] GetFoundations(){
+        return tops;
+    }
+
+    public void setFoundations (List<string>[] newFoundations){
+        this.tops = newFoundations;
+    }
+
+    public List<string>[] GetTableaus(){
+        return bottoms;
+    }
+
+    public void setTableaus (List<string>[] newTableaus){
+        this.bottoms = newTableaus;
+    }
+
 }
