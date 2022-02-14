@@ -52,7 +52,8 @@ public class Solitaire : MonoBehaviour
         Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
-        DealCards();
+        //StartCoroutine is for enum out to deal one at a time
+        StartCoroutine(DealCards());
         CreateStockPile();
 
         // Test that cards are removed from deck when dealt out
@@ -122,7 +123,7 @@ public class Solitaire : MonoBehaviour
 
     // Owen/Jenne Refactored 31-01-22 
     // Deal the cards onto the bottom display piles
-   public void DealCards(){
+   public IEnumerator DealCards(){
        // define offsets in y and z axis
         float yOffset = 0;
         float zOffset = 0.03f;
@@ -134,12 +135,15 @@ public class Solitaire : MonoBehaviour
         for (int row = 0; row < 7; row++){
             // remove the first pile from the list until there are no more piles
             for (int pile = row; pile < 7; pile++){
+                // added some code from tutorial (this line plu return type enum)
+                // this will make the cards deal out one at a time so fancyyyy
                 // Add card to the pile
                 bottoms[pile].Add(deck.Last<string>());
                 // remove card from the deck of cards remaining
                 deck.RemoveAt(deck.Count - 1);
                 // create a game object of the card and 
                 // assign it a position relative to the pile it is in
+                yield return new WaitForSeconds(0.01f);
                 newCard = Instantiate(cardPrefab, 
                     new Vector3(bottomPos[pile].transform.position.x, 
                                 bottomPos[pile].transform.position.y - yOffset, 
@@ -213,4 +217,5 @@ public class Solitaire : MonoBehaviour
     public void setTableaus (List<string>[] newTableaus){
         this.bottoms = newTableaus;
     }
+
 }

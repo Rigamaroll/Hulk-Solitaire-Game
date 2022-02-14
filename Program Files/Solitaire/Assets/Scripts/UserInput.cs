@@ -157,9 +157,8 @@ public class UserInput : MonoBehaviour
         } else {
             // Pick up the card
             TheLogger.PrintLog("Grab Card");
-            GameObject topCard = foundationPile[foundationPile.Count - 1];
-            TheLogger.PrintLog(topCard.name);
-
+            string topCard = foundationPile[foundationPile.Count - 1]; // Game object??
+            TheLogger.PrintLog(topCard);
 
             //wait for mouse up
             // get card pile we are trying to add it onto
@@ -171,8 +170,8 @@ public class UserInput : MonoBehaviour
 
             // Check if suits are alternating and card is 1 rank lower than 
             // bottom of stack card
-            if (GameRules.IsAlternating(tableauPile, topCard.name) &&
-                GameRules.IsRankGoood(tableauPile, topCard.name, "bottom")){
+            if (GameRules.IsAlternating(tableauPile, topCard) &&
+                GameRules.IsRankGoood(tableauPile, topCard, "bottom")){
                     
                 // if the card can go in the location selected remove it from the foundation pile
                 foundationPile.RemoveAt(foundationPile.Count - 1);
@@ -182,7 +181,7 @@ public class UserInput : MonoBehaviour
                 //add Card to Tableau Pile
                 tableauPile.Add(topCard);
                 tableaus[BottomPileSelected] = tableauPile;
-                solitaire.SetTableaus(tableaus);
+                solitaire.setTableaus(tableaus);
             }
         }
         
