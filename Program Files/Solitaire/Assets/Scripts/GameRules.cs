@@ -47,6 +47,13 @@ public class GameRules : MonoBehaviour
         return false;
     }
 
+    public static bool IsSameSuit(List<string> stack, string card){
+        string cardSuit = card.Substring(0, 1);
+        string stackSuit = stack[stack.Count - 1].Substring(0, 1);
+ 
+        return stackSuit == cardSuit;
+    }
+
     // Checks if the stack is empty (can be used for top or bottom)
     public static bool IsEmpty(List<GameObject> stack){
         return (stack.Count == 0);

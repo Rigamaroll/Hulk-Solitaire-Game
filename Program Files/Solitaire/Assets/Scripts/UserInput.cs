@@ -5,7 +5,8 @@ using UnityEngine;
 public class UserInput : MonoBehaviour
 {
     Vector3 mousePosition;
-    Vector3 cardOrigin; //when card hit by mouseDown startLocation in case has to revert
+    Vector3 cardOrigin; //when card hit by mouseDown startLocation in case has to 
+    Selectable cardFace = null;
     
     // Start is called before the first frame update
     void Start(){
@@ -54,9 +55,6 @@ public class UserInput : MonoBehaviour
         RaycastHit2D hit;
 
        // if (Input.GetMouseButton(0)){
-            
-        
-
             hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             
             // What we will do depends on what has been clicked
@@ -65,10 +63,9 @@ public class UserInput : MonoBehaviour
                 // The tag is associated with various game objects
                 
                 Rigidbody2D wasHit = hit.rigidbody;
-                Selectable cardFace = wasHit.GetComponent<Selectable>();
+                cardFace = wasHit.GetComponent<Selectable>();
             
                 wasHit.transform.forward = Vector3.forward;
-            
 
                /* if (!cardFace.IsFaceUp())  
                 {
@@ -78,7 +75,6 @@ public class UserInput : MonoBehaviour
                 }*/
                 wasHit.position = mousePosition;
                 
-
                 string whatHit = hit.collider.tag;
                 print(whatHit);
 
@@ -146,7 +142,6 @@ public class UserInput : MonoBehaviour
         // NEED TO GET THE PILE SELECTED
         int pileSelected = 2;
 
-
         // Probably want one solitaire game object for whole class
         Solitaire solitaire = FindObjectOfType<Solitaire>();
         List<string>[] foundations = solitaire.GetFoundations();
@@ -203,12 +198,121 @@ public class UserInput : MonoBehaviour
 
     // Call algorithm for if bottom spot is selected
     void Tableau(){
+         // NEED TO GET THE PILE SELECTED
+        int pileSelected = 2;
+        // Probably want one solitaire game object for whole class
+        Solitaire solitaire = FindObjectOfType<Solitaire>();
+        List<string>[] tableaus = solitaire.GetTableaus();
+        List<string> tableauPile = tableaus[pileSelected];
         /*
          *isCard Faceup ? getStackConnectedCardsBelow : return
          *!isMouseButton(0) ? LookForClosestElement
          *canCardBePlaced ? TRUE (SWITCH ELEMENTS) (isCardUncovered && faceDown ? flipCard : return): return cards to origin
          */
-         
+         // This will tell us where in our list the card is
+        int cardIndex = -1;
+        List<string> cardsSelected = new List<string>();
+
+        if (GameRules.IsEmpty(tableauPile)){
+            // You can't remove a card from an empty pile
+            TheLogger.PrintLog("No Action");
+            // Check if card is face up
+            // cardsSelected[0].IsFaceUp--------------------------------------------------
+        } else if(cardsSelected[0] == cardsSelected[0]){
+            TheLogger.PrintLog("Find Card in Pile");
+            for (int i = 0; i < tableauPile.Count; i++){
+                if (tableauPile[i] == cardFace.name){
+                    cardIndex = i;
+                }
+                // add the cards to the new list starting at the selected card
+                if (cardIndex != -1){
+                    cardsSelected.Add(cardFace.name);
+                }
+            }
+
+            //wait for mouse up
+            // get card pile we are trying to add it onto
+
+            string selectedSecond = "bottom";
+            int newPileSelected = 3;
+
+            if (selectedSecond == "bottom"){
+                //NOTE This should be the pile we are trying to add our card to
+                // List<string>[] tableaus =solitaire.GetTableaus();
+                List<string> newTableauPile = tableaus[newPileSelected];
+
+                // if empty || cards go on top of stack (alternating, rank one less)
+                if ((GameRules.IsEmpty(newTableauPile) && GameRules.IsCardCorrect(cardsSelected[0], "bottom")) 
+                    ||
+                   (GameRules.IsAlternating(newTableauPile, cardsSelected[0]) 
+                   && GameRules.IsRankGoood(newTableauPile, cardsSelected[0], "bottom"))){
+                        
+                    // if the card can go in the location selected remove it from the foundation pile
+                    for (int i = cardsSelected.Count - 1; i >= cardIndex; i--){
+                        tableauPile.RemoveAt(i);
+                    }
+                    // add the cards to the new pile
+                    for (int i = 0; i < cardsSelected.Count; i++){
+                        newTableauPile.Add(cardsSelected[i]);
+                    }
+
+                    // update the lists in the game
+                    tableaus[pileSelected] = tableauPile;
+                    tableaus[newPileSelected] = newTableauPile;
+                    
+                    // send updates to game
+                    solitaire.setTableaus(tableaus);
+
+            } else if (selectedSecond == "top"){
+                List<string>[] foundations = solitaire.GetFoundations();
+                List<string> newFoundationPile = foundations[newPileSelected];
+                // make sure only one card selected
+                if (cardsSelected.Count == 1){
+                    // check if it can be placed
+                    if ((GameRules.IsEmpty(newTableauPile) 
+                    && 
+                    GameRules.IsCardCorrect(cardsSelected[0], "top"))
+                    || (GameRules.IsSameSuit(newFoundationPile, cardsSelected[0]) 
+                    && GameRules.IsRankGoood(newFoundationPile, cardsSelected[0], "top"))){
+                        // remove card
+                        tableauPile.RemoveAt(cardIndex);
+                        // place card
+                        newFoundationPile.Add(cardsSelected[0]);
+
+                    // update the lists in the game
+                    tableaus[pileSelected] = tableauPile;
+                    foundations[newPileSelected] = newFoundationPile;
+                    
+                    // send updates to game
+                    solitaire.setTableaus(tableaus);
+                    solitaire.setFoundations(foundations);
+                    }
+
+
+                }
+            } else {
+                // return cards to pile (do nothing) let go of cards
+            }
+
+
+            }
+        }
+        
+        /*isMouseClick(0) ?
+        *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
+        */
+        print("Hit Deck");
+        // Deal cards
+        print("Deal 1 or 3 more cards");
+        /*
+         * isEmpty ? RETURN : dragCard
+         * !isMouseButton(0) ? LookForClosestElement
+         * canCardBePlaced ? TRUE (SWITCH ELEMENTS) : return cards to origin
+         */
+        print("Hit Top");
+        // cards on top can be moved back to the bottom
+        print("Pick this card up to move it somewhere");
+        ////////////////////////////////////
         print("Hit Bottom");
         // cards on the bottom can be picked up individually or as a stack
         print("Pick up this card (or cards if stack selected)");

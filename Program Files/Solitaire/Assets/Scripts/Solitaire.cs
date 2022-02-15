@@ -17,8 +17,8 @@ public class Solitaire : MonoBehaviour
     // Values Ace through King
     public static string[] values = new string[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"};
    
-    public List<string>[] bottoms;
-    public List<string>[] tops;
+    private List<string>[] bottoms;
+    private List<string>[] tops;
 
     private List<string> bottom0 = new List<string>();
     private List<string> bottom1 = new List<string>();
