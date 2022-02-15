@@ -52,9 +52,9 @@ public class Solitaire : MonoBehaviour
         Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
-        //StartCoroutine is for enum out to deal one at a time
+        //StartCoroutine is for enum out to deal one at a time. So fancy.
         StartCoroutine(DealCards());
-        CreateStockPile();
+        // CreateStockPile();
 
         // Test that cards are removed from deck when dealt out
         Demo1.TestSol11(deck);
@@ -169,29 +169,29 @@ public class Solitaire : MonoBehaviour
         }
     }
 
-    public void CreateStockPile()
-    {
-        TheLogger.PrintLog("CreateStockPile");
-        float zOffset = 0.02f;
-        float yOffset = 3f;
-        GameObject newCard = null;
-        stockPile = GameObject.FindGameObjectWithTag("Deck");
-        stockPileArray = new List<GameObject>();
+    // public void CreateStockPile()
+    // {
+    //     TheLogger.PrintLog("CreateStockPile");
+    //     float zOffset = 0.02f;
+    //     float yOffset = 3f;
+    //     GameObject newCard = null;
+    //     stockPile = GameObject.FindGameObjectWithTag("Deck");
+    //     stockPileArray = new List<GameObject>();
         
-        for (int i = 0; i < deck.Count; i++)
-        {
-            newCard = Instantiate(cardPrefab, new Vector3(-5f, yOffset, zOffset), Quaternion.identity,
-                stockPile.transform);
-            newCard.name = deck[i];
-            zOffset += 0.03f;
-            //yOffset -= 0.005f;
-            stockPileArray.Add(newCard);
-            newCard.GetComponent<Selectable>().FlipCard();
-            //TheLogger.PrintLog(stockPileArray[i].name);
-        }
+    //     for (int i = 0; i < deck.Count; i++)
+    //     {
+    //         newCard = Instantiate(cardPrefab, new Vector3(-5f, yOffset, zOffset), Quaternion.identity,
+    //             stockPile.transform);
+    //         newCard.name = deck[i];
+    //         zOffset += 0.03f;
+    //         //yOffset -= 0.005f;
+    //         stockPileArray.Add(newCard);
+    //         newCard.GetComponent<Selectable>().FlipCard();
+    //         //TheLogger.PrintLog(stockPileArray[i].name);
+    //     }
 
        
-    }
+    // }
 
     // 
     public List<GameObject> GetStockPileArray(){

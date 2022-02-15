@@ -16,7 +16,7 @@ public class UserInput : MonoBehaviour
     // Update is called once per frame
     void Update(){
        
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
            GetMouseClick();
         } 
@@ -54,7 +54,7 @@ public class UserInput : MonoBehaviour
         // https://docs.unity3d.com/ScriptReference/RaycastHit-collider.html 
         RaycastHit2D hit;
 
-       // if (Input.GetMouseButton(0)){
+    //    if (Input.GetMouseButtonDown(0)){
             hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             
             // What we will do depends on what has been clicked
@@ -62,10 +62,10 @@ public class UserInput : MonoBehaviour
 
                 // The tag is associated with various game objects
                 
-                Rigidbody2D wasHit = hit.rigidbody;
-                cardFace = wasHit.GetComponent<Selectable>();
+                // Rigidbody2D wasHit = hit.rigidbody;
+                // cardFace = wasHit.GetComponent<Selectable>();
             
-                wasHit.transform.forward = Vector3.forward;
+                // wasHit.transform.forward = Vector3.forward;
 
                /* if (!cardFace.IsFaceUp())  
                 {
@@ -73,22 +73,26 @@ public class UserInput : MonoBehaviour
                     return;
                     //cardFace.FlipCard();
                 }*/
-                wasHit.position = mousePosition;
+                // wasHit.position = mousePosition;
                 
                 string whatHit = hit.collider.tag;
                 print(whatHit);
 
                 switch(whatHit){
                     case "Deck":
+                        TheLogger.PrintLog("Hit Deck");
                         StockPile();
                         break;
                     case "Card":
+                        TheLogger.PrintLog("Hit Card");
                         TalonPile();
                         break;
                     case "Top":
+                        TheLogger.PrintLog("Hit Top");
                         Foundation();
                         break;
                     case "Bottom":
+                        TheLogger.PrintLog("Hit Bottom");
                         Tableau();
                         break;
                     default:
@@ -97,7 +101,7 @@ public class UserInput : MonoBehaviour
                         break;
                 }
             }
-        //}
+        // }
     }
 
     // This is where we will call the algorithm for if Deck is touched
@@ -148,12 +152,12 @@ public class UserInput : MonoBehaviour
         List<string> foundationPile = foundations[pileSelected];
         if (GameRules.IsEmpty(foundationPile)){
             // You can't remove a card from an empty pile
-            TheLogger.PrintLog("No Action");
+            // TheLogger.PrintLog("No Action");
         } else {
             // Pick up the card
-            TheLogger.PrintLog("Grab Card");
+            // TheLogger.PrintLog("Grab Card");
             string topCard = foundationPile[foundationPile.Count - 1]; // Game object??
-            TheLogger.PrintLog(topCard);
+            // TheLogger.PrintLog(topCard);
 
             //wait for mouse up
             // get card pile we are trying to add it onto
@@ -215,11 +219,11 @@ public class UserInput : MonoBehaviour
 
         if (GameRules.IsEmpty(tableauPile)){
             // You can't remove a card from an empty pile
-            TheLogger.PrintLog("No Action");
+            // TheLogger.PrintLog("No Action");
             // Check if card is face up
             // cardsSelected[0].IsFaceUp--------------------------------------------------
         } else if(cardsSelected[0] == cardsSelected[0]){
-            TheLogger.PrintLog("Find Card in Pile");
+            // TheLogger.PrintLog("Find Card in Pile");
             for (int i = 0; i < tableauPile.Count; i++){
                 if (tableauPile[i] == cardFace.name){
                     cardIndex = i;

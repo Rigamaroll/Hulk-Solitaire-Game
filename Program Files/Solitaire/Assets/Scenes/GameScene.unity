@@ -1518,7 +1518,7 @@ PrefabInstance:
     - target: {fileID: 4390230715830037930, guid: 427d304a0b8aba74eb122f9bfedbf6e7,
         type: 3}
       propertyPath: m_TagString
-      value: Card
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 427d304a0b8aba74eb122f9bfedbf6e7, type: 3}
@@ -1646,7 +1646,7 @@ MonoBehaviour:
   - {fileID: 1234744685}
   - {fileID: 1599227767}
   - {fileID: 1273457066}
-  visibleDeck: {fileID: 0}
+  stockPile: {fileID: 0}
   deck: []
 --- !u!1 &1234744685
 GameObject:
