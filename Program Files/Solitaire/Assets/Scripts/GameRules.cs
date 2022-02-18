@@ -47,6 +47,7 @@ public class GameRules : MonoBehaviour
         return false;
     }
 
+    // Checks if suit is the same
     public static bool IsSameSuit(List<string> stack, string card){
         string cardSuit = card.Substring(0, 1);
         string stackSuit = stack[stack.Count - 1].Substring(0, 1);

@@ -48,26 +48,31 @@ public class Solitaire : MonoBehaviour
         Shuffle(deck);
         Shuffle(deck);
 
-        // Test Cards are shuffled
-        Demo1.TestSol10(deck);
+        // // Test Cards are shuffled
+        // Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
-        //StartCoroutine is for enum out to deal one at a time. So fancy.
+        // StartCoroutine is for enum out to deal one at a time. So fancy.
         StartCoroutine(DealCards());
         // CreateStockPile();
 
-        // Test that cards are removed from deck when dealt out
-        Demo1.TestSol11(deck);
+        // // Test that cards are removed from deck when dealt out
+        // Demo1.TestSol11(deck);
 
-        // Test card rank against bottom/top of foundation/tableau
-        Demo1.TestSol9(bottom0); 
-        // Test that cards are alternating colours
-        Demo1.TestSol12(bottom0);
-        // Test that card is King for going in empty tableau spot
-        Demo1.TestSol13();
-        // Test that card is Ace for going into empty foundation spot
-        Demo1.TestSol14();
+        // // Test card rank against bottom/top of foundation/tableau
+        // Demo1.TestSol9(bottom0); 
+        // // Test that cards are alternating colours
+        // Demo1.TestSol12(bottom0);
+        // // Test that card is King for going in empty tableau spot
+        // Demo1.TestSol13();
+        // // Test that card is Ace for going into empty foundation spot
+        // Demo1.TestSol14();
 
+        // Test that foundations are stacked by matching suits
+        Demo2.TestSol15(bottom0);
+
+        // Test that foundations are stacked in ascending order
+        Demo2.TestSol16(bottom0);
     }
 
     // Update is called once per frame

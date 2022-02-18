@@ -42,7 +42,7 @@ public class Demo1 : MonoBehaviour
         for (int i = 0; i < deck.Count; i++){
                 TheLogger.PrintLog("Card: " + deck[i]);
 
-                if (i == 23){//0-23 fool
+                if (i == 23){//0-23 
                     TheLogger.PrintLog("This is the last card that will stay in the deck after dealing");
                 }
         }
