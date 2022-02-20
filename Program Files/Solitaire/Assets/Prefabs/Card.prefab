@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4390230715830037928}
   - component: {fileID: 1290274060690729306}
   - component: {fileID: 2715255414417302096}
+  - component: {fileID: 858106858269776579}
   - component: {fileID: 1166535256758114329}
   - component: {fileID: 2330417206629790876}
   m_Layer: 0
@@ -113,6 +114,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardFace: {fileID: 0}
   cardBack: {fileID: 21300000, guid: ca677a9f4f963404fbc479f924cd2395, type: 3}
+--- !u!114 &858106858269776579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390230715830037930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52256c8fa376eba419017a5f03851e85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!50 &1166535256758114329
 Rigidbody2D:
   serializedVersion: 4
@@ -121,7 +134,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4390230715830037930}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
