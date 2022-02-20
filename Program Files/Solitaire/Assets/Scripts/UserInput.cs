@@ -81,7 +81,9 @@ public class UserInput : MonoBehaviour
             
             //get the object that is hit
             clickedObject = hit.collider.gameObject;
+            cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
             clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
+
 
 
             // cardFace = wasHit.GetComponent<Selectable>();
@@ -434,7 +436,7 @@ public class UserInput : MonoBehaviour
         {
             targetLocation = targetBody.gameObject.transform.parent.gameObject;
         }
-
+        
         clickedObject.layer = 0;
         return targetLocation;
     }
