@@ -363,22 +363,33 @@ public class UserInput : MonoBehaviour
        
         TheLogger.PrintLog("Got to OnMouseUp");
         isDragged = false;
-        targetObject = GetCardPlaceLocation();
+        
+        if (GetCardPlaceLocation() == null)
+        {
+            clickedObject.transform.position = cardOrigin;
+            return;
+        }
+        else
+        {
+            targetObject = GetCardPlaceLocation();
+        }
         TheLogger.PrintLog(targetObject.name);
-        Transform targetPosition = targetObject.transform;
-
+        /*Transform targetPosition = targetObject.transform;
+        int lastChild = targetPosition.childCount - 1 < 0 ? 0 : targetPosition.childCount - 1;
+        GameObject dropLocation = targetPosition.childCount == 0 ? targetPosition.gameObject : targetPosition.GetChild(lastChild).transform.gameObject;*/
+        GameObject dropLocation = DropLocation();
+        
         switch (targetObject.name)
         {
             case "Top0":
             case "Top1":
             case "Top2":
             case "Top3":
-                //clickedObject.transform.position = targetLocation.transform.position;
-                /*clickedObject.transform.position = new Vector3(targetObject.transform.position.x,
-                    targetObject.transform.position.y, targetObject.transform.position.z - .03f);*/
+               
+                clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
+                    dropLocation.transform.position.y, dropLocation.transform.position.z - .03f);
                 TheLogger.PrintLog("Got to Tops");
-                /*clickedObject.transform.Translate(targetObject.transform.position.x,
-                    targetObject.transform.position.y, targetObject.transform.position.z -0.03f);*/
+               
                 //Foundation();
                 
                 break;
@@ -389,12 +400,11 @@ public class UserInput : MonoBehaviour
             case "Bottom4":
             case "Bottom5":
             case "Bottom6":
-                // clickedObject.transform.position = targetLocation.transform.position;
-                /*clickedObject.transform.position = new Vector3(targetObject.transform.position.x,
-                    targetObject.transform.position.y - .04f, targetObject.transform.position.z - .03f);*/
+                
+                clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
+                    dropLocation.transform.position.y - .40f, dropLocation.transform.position.z - .03f);
                 TheLogger.PrintLog("Got to Bottoms");
-                /*clickedObject.transform.Translate(targetObject.transform.position.x,
-                    targetObject.transform.position.y - .04f, targetObject.transform.position.z - 0.03f);*/
+               
                 //Tableau();
                 break;
             default:
@@ -402,13 +412,6 @@ public class UserInput : MonoBehaviour
                 break;
 
         }
-
-        clickedObject.transform.position = targetPosition.position;
-
-        /*
-         * check what the clickedObject's collider is colliding with and then set it there.
-         * 
-         */
 
     }
 
@@ -423,6 +426,10 @@ public class UserInput : MonoBehaviour
         {
             targetBody = hit.transform.GetComponent<Rigidbody2D>();
             TheLogger.PrintLog("we got the targetBody");
+        } else
+        {
+            clickedObject.layer = 0;
+            return null;
         }
 
         GameObject targetLocation;
@@ -440,4 +447,32 @@ public class UserInput : MonoBehaviour
         clickedObject.layer = 0;
         return targetLocation;
     }
+
+    public GameObject DropLocation()
+    {
+        Transform targetPosition = targetObject.transform;
+        //this grabs the last child index numnber
+
+        int lastChild;
+        if (targetPosition.childCount -1 < 0)
+        {
+            lastChild = 0;
+        } else
+        {
+            lastChild = targetPosition.childCount - 1;
+        }
+        //this grabs the GameObject which is either the last child or the parent if there is no children
+        GameObject dropLocation;
+        if (targetPosition.childCount == 0)
+        {
+            dropLocation = targetPosition.gameObject;
+        }else
+        {
+            dropLocation = targetPosition.GetChild(lastChild).transform.gameObject;
+        }
+       
+        return dropLocation;
+    } 
+
+   
 }
