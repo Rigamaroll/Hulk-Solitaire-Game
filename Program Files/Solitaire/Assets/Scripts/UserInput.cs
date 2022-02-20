@@ -473,6 +473,4 @@ public class UserInput : MonoBehaviour
        
         return dropLocation;
     } 
-
-   
 }
