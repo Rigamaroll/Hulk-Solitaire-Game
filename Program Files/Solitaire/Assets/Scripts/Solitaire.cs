@@ -69,10 +69,10 @@ public class Solitaire : MonoBehaviour
         // Demo1.TestSol14();
 
         // Test that foundations are stacked by matching suits
-        Demo2.TestSol15(bottom0);
+        //Demo2.TestSol15(bottom0);
 
         // Test that foundations are stacked in ascending order
-        Demo2.TestSol16(bottom0);
+        //Demo2.TestSol16(bottom0);
     }
 
     // Update is called once per frame

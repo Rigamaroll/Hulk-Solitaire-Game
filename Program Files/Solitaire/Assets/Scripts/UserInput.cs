@@ -78,12 +78,22 @@ public class UserInput : MonoBehaviour
             
             // What we will do depends on what has been clicked
             if (hit){
-            
-            //get the object that is hit
-            clickedObject = hit.collider.gameObject;
-            cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
-            clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
 
+            //get the object that is hit            
+            clickedObject = hit.collider.gameObject;
+
+            //testing for card click
+            TheLogger.PrintLog("card clicked");
+
+            //check if card is face up 
+            
+            
+                
+                cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
+                clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
+            
+
+            
 
 
             // cardFace = wasHit.GetComponent<Selectable>();
@@ -230,45 +240,49 @@ public class UserInput : MonoBehaviour
     // Call algorithm for if bottom spot is selected
     void Tableau()
     {
-         // NEED TO GET THE PILE SELECTED
-        int pileSelected = 2;
+        //this is getting the pile that card was selected from
+        string parentPile = clickedObject.transform.parent.gameObject.name;        
+        int pileSelected = int.Parse(parentPile.Substring(parentPile.Length-1));
         // Probably want one solitaire game object for whole class
-       // Solitaire solitaire = FindObjectOfType<Solitaire>();
+        // Solitaire solitaire = FindObjectOfType<Solitaire>();
         List<string>[] tableaus = solitaire.GetTableaus();
-        List<string> tableauPile = tableaus[pileSelected];
-        /*
-         *isCard Faceup ? getStackConnectedCardsBelow : return
-         *!isMouseButton(0) ? LookForClosestElement
-         *canCardBePlaced ? TRUE (SWITCH ELEMENTS) (isCardUncovered && faceDown ? flipCard : return): return cards to origin
-         */
-         // This will tell us where in our list the card is
+        List<string> tableauPile = tableaus[pileSelected];                
+       
+        // This will tell us where in our list the card is
         int cardIndex = -1;
         List<string> cardsSelected = new List<string>();
 
-        if (GameRules.IsEmpty(tableauPile)){
-            // You can't remove a card from an empty pile
-            // TheLogger.PrintLog("No Action");
-            // Check if card is face up
-            // cardsSelected[0].IsFaceUp--------------------------------------------------
-        } else if(cardsSelected[0] == cardsSelected[0]){
-            // TheLogger.PrintLog("Find Card in Pile");
-            for (int i = 0; i < tableauPile.Count; i++){
-                if (tableauPile[i] == cardFace.name){
-                    cardIndex = i;
-                }
-                // add the cards to the new list starting at the selected card
-                if (cardIndex != -1){
-                    cardsSelected.Add(cardFace.name);
-                }
+        string cardSelected = clickedObject.transform.name;
+
+        //check if the card selected has siblings that are below it in the list
+        print(pileSelected);
+        print(cardSelected);
+        
+        // asseses what cards in a tableau pile under a card selected
+        for (int i = 0; i < tableauPile.Count; i++){
+            if (tableauPile[i] == cardSelected){
+                cardIndex = i;
             }
+            // add the cards to the new list starting at the selected card
+            if (cardIndex != -1){
+                cardsSelected.Add(tableauPile[i]);
+                print(tableauPile[i]);
+            }
+        }
 
-            //wait for mouse up
-            // get card pile we are trying to add it onto
+        print(cardsSelected);
 
-            string selectedSecond = "bottom";
-            int newPileSelected = 3;
+        //get card pile we are trying to add it onto
+        string targetPile = targetObject.transform.name;
+        int newPileSelected = int.Parse(targetPile.Substring(targetPile.Length - 1));
 
-            if (selectedSecond == "bottom"){
+        print(targetPile);
+        //print(targetPileSelected);
+
+        
+        string selectedSecond = targetObject.transform.parent.gameObject.name;
+            
+            if (selectedSecond == "Bottom"){
                 //NOTE This should be the pile we are trying to add our card to
                 // List<string>[] tableaus =solitaire.GetTableaus();
                 List<string> newTableauPile = tableaus[newPileSelected];
@@ -295,7 +309,7 @@ public class UserInput : MonoBehaviour
                     // send updates to game
                     solitaire.setTableaus(tableaus);
 
-            } else if (selectedSecond == "top"){
+            } else if (selectedSecond == "Top"){
                 List<string>[] foundations = solitaire.GetFoundations();
                 List<string> newFoundationPile = foundations[newPileSelected];
                 // make sure only one card selected
@@ -328,40 +342,41 @@ public class UserInput : MonoBehaviour
 
 
             }
-        }
+        //}
 
         // MUST TURN OFF THE NEW COLOUR HIGHLIGHTING WHAT CARD WE CLICKED!!!!
 
         /*isMouseClick(0) ?
         *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
         */
-        print("Hit Deck");
+        //print("Hit Deck");
         // Deal cards
-        print("Deal 1 or 3 more cards");
+        //print("Deal 1 or 3 more cards");
         /*
          * isEmpty ? RETURN : dragCard
          * !isMouseButton(0) ? LookForClosestElement
          * canCardBePlaced ? TRUE (SWITCH ELEMENTS) : return cards to origin
          */
-        print("Hit Top");
+        //print("Hit Top");
         // cards on top can be moved back to the bottom
-        print("Pick this card up to move it somewhere");
+        //print("Pick this card up to move it somewhere");
         ////////////////////////////////////
-        print("Hit Bottom");
+        //print("Hit Bottom");
         // cards on the bottom can be picked up individually or as a stack
-        print("Pick up this card (or cards if stack selected)");
+        //print("Pick up this card (or cards if stack selected)");
         // if stack, make sure it is moveable as a stack
     }
     private void OnMouseDown()
     {
+
         isDragged = true;
-        TheLogger.PrintLog("Got to OnMouseDown");
+        //TheLogger.PrintLog("Got to OnMouseDown");
     }
 
     private void OnMouseUp()
     {
        
-        TheLogger.PrintLog("Got to OnMouseUp");
+        //TheLogger.PrintLog("Got to OnMouseUp");
         isDragged = false;
         
         if (GetCardPlaceLocation() == null)
@@ -373,11 +388,13 @@ public class UserInput : MonoBehaviour
         {
             targetObject = GetCardPlaceLocation();
         }
-        TheLogger.PrintLog(targetObject.name);
+        //TheLogger.PrintLog(targetObject.name);
         /*Transform targetPosition = targetObject.transform;
         int lastChild = targetPosition.childCount - 1 < 0 ? 0 : targetPosition.childCount - 1;
         GameObject dropLocation = targetPosition.childCount == 0 ? targetPosition.gameObject : targetPosition.GetChild(lastChild).transform.gameObject;*/
-        GameObject dropLocation = DropLocation();
+        //check to see if the card is faceup 
+        //if (clickedObject.GetComponent<Selectable>().IsFaceUp())
+            GameObject dropLocation = DropLocation();
         
         switch (targetObject.name)
         {
@@ -405,7 +422,7 @@ public class UserInput : MonoBehaviour
                     dropLocation.transform.position.y - .40f, dropLocation.transform.position.z - .03f);
                 TheLogger.PrintLog("Got to Bottoms");
                
-                //Tableau();
+                Tableau();
                 break;
             default:
                 TheLogger.PrintLog("got to default");
