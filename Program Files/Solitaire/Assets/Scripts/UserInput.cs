@@ -93,17 +93,17 @@ public class UserInput : MonoBehaviour{
     // This is where we will call the algorithm for if Deck is touched
     void StockPile(){
         List<GameObject> stockPile = solitaire.GetStockPileArray();
-        if (GameRules.IsEmpty(stockPile)){
-            TheLogger.PrintLog("turn over Talons");
-        } else {
-            TheLogger.PrintLog("Deal Card");
-            GameObject nextCard = stockPile[stockPile.Count - 1];
-            TheLogger.PrintLog(nextCard.name);
-            stockPile.RemoveAt(stockPile.Count - 1);
+        // if (GameRules.IsEmpty(stockPile)){
+        //     TheLogger.PrintLog("turn over Talons");
+        // } else {
+        //     TheLogger.PrintLog("Deal Card");
+        //     GameObject nextCard = stockPile[stockPile.Count - 1];
+        //     TheLogger.PrintLog(nextCard.name);
+        //     stockPile.RemoveAt(stockPile.Count - 1);
 
-            //add ^^Card to Talon Pile
-            solitaire.SetStockPileArray(stockPile);
-        }
+        //     //add ^^Card to Talon Pile
+        //     solitaire.SetStockPileArray(stockPile);
+        // }
         
         /*isMouseClick(0) ?
         *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
@@ -125,179 +125,175 @@ public class UserInput : MonoBehaviour{
     // Call algorithm for if top spot is selected
     void Foundation() {
         // Get the pile that card(s) was selected from
-        string parentStack = clickedObject.transform.parent.gameObject.name;    
-        // Get the pile number to use as an index
-        int parentStackNo = int.Parse(parentStack.Substring(parentStack.Length-1));
-        string parentStackType = clickedObject.transform.root.name;
+        GameObject parentStack = clickedObject.transform.parent.gameObject; 
 
-        List<string>[] foundations = solitaire.GetFoundations();
-        List<string> foundationPile = foundations[parentStackNo];
-        List<string> cardsSelected = new List<string>();
-        cardsSelected.Add(foundationPile[foundationPile.Count - 1]); // Game object??
+        // Get index of card selected card
+        int cardIndex = clickedObject.transform.GetSiblingIndex();
+        // print("card Index of selected card is:" + cardIndex);
 
-        //get card pile we are trying to add it onto
-        string targetStack = targetObject.transform.name;
-        int targetStackNo = int.Parse(targetStack.Substring(targetStack.Length - 1));
-        string targetStackType = targetObject.transform.parent.gameObject.name;  
+        // Get target stack
+        GameObject targetStack;
+        if ((targetObject.transform.parent.gameObject.name.Equals("Top"))||(targetObject.transform.parent.gameObject.name.Equals("Bottom"))){
+            // Case where we have selected an empty pile
+            targetStack = targetObject;
+        } else {
+            // Case where pile is not empty
+            targetStack = targetObject.transform.parent.gameObject;
+        }
 
-        // The pile we are trying to add our card to
-        List<string>[] tableaus =solitaire.GetTableaus();
-        List<string> tableauPile = tableaus[targetStackNo];
+        if (targetStack.transform.parent.gameObject.name.Equals("Bottom")){
+            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
 
-        // Check if suits are alternating and card is 1 rank lower than 
-        // bottom of stack card
-        if (GameRules.IsAlternating(tableauPile, cardsSelected[0]) && GameRules.IsRankGoood(tableauPile, cardsSelected[0], "bottom")){
-                
-            // if the card can go in the location selected remove it from the foundation pile
-            foundationPile.RemoveAt(foundationPile.Count - 1);
-            foundations[parentStackNo] = foundationPile;
-            solitaire.setFoundations(foundations);
+            // Case where we have selected an empty stack
+            if (GameRules.IsEmpty(targetStack)){
+                // print("Cannot move to an empty tableau stack");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
 
-            //add Card to Tableau Pile
-            tableauPile.Add(cardsSelected[0]);
-            tableaus[targetStackNo] = tableauPile;
-            solitaire.setTableaus(tableaus);
-
-            // Update Locations
-            UpdateLocation(true, false);
-            UpdateGameObjects(parentStack.Length - 1, 1);
-
+            // Case where we have not selected an empty stack
+            if (GameRules.IsAlternating(stackCard, clickedObject.name)){
+                // print("Card colour is opposite to the target card");
+                if(GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom")){
+                    // print("Card rank is one less than target card, it can be moved.");
+                    UpdateLocation(true, false); //move, not to the top
+                    UpdateGameObjects(cardIndex, 1);
+                    return;
+                }
+                // print("Card rank is incorrect and cannot be moved.");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
+            // print("Card colour is incorrect and cannot be moved.");
+            UpdateLocation(false, false); // return to origin
             return;
         }
-        UpdateLocation(false, false);
+
+        if (targetStack.transform.parent.gameObject.name.Equals("Top")){
+            // Case where we have selected an empty pile
+            if (GameRules.IsEmpty(targetStack)){
+                // print("Check Rank, can only move an Ace to an empty foundation slot");
+                if(GameRules.IsEmptyRank(clickedObject.name, "top")){
+                    // print("Card is an Ace, movingto new slot.");
+                    UpdateLocation(true, true); //move, to the top
+                    UpdateGameObjects(cardIndex, 1);
+                    return;
+                }
+                // print("Card is not an Ace, connot be put in an empty slot.");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
+            // print("Cannot move between non-empty foundations.");
+            UpdateLocation(false, false); // return to origin
+            return;
+        }
     }
 
     // Call algorithm for if bottom spot is selected
     void Tableau()
     {
         // Get the pile that card(s) was selected from
-        string parentStack = clickedObject.transform.parent.gameObject.name;    
-        // Get the pile number to use as an index
-        int parentStackNo = int.Parse(parentStack.Substring(parentStack.Length-1));
-        string parentStackType = clickedObject.transform.root.name;
-        // Get the tableau piles and the list the card was selected from
-        List<string>[] tableaus = solitaire.GetTableaus();
-        List<string> tableauPile = tableaus[parentStackNo];                
-       
-        // This will tell us where in our list the card is
-        int cardIndex = -1;
-        List<string> cardsSelected = new List<string>();
-        string cardSelected = clickedObject.transform.name;
+        GameObject parentStack = clickedObject.transform.parent.gameObject; 
 
-        // Get the cards in a tableau pile under a card selected
-        for (int i = 0; i < tableauPile.Count; i++){
-            if (tableauPile[i] == cardSelected){
-                cardIndex = i;
-            }
-            // add the cards to the new list starting at the selected card
-            if (cardIndex != -1)
-            {
-                cardsSelected.Add(tableauPile[i]);
-                print(tableauPile[i]);
-            }
-        }
+        // Get index of card selected card
+        int cardIndex = clickedObject.transform.GetSiblingIndex();
+        // print("card Index of selected card is:" + cardIndex);
 
-        //get card pile we are trying to add it onto
-        string targetStack = targetObject.transform.name;
-        int targetStackNo = int.Parse(targetStack.Substring(targetStack.Length - 1));
-        string targetStackType;
-        // Get the target pile type      
-        if ((clickedObject.transform.parent.gameObject.name.Equals("Top"))||(clickedObject.transform.parent.gameObject.name.Equals("Bottom"))){
+        // Get number of cards to see how many have been selected
+        int numCards = clickedObject.transform.parent.gameObject.transform.childCount - cardIndex;
+        // print("Number of cards selected is: " + numCards);
+
+        // Get target stack
+        GameObject targetStack;
+        if ((targetObject.transform.parent.gameObject.name.Equals("Top"))||(targetObject.transform.parent.gameObject.name.Equals("Bottom"))){
             // Case where we have selected an empty pile
-            targetStackType = targetObject.transform.name;
+            targetStack = targetObject;
         } else {
             // Case where pile is not empty
-            targetStackType = targetObject.transform.parent.gameObject.name;
+            targetStack = targetObject.transform.parent.gameObject;
         }
 
-        if (targetStackType == "Bottom"){
-            // Pile we are adding card(s) to
-            List<string> newPile = tableaus[targetStackNo];
+        if (targetStack.transform.parent.gameObject.name.Equals("Bottom")){
+            //print("We're moving the card to the bottom");
 
-            // if empty || cards go on top of stack (alternating, rank one less)
-            if (GameRules.IsEmpty(newPile)){
-                if (!GameRules.IsCardCorrect(cardsSelected[0], "bottom")){
-                    // clickedObject.transform.position = cardOrigin;
-                    UpdateLocation(false, false);
+            // Case 1, new pile is empty, must be a king
+            //print("Case 1 - Moving to empty stack");
+            if (GameRules.IsEmpty(targetStack)){
+                //print("Target stack is empty");
+                if(GameRules.IsEmptyRank(clickedObject.name, "bottom")){
+                    //print("Card is a King and can be moved");
+                    UpdateLocation(true, false); //move, not to the top
+                    UpdateGameObjects(cardIndex, numCards);
                     return;
                 }
-// Owen and I think there is a problem with this else if statement!!!
-            }else if(!(GameRules.IsAlternating(newPile, cardsSelected[0])&& GameRules.IsRankGoood(newPile, cardsSelected[0], "bottom"))){
-                // clickedObject.transform.position = cardOrigin;
-                print("cards Selected: " + cardsSelected[0]);
-                    UpdateLocation(false, false);
-                    return;
-            }
-  
-            // if the card can go in the location selected remove it from the foundation pile
-            for (int i = cardsSelected.Count - 1; i >= cardIndex; i--){
-                tableauPile.RemoveAt(i);
-            }
-            // add the cards to the new pile
-            for (int i = 0; i < cardsSelected.Count; i++){
-                newPile.Add(cardsSelected[i]);
-            }
-
-            // update the lists in the game
-            tableaus[parentStackNo] = tableauPile;
-            tableaus[targetStackNo] = newPile;
-            
-            // send updates to game
-            solitaire.setTableaus(tableaus);
-
-            // update locations
-            UpdateLocation(true, false);
-            // Call Solitaire method to update the drawing of the cards
-            
-            // Update the game objects
-            UpdateGameObjects(cardIndex, cardsSelected.Count);
-            return;
-
-        } else if (targetStackType == "Top"){
-            print("Card is going to top");
-            // Get pile we are adding cards to
-            List<string>[] foundations = solitaire.GetFoundations();
-            List<string> newFoundationPile = foundations[targetStackNo];
-
-            // make sure only one card selected
-            if (cardsSelected.Count == 1){
-                // check if it can be placed
-
-                if (GameRules.IsEmpty(newFoundationPile)) {
-                    if(!GameRules.IsCardCorrect(cardsSelected[0], "top")){
-                        // clickedObject.transform.position = cardOrigin;
-                        UpdateLocation(false, false);
-                        return;
-                    }
-                }else if(!(GameRules.IsSameSuit(newFoundationPile, cardsSelected[0]) && GameRules.IsRankGoood(newFoundationPile, cardsSelected[0], "top"))){
-                    // clickedObject.transform.position = cardOrigin;
-                    UpdateLocation(false, false);
-                    return;
-                }
-
-                print("Card is gooood for top");
-                // remove card
-                tableauPile.RemoveAt(cardIndex);
-                // place card
-                newFoundationPile.Add(cardsSelected[0]);
-
-                // update the lists in the game
-                tableaus[parentStackNo] = tableauPile;
-                foundations[targetStackNo] = newFoundationPile;
-                
-                // send updates to game
-                solitaire.setTableaus(tableaus);
-                solitaire.setFoundations(foundations);
-
-                // update location
-                UpdateLocation(true, true);
-                UpdateGameObjects(cardIndex, cardsSelected.Count);
+                //print("Card is not a King, cannot be moved here");
+                UpdateLocation(false, false); // return to origin
                 return;
             }
+
+            //print("Case 2 - moving to a stack with cards");
+            // Case 2 Moving onto a tableau pile alt colours and rank -1
+            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            if (GameRules.IsAlternating(stackCard, clickedObject.name)){
+                //print("Card colour is opposite to the target card");
+                if(GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom")){
+                    //print("Card rank is one less than target card, it can be moved.");
+                    UpdateLocation(true, false); //move, not to the top
+                    UpdateGameObjects(cardIndex, numCards);
+                    return;
+                }
+                //print("Card rank is incorrect and cannot be moved.");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
+            // print("Card colour is incorrect and cannot be moved.");
+            UpdateLocation(false, false); // return to origin
+            return;
         }
-        // return cards to pile (do nothing) let go of cards
-        clickedObject.transform.position = cardOrigin;
-        print("Returning Card to Origin");
+
+        if (targetStack.transform.parent.gameObject.name.Equals("Top")){
+            // Make sure only one card is selected
+            if (numCards != 1){
+                // print("Can only move one card to the top at a time.");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
+
+            // Case 1: Foundation Pile is empty
+            if (GameRules.IsEmpty(targetStack)){
+                // print("Target stack is empty");
+                if(GameRules.IsEmptyRank(clickedObject.name, "top")){
+                    // print("Card is an Ace and can be moved");
+                    UpdateLocation(true, true); //move, to the top
+                    UpdateGameObjects(cardIndex, numCards);
+                    return;
+                }
+                // print("Card is not an Ace, cannot be moved here");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
+
+            // Case 2: Foundation Pile is not empty
+            print("Case 2 - moving to a stack with cards");
+            // Case 2 Moving onto a foundation pile same suit and rank +1
+            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            if (GameRules.IsSameSuit(stackCard, clickedObject.name)){
+                // print("Card suit is same as the target card");
+                if(GameRules.IsRankGoood(stackCard, clickedObject.name, "top")){
+                    // print("Card rank is one more than target card, it can be moved.");
+                    UpdateLocation(true, true); //move, to the top
+                    UpdateGameObjects(cardIndex, numCards);
+                    return;
+                }
+                // print("Card rank is incorrect and cannot be moved.");
+                UpdateLocation(false, false); // return to origin
+                return;
+            }
+            // print("Card suit is incorrect and cannot be moved.");
+            UpdateLocation(false, false); // return to origin
+            return;
+        }
+        print("This is the bad place");
     }
 
     private GameObject GetCardPlaceLocation(){
@@ -382,28 +378,33 @@ public class UserInput : MonoBehaviour{
         print("Inside update Game Objects");
         // Get the target pile type
         GameObject ts;
+        // Check to see if the game object is a card, or an empty spot
         if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
         {
-            // Case where we have selected an empty pile
+            // Case where we have selected an empty spot
             ts = targetObject.transform.gameObject;
         }
         else
         {
-            // Case where pile is not empty
+            // Case where pile is not empty, want to get parent pile
             ts = targetObject.transform.parent.gameObject;
         }
         print("ts is : " + ts.name);
 
         // Get parent pile 
+        print("clicked object is: " + clickedObject.transform.name);
+        print("clicked object's parent is: " + clickedObject.transform.parent.gameObject.name);
         GameObject ps = clickedObject.transform.parent.gameObject;
         print("ps is: " + ps.name);
 
         // Parent Game Object
         GameObject mom = ps;
 
+        print("Number of cards is: " + numCards);
         // if the card can go in the location selected remove it from the pile
         for (int i = 0; i < numCards;  i++)
         {
+            print("card index is: " + cardIndex);
             // print("moving card: " + ps.transform.GetChild(cardIndex).name);
             ps.transform.GetChild(cardIndex).SetParent(ts.transform);
         }
@@ -420,5 +421,4 @@ public class UserInput : MonoBehaviour{
             mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().FlipCard();
         }
     }
-
 }
