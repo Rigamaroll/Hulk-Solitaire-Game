@@ -190,7 +190,8 @@ public class UserInput : MonoBehaviour{
                 cardIndex = i;
             }
             // add the cards to the new list starting at the selected card
-            if (cardIndex != -1){
+            if (cardIndex != -1)
+            {
                 cardsSelected.Add(tableauPile[i]);
                 print(tableauPile[i]);
             }
@@ -201,7 +202,7 @@ public class UserInput : MonoBehaviour{
         int targetStackNo = int.Parse(targetStack.Substring(targetStack.Length - 1));
         string targetStackType;
         // Get the target pile type      
-        if ((gameObject.transform.parent.gameObject.name.Equals("Top"))||(gameObject.transform.parent.gameObject.name.Equals("Bottom"))){
+        if ((clickedObject.transform.parent.gameObject.name.Equals("Top"))||(clickedObject.transform.parent.gameObject.name.Equals("Bottom"))){
             // Case where we have selected an empty pile
             targetStackType = targetObject.transform.name;
         } else {
@@ -220,8 +221,10 @@ public class UserInput : MonoBehaviour{
                     UpdateLocation(false, false);
                     return;
                 }
+// Owen and I think there is a problem with this else if statement!!!
             }else if(!(GameRules.IsAlternating(newPile, cardsSelected[0])&& GameRules.IsRankGoood(newPile, cardsSelected[0], "bottom"))){
-                    // clickedObject.transform.position = cardOrigin;
+                // clickedObject.transform.position = cardOrigin;
+                print("cards Selected: " + cardsSelected[0]);
                     UpdateLocation(false, false);
                     return;
             }
@@ -248,7 +251,6 @@ public class UserInput : MonoBehaviour{
             
             // Update the game objects
             UpdateGameObjects(cardIndex, cardsSelected.Count);
-
             return;
 
         } else if (targetStackType == "Top"){
@@ -290,9 +292,6 @@ public class UserInput : MonoBehaviour{
                 // update location
                 UpdateLocation(true, true);
                 UpdateGameObjects(cardIndex, cardsSelected.Count);
-                
-                // turn last card over
-
                 return;
             }
         }
@@ -372,7 +371,8 @@ public class UserInput : MonoBehaviour{
             }
 
         }else{
-            // return th card to its original location
+            print("Card cannot move there!");
+            // return the card to its original location
             clickedObject.transform.position = cardOrigin;
         }
     }
@@ -401,20 +401,22 @@ public class UserInput : MonoBehaviour{
         // Parent Game Object
         GameObject mom = ps;
 
-        // if the card can go in the location selected remove it from the foundation pile
+        // if the card can go in the location selected remove it from the pile
         for (int i = 0; i < numCards;  i++)
         {
-            print("moving card: " + ps.transform.GetChild(cardIndex).name);
+            // print("moving card: " + ps.transform.GetChild(cardIndex).name);
             ps.transform.GetChild(cardIndex).SetParent(ts.transform);
         }
 
         // print("is not faceup: " + !mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().IsFaceUp());
         if (mom.transform.childCount == 0)
         {
+            print("No cards to flip!");
             return;
         }
         if (!mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().IsFaceUp())
         {
+            print("Next card should flip!");
             mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().FlipCard();
         }
     }
