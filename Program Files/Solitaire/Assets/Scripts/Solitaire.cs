@@ -80,7 +80,6 @@ public class Solitaire : MonoBehaviour
         
     }
 
-    // Owen/Jenne Refactored 31-01-22 
     // Generate the deck from the two array lists
     public static List<string> GenerateDeck() {
         // Create a list to store the card (Suit/Value) in
@@ -98,7 +97,6 @@ public class Solitaire : MonoBehaviour
         return deck;
     }
 
-    // Owen/Jenne Refactored 31-01-22 
     // Shuffle the deck of cards
     public static void Shuffle<T>(List<T> deck){
         // Random so that we don't get the same shuffle pattern each time
@@ -126,9 +124,9 @@ public class Solitaire : MonoBehaviour
         deck = shuffledDeck;
     }
 
-    // Owen/Jenne Refactored 31-01-22 
+
     // Deal the cards onto the bottom display piles
-   public IEnumerator DealCards(){
+    public IEnumerator DealCards(){
        // define offsets in y and z axis
         float yOffset = 0;
         float zOffset = 0.03f;
@@ -162,15 +160,13 @@ public class Solitaire : MonoBehaviour
                 // determine if card should be face up or face  
                 // (last card on pile is faceup)
                 if (pile == row){
-
                     newCard.GetComponent<Selectable>().faceUp = true;
-                    
                 }
             }
 
-            // Increase the offset with each card added
-            yOffset = yOffset + 0.4f;
-            zOffset = zOffset + 0.03f;
+        // Increase the offset with each card added
+        yOffset = yOffset + 0.4f;
+        zOffset = zOffset + 0.03f;
         }
     }
 
@@ -197,6 +193,12 @@ public class Solitaire : MonoBehaviour
 
        
     // }
+
+    // Update display lists
+    public void UpdatePositions(List<string> cardsSelected, string parentStackType, int parentStackNo, string targetStackType, int targetStackNo){
+        for (int i = 0; i < cardsSelected.Count; i ++){
+        }
+    }
 
     // 
     public List<GameObject> GetStockPileArray(){
