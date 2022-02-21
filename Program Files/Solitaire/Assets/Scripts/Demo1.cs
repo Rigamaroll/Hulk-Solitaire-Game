@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ public class Demo1 : MonoBehaviour
     }
 
     // Test SOL9 that you can only stack one lower on the bottom, one higher on the top
-    public static void TestSol9(List<string> stackCard){
+*//*    public static void TestSol9(List<string> stackCard){
         List<string> testCards = new List<string> {"D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10",
                                                     "D11", "D12", "D13"};       
         TheLogger.PrintLog("// SOL 9 - Rank of cards must be functional as per rules");
@@ -31,7 +31,7 @@ public class Demo1 : MonoBehaviour
                 " - Top test Selected Card is one higher than stack card: " + 
                 GameRules.IsRankGoood(stackCard,testCards[i], "top") );    
         }
-    }
+    }*//*
 
     // Test SOL 10 A full deck of card that can be shuffled
     public static void TestSol10(List<string> deck){
@@ -107,3 +107,4 @@ public class Demo1 : MonoBehaviour
         }
     } 
 }
+*/
