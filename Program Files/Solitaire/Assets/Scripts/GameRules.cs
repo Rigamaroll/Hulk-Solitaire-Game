@@ -28,8 +28,8 @@ public class GameRules : MonoBehaviour
 
     public static bool IsRankGoood(string stackCard, string selectedCard, string pos)
     {
-        int cardRank = int.Parse(selectedCard.Substring(selectedCard.Length - 1));
-        int stackRank = int.Parse(stackCard.Substring(stackCard.Length - 1));
+        int cardRank = int.Parse(selectedCard.Substring(1, selectedCard.Length - 1));
+        int stackRank = int.Parse(stackCard.Substring(1, stackCard.Length - 1));
 
         switch (pos)
         {
