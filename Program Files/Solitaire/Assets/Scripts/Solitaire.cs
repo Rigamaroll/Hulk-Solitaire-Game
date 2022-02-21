@@ -197,6 +197,11 @@ public class Solitaire : MonoBehaviour
     // Update display lists
     public void UpdatePositions(List<string> cardsSelected, string parentStackType, int parentStackNo, string targetStackType, int targetStackNo){
         for (int i = 0; i < cardsSelected.Count; i ++){
+            //find the card by its name and rank then pull the card and put it into new stack
+                // Get the original location
+                // Get the target location
+                // Remove from original array
+                // put the card into the new location array
         }
     }
 
