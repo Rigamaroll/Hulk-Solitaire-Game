@@ -19,8 +19,27 @@ public class UserInput : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if (isDragged){
+            //checks the mousePosition for moving the cards to that spot
             mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            clickedObject.transform.Translate(mousePosition);
+            //checks if more than one card being moved at a time.
+            if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            {
+                GameObject cardsInStack;
+                
+                //moves each card at a time in this for loop
+                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                {
+                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+                    cardsInStack.transform.Translate(mousePosition);
+           
+                }
+            }
+            //if only 1 card to move do this
+            else
+            {
+                clickedObject.transform.Translate(mousePosition);
+            }
+          
         }
     }
 
@@ -57,7 +76,26 @@ public class UserInput : MonoBehaviour{
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
         
         if (GetCardPlaceLocation() == null){
-            clickedObject.transform.position = cardOrigin;
+            if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            {
+                GameObject cardsInStack;
+                float stackYoffSet = 0.00f;
+                float stackZoffSet = 0.00f;
+                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                {
+                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+                    cardsInStack.transform.position = new Vector3(cardOrigin.x,
+                cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
+                    stackYoffSet += 0.40f;
+                    stackZoffSet += 0.03f;
+                }
+            }
+            else
+            {
+                clickedObject.transform.position = cardOrigin;
+            }
+
+            //clickedObject.transform.position = cardOrigin;
             return;
         }
         else{
@@ -197,12 +235,12 @@ public class UserInput : MonoBehaviour{
 
         // Get index of card selected card
         int cardIndex = clickedObject.transform.GetSiblingIndex();
-        // print("card Index of selected card is:" + cardIndex);
+        //print("card Index of selected card is:" + cardIndex);
 
         // Get number of cards to see how many have been selected
         int numCards = clickedObject.transform.parent.gameObject.transform.childCount - cardIndex;
-        // print("Number of cards selected is: " + numCards);
-
+       // print("Number of cards selected is: " + numCards);
+       // print("target object is " + targetObject.name);
         // Get target stack
         GameObject targetStack;
         if ((targetObject.transform.parent.gameObject.name.Equals("Top"))||(targetObject.transform.parent.gameObject.name.Equals("Bottom"))){
@@ -213,40 +251,42 @@ public class UserInput : MonoBehaviour{
             targetStack = targetObject.transform.parent.gameObject;
         }
 
+        //print("targetStack name is " + targetStack.name);
         if (targetStack.transform.parent.gameObject.name.Equals("Bottom")){
-            //print("We're moving the card to the bottom");
-
+           // print("We're moving the card to the bottom");
+            
             // Case 1, new pile is empty, must be a king
-            //print("Case 1 - Moving to empty stack");
+           // print("Case 1 - Moving to empty stack");
             if (GameRules.IsEmpty(targetStack)){
                 //print("Target stack is empty");
                 if(GameRules.IsEmptyRank(clickedObject.name, "bottom")){
-                    //print("Card is a King and can be moved");
+     //               print("Card is a King and can be moved");
                     UpdateLocation(true, false); //move, not to the top
                     UpdateGameObjects(cardIndex, numCards);
                     return;
                 }
-                //print("Card is not a King, cannot be moved here");
+    //            print("Card is not a King, cannot be moved here");
                 UpdateLocation(false, false); // return to origin
                 return;
             }
 
-            //print("Case 2 - moving to a stack with cards");
+            print("Case 2 - moving to a stack with cards");
             // Case 2 Moving onto a tableau pile alt colours and rank -1
             string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
             if (GameRules.IsAlternating(stackCard, clickedObject.name)){
-                //print("Card colour is opposite to the target card");
+                print("Card colour is opposite to the target card");
                 if(GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom")){
-                    //print("Card rank is one less than target card, it can be moved.");
+                   // print("clickedObject's name is " + clickedObject.name);
+                   // print("Card rank is one less than target card, it can be moved.");
                     UpdateLocation(true, false); //move, not to the top
                     UpdateGameObjects(cardIndex, numCards);
                     return;
                 }
-                //print("Card rank is incorrect and cannot be moved.");
+               // print("Card rank is incorrect and cannot be moved.");
                 UpdateLocation(false, false); // return to origin
                 return;
             }
-            // print("Card colour is incorrect and cannot be moved.");
+           // print("Card colour is incorrect and cannot be moved.");
             UpdateLocation(false, false); // return to origin
             return;
         }
@@ -254,50 +294,57 @@ public class UserInput : MonoBehaviour{
         if (targetStack.transform.parent.gameObject.name.Equals("Top")){
             // Make sure only one card is selected
             if (numCards != 1){
-                // print("Can only move one card to the top at a time.");
+            //    print("Can only move one card to the top at a time.");
                 UpdateLocation(false, false); // return to origin
                 return;
             }
 
             // Case 1: Foundation Pile is empty
             if (GameRules.IsEmpty(targetStack)){
-                // print("Target stack is empty");
+              //  print("Target stack is empty");
                 if(GameRules.IsEmptyRank(clickedObject.name, "top")){
-                    // print("Card is an Ace and can be moved");
+                   // print("Card is an Ace and can be moved");
                     UpdateLocation(true, true); //move, to the top
                     UpdateGameObjects(cardIndex, numCards);
                     return;
                 }
-                // print("Card is not an Ace, cannot be moved here");
+              //  print("Card is not an Ace, cannot be moved here");
                 UpdateLocation(false, false); // return to origin
                 return;
             }
 
             // Case 2: Foundation Pile is not empty
-            print("Case 2 - moving to a stack with cards");
+          //  print("Case 2 - moving to a stack with cards");
             // Case 2 Moving onto a foundation pile same suit and rank +1
             string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
             if (GameRules.IsSameSuit(stackCard, clickedObject.name)){
-                // print("Card suit is same as the target card");
+            //    print("Card suit is same as the target card");
                 if(GameRules.IsRankGoood(stackCard, clickedObject.name, "top")){
-                    // print("Card rank is one more than target card, it can be moved.");
+                  //  print("Card rank is one more than target card, it can be moved.");
                     UpdateLocation(true, true); //move, to the top
                     UpdateGameObjects(cardIndex, numCards);
                     return;
                 }
-                // print("Card rank is incorrect and cannot be moved.");
+               // print("Card rank is incorrect and cannot be moved.");
                 UpdateLocation(false, false); // return to origin
                 return;
             }
-            // print("Card suit is incorrect and cannot be moved.");
+            //print("Card suit is incorrect and cannot be moved.");
             UpdateLocation(false, false); // return to origin
             return;
         }
-        print("This is the bad place");
+        //print("This is the bad place");
     }
 
     private GameObject GetCardPlaceLocation(){
-        clickedObject.layer = 2;
+        GameObject cardsInStack;
+        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+        {
+            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+            cardsInStack.layer = 2;
+        }
+
+        //clickedObject.layer = 2;
         RaycastHit2D hit;
         Rigidbody2D targetBody = null;
         hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -318,8 +365,12 @@ public class UserInput : MonoBehaviour{
         } else {
             targetLocation = targetBody.gameObject.transform.parent.gameObject;
         }
-        
-        clickedObject.layer = 0;
+        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+        {
+            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+            cardsInStack.layer = 0;
+        }
+        //clickedObject.layer = 0;
         return targetLocation;
     }
 
@@ -339,6 +390,7 @@ public class UserInput : MonoBehaviour{
         if (targetPosition.childCount == 0){
             dropLocation = targetPosition.gameObject;
         }else{
+          
             dropLocation = targetPosition.GetChild(lastChild).transform.gameObject;
         }
        
@@ -362,15 +414,65 @@ public class UserInput : MonoBehaviour{
                 {
                     yOffSet = 0.0f;
                 }
-                clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                dropLocation.transform.position.y - yOffSet, dropLocation.transform.position.z - 0.03f);
+                //checks if the selected card is the last card in the stack.  If not it gets the totals amount of cards and places all of them.
+                if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+                {
+                    float stackYoffSet;
+                    GameObject cardsInStack;
+                    print("targetObject is " + targetObject.name);
+                    print("targetObject childcount is  " + targetObject.transform.childCount);
+                    //if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
+                    if (targetObject.transform.childCount == 0) 
+                    {
+                        
+                        print("Got to childCount 0");
+                        stackYoffSet = 0.0f;
+                    } else
+                    {
+                        print("Got to childCount not 0");
+                        stackYoffSet = 0.40f;
+                    }
+                    float stackZoffSet = 0.03f;
+                    for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                    {
+                        cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+                        cardsInStack.transform.position = new Vector3(dropLocation.transform.position.x,
+                    dropLocation.transform.position.y - stackYoffSet, dropLocation.transform.position.z - stackZoffSet);
+                        stackYoffSet += 0.40f;
+                        stackZoffSet += 0.03f;
+                    }
+                }
+                else
+                {
+                    clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
+                    dropLocation.transform.position.y - yOffSet, dropLocation.transform.position.z - 0.03f);
+                }
             }
 
         }else{
             print("Card cannot move there!");
             // return the card to its original location
-            clickedObject.transform.position = cardOrigin;
+            if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            {
+                GameObject cardsInStack;
+                float stackYoffSet = 0.00f;
+                float stackZoffSet = 0.00f;
+                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                {
+                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+                    cardsInStack.transform.position = new Vector3(cardOrigin.x,
+                cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
+                    stackYoffSet += 0.40f;
+                    stackZoffSet += 0.03f;
+                }
+            }
+            else
+            {
+                clickedObject.transform.position = cardOrigin;
+            }
+            //clickedObject.transform.position = cardOrigin;
         }
+        
     }
 
     private void UpdateGameObjects(int cardIndex, int numCards)
