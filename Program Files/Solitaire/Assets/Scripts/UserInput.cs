@@ -4,22 +4,40 @@ using UnityEngine;
 
 public class UserInput : MonoBehaviour
 {
-    Vector3 mousePosition;
+    Vector2 mousePosition;
     Vector3 cardOrigin; //when card hit by mouseDown startLocation in case has to 
     Selectable cardFace = null;
+    GameObject clickedObject;
+    GameObject targetObject;
+    bool isDragged;
+    Solitaire solitaire;
     
     // Start is called before the first frame update
     void Start(){
-        
+        solitaire = FindObjectOfType<Solitaire>();
     }
 
     // Update is called once per frame
     void Update(){
-       
+        
         if (Input.GetMouseButtonDown(0))
+        {                
+            GetMouseClick();
+        }
+
+        if (isDragged)
         {
-           GetMouseClick();
-        } 
+
+            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            clickedObject.transform.Translate(mousePosition);
+
+        }
+
+        /*if (Input.GetMouseButton(0))
+        {
+            Rigidbody2D cardBody = clickedObject.GetComponent<Rigidbody2D>();
+            cardBody.position = mousePosition;
+        }*/
     }
 
     /*void OnMouseClick()
@@ -46,11 +64,12 @@ public class UserInput : MonoBehaviour
 
     // Might want to change to on click down, need to investigate this
     void GetMouseClick(){
+        
         //To store the mouse's position
 
         mousePosition = Camera.main.ScreenToWorldPoint(
-                               new Vector3(Input.mousePosition.x,
-                               Input.mousePosition.y, -10));
+                               new Vector2(Input.mousePosition.x,
+                               Input.mousePosition.y));
         // https://docs.unity3d.com/ScriptReference/RaycastHit-collider.html 
         RaycastHit2D hit;
 
@@ -59,55 +78,61 @@ public class UserInput : MonoBehaviour
             
             // What we will do depends on what has been clicked
             if (hit){
-
-                // The tag is associated with various game objects
-                
-                // Rigidbody2D wasHit = hit.rigidbody;
-                // cardFace = wasHit.GetComponent<Selectable>();
             
-                // wasHit.transform.forward = Vector3.forward;
+            //get the object that is hit
+            clickedObject = hit.collider.gameObject;
+            cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
+            clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
 
-               /* if (!cardFace.IsFaceUp())  
-                {
-                    
-                    return;
-                    //cardFace.FlipCard();
-                }*/
-                // wasHit.position = mousePosition;
-                
-                string whatHit = hit.collider.tag;
+
+
+            // cardFace = wasHit.GetComponent<Selectable>();
+
+            // wasHit.transform.forward = Vector3.forward;
+
+            /* if (!cardFace.IsFaceUp())  
+             {
+
+                 return;
+                 //cardFace.FlipCard();
+             }*/
+
+            /*Rigidbody2D cardBody = hit.rigidbody;
+            cardBody.position = mousePosition;*/
+            // The tag is associated with various game objects
+           /* string whatHit = hit.collider.tag;
                 print(whatHit);
 
                 switch(whatHit){
                     case "Deck":
                         TheLogger.PrintLog("Hit Deck");
-                        StockPile();
+                        StockPile(clickedObject);
                         break;
                     case "Card":
                         TheLogger.PrintLog("Hit Card");
-                        TalonPile();
+                        TalonPile(clickedObject);
                         break;
                     case "Top":
                         TheLogger.PrintLog("Hit Top");
-                        Foundation();
+                        Foundation(clickedObject);
                         break;
                     case "Bottom":
                         TheLogger.PrintLog("Hit Bottom");
-                        Tableau();
+                        Tableau(clickedObject);
                         break;
                     default:
                     //This is the bad place
-                        print("You missed");
+                        print("You missed HAHAHAHAHAHAHA");
                         break;
-                }
+                }*/
             }
         // }
     }
 
     // This is where we will call the algorithm for if Deck is touched
-    void StockPile(){
+    void StockPile(GameObject clicky){
 
-        Solitaire solitaire = FindObjectOfType<Solitaire>();
+       // Solitaire solitaire = FindObjectOfType<Solitaire>();
         List<GameObject> stockPile = solitaire.GetStockPileArray();
         if (GameRules.IsEmpty(stockPile)){
             TheLogger.PrintLog("turn over Talons");
@@ -132,7 +157,8 @@ public class UserInput : MonoBehaviour
     }
 
     // This is where we will call the algorithm for if a card is selected
-    void TalonPile(){
+    void TalonPile(GameObject clicky)
+    {
         print("Hit Card");
         // select the card for moving somewhere
         // if double clicked, and can go to top spot, go there
@@ -141,13 +167,14 @@ public class UserInput : MonoBehaviour
     }
 
     // Call algorithm for if top spot is selected
-    void Foundation(){
+    void Foundation()
+    {
 
         // NEED TO GET THE PILE SELECTED
         int pileSelected = 2;
 
         // Probably want one solitaire game object for whole class
-        Solitaire solitaire = FindObjectOfType<Solitaire>();
+        //Solitaire solitaire = FindObjectOfType<Solitaire>();
         List<string>[] foundations = solitaire.GetFoundations();
         List<string> foundationPile = foundations[pileSelected];
         if (GameRules.IsEmpty(foundationPile)){
@@ -201,11 +228,12 @@ public class UserInput : MonoBehaviour
     }
 
     // Call algorithm for if bottom spot is selected
-    void Tableau(){
+    void Tableau()
+    {
          // NEED TO GET THE PILE SELECTED
         int pileSelected = 2;
         // Probably want one solitaire game object for whole class
-        Solitaire solitaire = FindObjectOfType<Solitaire>();
+       // Solitaire solitaire = FindObjectOfType<Solitaire>();
         List<string>[] tableaus = solitaire.GetTableaus();
         List<string> tableauPile = tableaus[pileSelected];
         /*
@@ -301,7 +329,9 @@ public class UserInput : MonoBehaviour
 
             }
         }
-        
+
+        // MUST TURN OFF THE NEW COLOUR HIGHLIGHTING WHAT CARD WE CLICKED!!!!
+
         /*isMouseClick(0) ?
         *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
         */
@@ -322,4 +352,127 @@ public class UserInput : MonoBehaviour
         print("Pick up this card (or cards if stack selected)");
         // if stack, make sure it is moveable as a stack
     }
+    private void OnMouseDown()
+    {
+        isDragged = true;
+        TheLogger.PrintLog("Got to OnMouseDown");
+    }
+
+    private void OnMouseUp()
+    {
+       
+        TheLogger.PrintLog("Got to OnMouseUp");
+        isDragged = false;
+        
+        if (GetCardPlaceLocation() == null)
+        {
+            clickedObject.transform.position = cardOrigin;
+            return;
+        }
+        else
+        {
+            targetObject = GetCardPlaceLocation();
+        }
+        TheLogger.PrintLog(targetObject.name);
+        /*Transform targetPosition = targetObject.transform;
+        int lastChild = targetPosition.childCount - 1 < 0 ? 0 : targetPosition.childCount - 1;
+        GameObject dropLocation = targetPosition.childCount == 0 ? targetPosition.gameObject : targetPosition.GetChild(lastChild).transform.gameObject;*/
+        GameObject dropLocation = DropLocation();
+        
+        switch (targetObject.name)
+        {
+            case "Top0":
+            case "Top1":
+            case "Top2":
+            case "Top3":
+               
+                clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
+                    dropLocation.transform.position.y, dropLocation.transform.position.z - .03f);
+                TheLogger.PrintLog("Got to Tops");
+               
+                //Foundation();
+                
+                break;
+            case "Bottom0":
+            case "Bottom1":
+            case "Bottom2":
+            case "Bottom3":
+            case "Bottom4":
+            case "Bottom5":
+            case "Bottom6":
+                
+                clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
+                    dropLocation.transform.position.y - .40f, dropLocation.transform.position.z - .03f);
+                TheLogger.PrintLog("Got to Bottoms");
+               
+                //Tableau();
+                break;
+            default:
+                TheLogger.PrintLog("got to default");
+                break;
+
+        }
+
+    }
+
+    private GameObject GetCardPlaceLocation() 
+    {
+        clickedObject.layer = 2;
+        RaycastHit2D hit;
+        Rigidbody2D targetBody = null;
+        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+        if (hit.transform != null)
+        {
+            targetBody = hit.transform.GetComponent<Rigidbody2D>();
+            TheLogger.PrintLog("we got the targetBody");
+        } else
+        {
+            clickedObject.layer = 0;
+            return null;
+        }
+
+        GameObject targetLocation;
+
+        if (targetBody.transform.gameObject.transform.parent.gameObject.name.Equals("Bottom"
+            ) || targetBody.transform.gameObject.transform.parent.gameObject.name.Equals("Top"))
+        {
+            targetLocation = targetBody.gameObject;
+           
+        } else
+        {
+            targetLocation = targetBody.gameObject.transform.parent.gameObject;
+        }
+        
+        clickedObject.layer = 0;
+        return targetLocation;
+    }
+
+    public GameObject DropLocation()
+    {
+        Transform targetPosition = targetObject.transform;
+        //this grabs the last child index numnber
+
+        int lastChild;
+        if (targetPosition.childCount -1 < 0)
+        {
+            lastChild = 0;
+        } else
+        {
+            lastChild = targetPosition.childCount - 1;
+        }
+        //this grabs the GameObject which is either the last child or the parent if there is no children
+        GameObject dropLocation;
+        if (targetPosition.childCount == 0)
+        {
+            dropLocation = targetPosition.gameObject;
+        }else
+        {
+            dropLocation = targetPosition.GetChild(lastChild).transform.gameObject;
+        }
+       
+        return dropLocation;
+    } 
+
+   
 }
