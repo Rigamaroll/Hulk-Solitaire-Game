@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class UserInput : MonoBehaviour{
     Vector2 mousePosition;
-    Vector3 cardOrigin; //when card hit by mouseDown startLocation in case has to 
-    // Selectable cardFace = null;
+    Vector3 cardOrigin; 
     GameObject clickedObject;
     GameObject targetObject;
     bool isDragged = false;
@@ -72,13 +71,8 @@ public class UserInput : MonoBehaviour{
             case "Top1":
             case "Top2":
             case "Top3":
-               
-                // clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                //     dropLocation.transform.position.y, dropLocation.transform.position.z - .03f);
                 TheLogger.PrintLog("Got to Tops");
-               
-                //Foundation();
-                
+                Foundation();
                 break;
             case "Bottom0":
             case "Bottom1":
@@ -87,11 +81,7 @@ public class UserInput : MonoBehaviour{
             case "Bottom4":
             case "Bottom5":
             case "Bottom6":
-                
-                // clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                //     dropLocation.transform.position.y - .40f, dropLocation.transform.position.z - .03f);
                 TheLogger.PrintLog("Got to Bottoms");
-               
                 Tableau();
                 break;
             default:
@@ -101,14 +91,11 @@ public class UserInput : MonoBehaviour{
     }
 
     // This is where we will call the algorithm for if Deck is touched
-    void StockPile(GameObject clicky){
-
-       // Solitaire solitaire = FindObjectOfType<Solitaire>();
+    void StockPile(){
         List<GameObject> stockPile = solitaire.GetStockPileArray();
         if (GameRules.IsEmpty(stockPile)){
             TheLogger.PrintLog("turn over Talons");
         } else {
-
             TheLogger.PrintLog("Deal Card");
             GameObject nextCard = stockPile[stockPile.Count - 1];
             TheLogger.PrintLog(nextCard.name);
@@ -153,7 +140,7 @@ public class UserInput : MonoBehaviour{
         int targetStackNo = int.Parse(targetStack.Substring(targetStack.Length - 1));
         string targetStackType = targetObject.transform.parent.gameObject.name;  
 
-        //NOTE This should be the pile we are trying to add our card to
+        // The pile we are trying to add our card to
         List<string>[] tableaus =solitaire.GetTableaus();
         List<string> tableauPile = tableaus[targetStackNo];
 
@@ -173,7 +160,8 @@ public class UserInput : MonoBehaviour{
 
             // Update Locations
             UpdateLocation(true, false);
-            solitaire.UpdatePositions(cardsSelected, parentStackType, parentStackNo, targetStackType, targetStackNo);
+            UpdateGameObjects(parentStack.Length - 1, 1);
+
             return;
         }
         UpdateLocation(false, false);
@@ -255,12 +243,14 @@ public class UserInput : MonoBehaviour{
             solitaire.setTableaus(tableaus);
 
             // update locations
-            // clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-            // dropLocation.transform.position.y - .40f, dropLocation.transform.position.z - .03f);
             UpdateLocation(true, false);
             // Call Solitaire method to update the drawing of the cards
-            solitaire.UpdatePositions(cardsSelected, parentStackType, parentStackNo, targetStackType, targetStackNo);
+            
+            // Update the game objects
+            UpdateGameObjects(cardIndex, cardsSelected.Count);
+
             return;
+
         } else if (targetStackType == "Top"){
             print("Card is going to top");
             // Get pile we are adding cards to
@@ -298,10 +288,11 @@ public class UserInput : MonoBehaviour{
                 solitaire.setFoundations(foundations);
 
                 // update location
-                // clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                // dropLocation.transform.position.y, dropLocation.transform.position.z - .03f);
                 UpdateLocation(true, true);
-                solitaire.UpdatePositions(cardsSelected, parentStackType, parentStackNo, targetStackType, targetStackNo);
+                UpdateGameObjects(cardIndex, cardsSelected.Count);
+                
+                // turn last card over
+
                 return;
             }
         }
@@ -309,8 +300,6 @@ public class UserInput : MonoBehaviour{
         clickedObject.transform.position = cardOrigin;
         print("Returning Card to Origin");
     }
-
-    
 
     private GameObject GetCardPlaceLocation(){
         clickedObject.layer = 2;
@@ -341,7 +330,7 @@ public class UserInput : MonoBehaviour{
 
     public GameObject DropLocation(){
         Transform targetPosition = targetObject.transform;
-        //this grabs the last child index numnber
+        // this grabs the last child index numnber
         int lastChild;
 
         if (targetPosition.childCount -1 < 0){
@@ -350,7 +339,7 @@ public class UserInput : MonoBehaviour{
             lastChild = targetPosition.childCount - 1;
         }
 
-        //this grabs the GameObject which is either the last child or the parent if there is no children
+        // this grabs the GameObject which is either the last child or the parent if there is no children
         GameObject dropLocation;
         if (targetPosition.childCount == 0){
             dropLocation = targetPosition.gameObject;
@@ -364,15 +353,70 @@ public class UserInput : MonoBehaviour{
     private void UpdateLocation(bool isMoving, bool isTop){
         if (isMoving){
             if (isTop){
+                // Foundation: offset the z-index only
                 clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
                 dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
             }else{
+                // Tableau: offset y and z-index
+                float yOffSet;
+                if (targetObject.transform.childCount != 0)
+                {
+                     yOffSet = 0.40f;
+                }
+                else
+                {
+                    yOffSet = 0.0f;
+                }
                 clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                dropLocation.transform.position.y - 0.40f, dropLocation.transform.position.z - 0.03f);
+                dropLocation.transform.position.y - yOffSet, dropLocation.transform.position.z - 0.03f);
             }
 
         }else{
+            // return th card to its original location
             clickedObject.transform.position = cardOrigin;
         }
     }
+
+    private void UpdateGameObjects(int cardIndex, int numCards)
+    {
+        print("Inside update Game Objects");
+        // Get the target pile type
+        GameObject ts;
+        if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
+        {
+            // Case where we have selected an empty pile
+            ts = targetObject.transform.gameObject;
+        }
+        else
+        {
+            // Case where pile is not empty
+            ts = targetObject.transform.parent.gameObject;
+        }
+        print("ts is : " + ts.name);
+
+        // Get parent pile 
+        GameObject ps = clickedObject.transform.parent.gameObject;
+        print("ps is: " + ps.name);
+
+        // Parent Game Object
+        GameObject mom = ps;
+
+        // if the card can go in the location selected remove it from the foundation pile
+        for (int i = 0; i < numCards;  i++)
+        {
+            print("moving card: " + ps.transform.GetChild(cardIndex).name);
+            ps.transform.GetChild(cardIndex).SetParent(ts.transform);
+        }
+
+        // print("is not faceup: " + !mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().IsFaceUp());
+        if (mom.transform.childCount == 0)
+        {
+            return;
+        }
+        if (!mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().IsFaceUp())
+        {
+            mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().FlipCard();
+        }
+    }
+
 }
