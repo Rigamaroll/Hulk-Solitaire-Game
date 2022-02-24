@@ -223,7 +223,8 @@ public class UserInput : MonoBehaviour{
         GameObject targetStack;
         print("target object is: " + targetObject.name);
         if (targetObject.transform.name.Equals("DeckButton")||(targetObject.transform.name.Equals("TalonPile")))
-        {
+        {   
+            // tries to move onto the stockpile or talon pile
             UpdateLocation(false, false); // return to origin
             return;
         }
@@ -237,9 +238,6 @@ public class UserInput : MonoBehaviour{
             // Case where pile is not empty
             targetStack = targetObject.transform.parent.gameObject;
         }
-
-
-        
 
         if (targetStack.transform.parent.gameObject.name.Equals("Bottom"))
         {
