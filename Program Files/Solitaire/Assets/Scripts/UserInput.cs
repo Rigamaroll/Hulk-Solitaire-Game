@@ -77,7 +77,6 @@ public class UserInput : MonoBehaviour{
         //testing for card click
         TheLogger.PrintLog("card clicked");
 
-        
         }
     }
 
@@ -138,8 +137,8 @@ public class UserInput : MonoBehaviour{
                 Tableau();
                 break;
             case "TalonPile":
-                Talon();
                 TheLogger.PrintLog("Got To TalonPile");
+                Talon();
                 break;
             default:
                 TheLogger.PrintLog("got to default");
@@ -149,8 +148,6 @@ public class UserInput : MonoBehaviour{
 
     // This is where we will call the algorithm for if Deck is touched
     void StockPile(){
-       
-  
         GameObject deckRoot = clickedObject.transform.root.gameObject;
         GameObject talonPile = deckRoot.transform.GetChild(1).gameObject;
         float zOffSet;
@@ -172,9 +169,10 @@ public class UserInput : MonoBehaviour{
             clickedObject.transform.SetParent(talonPile.transform);
             clickedObject.transform.position = new Vector3(talonPile.transform.position.x, talonPile.transform.position.y, talonPile.transform.position.z + zOffSet);
             clickedObject.GetComponent<Selectable>().FlipCard();
-           
 
-        } else {
+        } 
+        else 
+        {
             //refresh from the talonpile
 
             GameObject talonCard;
@@ -223,6 +221,12 @@ public class UserInput : MonoBehaviour{
 
         // Get target stack
         GameObject targetStack;
+        print("target object is: " + targetObject.name);
+        if (targetObject.transform.name.Equals("DeckButton")||(targetObject.transform.name.Equals("TalonPile")))
+        {
+            UpdateLocation(false, false); // return to origin
+            return;
+        }
         if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
         {
             // Case where we have selected an empty pile
@@ -234,17 +238,27 @@ public class UserInput : MonoBehaviour{
             targetStack = targetObject.transform.parent.gameObject;
         }
 
+
+        
+
         if (targetStack.transform.parent.gameObject.name.Equals("Bottom"))
         {
-            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
-
-            // Case where we have selected an empty stack
-            if (GameRules.IsEmpty(targetStack))
-            {
-                // print("Cannot move to an empty tableau stack");
+            // Case 1, new pile is empty, must be a king
+            print("Case 1 - Moving to empty stack");
+            if (GameRules.IsEmpty(targetStack)){
+                print("Target stack is empty");
+                if(GameRules.IsEmptyRank(clickedObject.name, "bottom")){
+                    print("Card is a King and can be moved");
+                    UpdateLocation(true, false); //move, not to the top
+                    UpdateGameObjects(cardIndex, 1);
+                    return;
+                }
+                print("Card is not a King, cannot be moved here");
                 UpdateLocation(false, false); // return to origin
                 return;
             }
+
+            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
 
             // Case where we have not selected an empty stack
             if (GameRules.IsAlternating(stackCard, clickedObject.name))
@@ -305,9 +319,9 @@ public class UserInput : MonoBehaviour{
             //print("Card suit is incorrect and cannot be moved.");
             UpdateLocation(false, false); // return to origin
             return;
-            // print("Cannot move between non-empty foundations.");
-            UpdateLocation(false, false); // return to origin
-            return;
+            // // print("Cannot move between non-empty foundations.");
+            // UpdateLocation(false, false); // return to origin
+            // return;
         }
     }
 
@@ -554,7 +568,9 @@ public class UserInput : MonoBehaviour{
                 // Foundation: offset the z-index only
                 clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
                 dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
-            }else{
+            }
+            else
+            {
                 // Tableau: offset y and z-index
                 float yOffSet;
                 if (targetObject.transform.childCount != 0)
