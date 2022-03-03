@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] KeyCode pablosNewGame;
+    [SerializeField] KeyCode pablosDone;
+
     public void PlayGame()
     {
         SceneManager.LoadScene("GameScene");
@@ -20,5 +23,17 @@ public class MainMenu : MonoBehaviour
     public void HomeButton()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    // Add Key Entries
+    void FixedUpdate()
+    {
+        if (Input.GetKey(pablosNewGame)){
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        else if(Input.GetKey(pablosDone)){
+            Application.Quit();
+            Debug.Log("Exiting App");
+        }
     }
 }
