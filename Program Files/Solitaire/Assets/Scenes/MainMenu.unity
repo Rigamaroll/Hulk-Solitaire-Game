@@ -559,7 +559,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Options
+  m_text: Help
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -680,6 +680,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9941a9462e893343a709ee8e27a2192, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pablosNewGame: 0
+  pablosDone: 0
 --- !u!1 &902659512
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,7 +695,7 @@ GameObject:
   - component: {fileID: 902659515}
   - component: {fileID: 902659514}
   m_Layer: 0
-  m_Name: OptionsButton
+  m_Name: HelpButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1272,6 +1274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9941a9462e893343a709ee8e27a2192, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pablosNewGame: 0
+  pablosDone: 0
 --- !u!1 &1677957023
 GameObject:
   m_ObjectHideFlags: 0
