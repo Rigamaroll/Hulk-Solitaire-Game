@@ -8,27 +8,27 @@ public class MainMenu : MonoBehaviour
     [SerializeField] KeyCode pablosNewGame;
     [SerializeField] KeyCode pablosDone;
     [SerializeField] KeyCode pablosMenu;
-    private bool isVegas = false;
+    static bool isVegas = false;
 
-    public void PlayGame()
+    public static void PlayGame()
     {
         SceneManager.LoadScene("GameScene");
         Debug.Log("Loading Game Scene");
     }
 
-    public void QuitGame()
+    public static void QuitGame()
     {
         Application.Quit();
         Debug.Log("Exiting App");
     }
 
-    public void HomeButton()
+    public static void HomeButton()
     {
         SceneManager.LoadScene("MainMenu");
     }
 
     // Add Key Entries
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         if (Input.GetKey(pablosNewGame)){
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -43,17 +43,17 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    public void OnStandard(){
-        isVegas = false;
-        print("isVegas is set to: " + isVegas);
+    public static void OnStandard(){
+        MainMenu.isVegas = false;
+        print("isVegas is set to: " + MainMenu.isVegas);
     }
 
-    public void OnVegas(){
-        isVegas = true;
-        print("isVegas is set to: " + isVegas);
+    public static void OnVegas(){
+        MainMenu.isVegas = true;
+        print("isVegas is set to: " + MainMenu.isVegas);
     }
 
-    public bool GetOnVegas(){
-        return isVegas;
+    public static bool GetOnVegas(){
+        return MainMenu.isVegas;
     }
 }

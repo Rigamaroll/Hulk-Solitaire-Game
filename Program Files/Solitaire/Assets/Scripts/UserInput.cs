@@ -11,12 +11,10 @@ public class UserInput : MonoBehaviour{
     bool isStockpileCard = false;
     Solitaire solitaire;
     GameObject dropLocation;
-    MainMenu usrSettings;
     
     //Start is called before the first frame update
     void Start(){
         solitaire = FindObjectOfType<Solitaire>();
-        usrSettings = FindObjectOfType<MainMenu>();
     }
 
     //Update is called once per frame
@@ -182,8 +180,8 @@ public class UserInput : MonoBehaviour{
         {
             // refresh from the talonpile
             // flips cards over if not in Vegas mode
-            print("isVegas is set to: " + usrSettings.GetOnVegas());
-            if (!usrSettings.GetOnVegas()){
+            print("isVegas is set to: " + MainMenu.GetOnVegas());
+            if (!MainMenu.GetOnVegas()){
                 GameObject talonCard;
                 GameObject stockPile = deckRoot.transform.GetChild(0).gameObject;
                 TheLogger.PrintLog("stockPile name is " + stockPile.name);
