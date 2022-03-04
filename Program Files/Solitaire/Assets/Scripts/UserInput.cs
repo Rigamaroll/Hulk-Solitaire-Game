@@ -8,6 +8,7 @@ public class UserInput : MonoBehaviour{
     GameObject clickedObject;
     GameObject targetObject;
     bool isDragged = false;
+    bool isStockpileCard = false;
     Solitaire solitaire;
     GameObject dropLocation;
     
@@ -57,9 +58,18 @@ public class UserInput : MonoBehaviour{
         if (hit){
             //get the object that is hit            
             clickedObject = hit.collider.gameObject;
+            cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
 
+            if (clickedObject.transform.parent.name.Equals("DeckButton") || clickedObject.transform.name.Equals("DeckButton"))
+            {
+                isStockpileCard = true;
+                StockPile();
+                //TheLogger.PrintLog("Hit Stockpile");
+                return;          
+            }
+            
         // check if card is face up 
-        if(clickedObject.GetComponent<Selectable>().IsFaceUp()){
+        if(clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
             isDragged = true;
             clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
         }
@@ -67,11 +77,16 @@ public class UserInput : MonoBehaviour{
         //testing for card click
         TheLogger.PrintLog("card clicked");
 
-        cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
+        
         }
     }
 
     private void OnMouseUp(){
+        if (isStockpileCard)
+        {
+            isStockpileCard = false;
+            return;
+        }
         isDragged = false;
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
         
@@ -122,6 +137,10 @@ public class UserInput : MonoBehaviour{
                 TheLogger.PrintLog("Got to Bottoms");
                 Tableau();
                 break;
+            case "TalonPile":
+                Foundation();
+                TheLogger.PrintLog("Got To TalonPile");
+                break;
             default:
                 TheLogger.PrintLog("got to default");
                 break;
@@ -130,24 +149,56 @@ public class UserInput : MonoBehaviour{
 
     // This is where we will call the algorithm for if Deck is touched
     void StockPile(){
-        List<GameObject> stockPile = solitaire.GetStockPileArray();
-        // if (GameRules.IsEmpty(stockPile)){
-        //     TheLogger.PrintLog("turn over Talons");
-        // } else {
-        //     TheLogger.PrintLog("Deal Card");
-        //     GameObject nextCard = stockPile[stockPile.Count - 1];
-        //     TheLogger.PrintLog(nextCard.name);
-        //     stockPile.RemoveAt(stockPile.Count - 1);
+       
+  
+        GameObject deckRoot = clickedObject.transform.root.gameObject;
+        GameObject talonPile = deckRoot.transform.GetChild(1).gameObject;
+        float zOffSet;
 
-        //     //add ^^Card to Talon Pile
-        //     solitaire.SetStockPileArray(stockPile);
-        // }
-        
-        /*isMouseClick(0) ?
-        *  !isStockPileEmpty ? flipTopCard to Talon Pile : putTalonBackToStock 
-        */
-        print("Hit Deck");
-        // Deal cards
+        //checks to see what the zOffSet will be depending on how big the talonPile is
+        if (talonPile.transform.childCount > 0)
+        {
+            zOffSet = talonPile.transform.GetChild(talonPile.transform.childCount - 1).transform.position.z - 0.03f;
+        } else
+        {
+            zOffSet = -0.03f;
+        }
+       
+        //checks to see if it restocks the Stockpile or flips onto the talonpile
+        if (!clickedObject.transform.name.Equals("DeckButton"))
+        {
+            //move the card to the talonpile
+            
+            clickedObject.transform.SetParent(talonPile.transform);
+            clickedObject.transform.position = new Vector3(talonPile.transform.position.x, talonPile.transform.position.y, talonPile.transform.position.z + zOffSet);
+            clickedObject.GetComponent<Selectable>().FlipCard();
+           
+
+        } else {
+            //refresh from the talonpile
+
+            GameObject talonCard;
+            GameObject stockPile = deckRoot.transform.GetChild(0).gameObject;
+            TheLogger.PrintLog("stockPile name is " + stockPile.name);
+            TheLogger.PrintLog("StockPile Empty");
+            TheLogger.PrintLog("TalongPile name is " + talonPile.name);
+            TheLogger.PrintLog("TalonPile length is " + talonPile.transform.childCount);
+
+            zOffSet = 0.03f;
+
+            //goes through each card in the talonpile and puts it back in the stockpile
+            for (int talonLength = talonPile.transform.childCount; talonLength > 0; talonLength--)
+            {
+
+                talonCard = talonPile.transform.GetChild(talonPile.transform.childCount - 1).transform.gameObject;
+                talonCard.transform.SetParent(deckRoot.transform.GetChild(0).transform);
+                talonCard.transform.position = new Vector3(stockPile.transform.position.x, stockPile.transform.position.y, stockPile.transform.position.z - zOffSet);
+                talonCard.GetComponent<Selectable>().FlipCard();
+                zOffSet += 0.03f;
+
+            }
+        }
+       
         print("Deal 1 or 3 more cards");
     }
 
