@@ -2274,6 +2274,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9941a9462e893343a709ee8e27a2192, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pablosNewGame: 110
+  pablosDone: 113
+  pablosMenu: 109
 --- !u!4 &1336894210
 Transform:
   m_ObjectHideFlags: 0
