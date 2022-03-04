@@ -11,10 +11,12 @@ public class UserInput : MonoBehaviour{
     bool isStockpileCard = false;
     Solitaire solitaire;
     GameObject dropLocation;
+    MainMenu usrSettings;
     
     //Start is called before the first frame update
     void Start(){
         solitaire = FindObjectOfType<Solitaire>();
+        usrSettings = FindObjectOfType<MainMenu>();
     }
 
     //Update is called once per frame
@@ -180,25 +182,28 @@ public class UserInput : MonoBehaviour{
         {
             // refresh from the talonpile
             // flips cards over if not in Vegas mode
-            GameObject talonCard;
-            GameObject stockPile = deckRoot.transform.GetChild(0).gameObject;
-            TheLogger.PrintLog("stockPile name is " + stockPile.name);
-            TheLogger.PrintLog("StockPile Empty");
-            TheLogger.PrintLog("TalongPile name is " + talonPile.name);
-            TheLogger.PrintLog("TalonPile length is " + talonPile.transform.childCount);
+            print("isVegas is set to: " + usrSettings.GetOnVegas());
+            if (!usrSettings.GetOnVegas()){
+                GameObject talonCard;
+                GameObject stockPile = deckRoot.transform.GetChild(0).gameObject;
+                TheLogger.PrintLog("stockPile name is " + stockPile.name);
+                TheLogger.PrintLog("StockPile Empty");
+                TheLogger.PrintLog("TalongPile name is " + talonPile.name);
+                TheLogger.PrintLog("TalonPile length is " + talonPile.transform.childCount);
 
-            zOffSet = 0.03f;
+                zOffSet = 0.03f;
 
-            //goes through each card in the talonpile and puts it back in the stockpile
-            for (int talonLength = talonPile.transform.childCount; talonLength > 0; talonLength--)
-            {
+                //goes through each card in the talonpile and puts it back in the stockpile
+                for (int talonLength = talonPile.transform.childCount; talonLength > 0; talonLength--)
+                {
 
-                talonCard = talonPile.transform.GetChild(talonPile.transform.childCount - 1).transform.gameObject;
-                talonCard.transform.SetParent(deckRoot.transform.GetChild(0).transform);
-                talonCard.transform.position = new Vector3(stockPile.transform.position.x, stockPile.transform.position.y, stockPile.transform.position.z - zOffSet);
-                talonCard.GetComponent<Selectable>().FlipCard();
-                zOffSet += 0.03f;
+                    talonCard = talonPile.transform.GetChild(talonPile.transform.childCount - 1).transform.gameObject;
+                    talonCard.transform.SetParent(deckRoot.transform.GetChild(0).transform);
+                    talonCard.transform.position = new Vector3(stockPile.transform.position.x, stockPile.transform.position.y, stockPile.transform.position.z - zOffSet);
+                    talonCard.GetComponent<Selectable>().FlipCard();
+                    zOffSet += 0.03f;
 
+                }
             }
         }
        

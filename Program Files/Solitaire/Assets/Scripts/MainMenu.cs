@@ -7,7 +7,8 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] KeyCode pablosNewGame;
     [SerializeField] KeyCode pablosDone;
-    private bool isVegas;
+    [SerializeField] KeyCode pablosMenu;
+    private bool isVegas = false;
 
     public void PlayGame()
     {
@@ -32,23 +33,27 @@ public class MainMenu : MonoBehaviour
         if (Input.GetKey(pablosNewGame)){
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+        else if(Input.GetKey(pablosMenu)){
+            SceneManager.LoadScene("MainMenu");
+            Debug.Log("Exiting App");
+        }
         else if(Input.GetKey(pablosDone)){
             Application.Quit();
             Debug.Log("Exiting App");
         }
     }
 
-    public void onStandard(){
+    public void OnStandard(){
         isVegas = false;
         print("isVegas is set to: " + isVegas);
     }
 
-    public void onVegas(){
+    public void OnVegas(){
         isVegas = true;
         print("isVegas is set to: " + isVegas);
     }
 
-    public bool getOnVegas(){
+    public bool GetOnVegas(){
         return isVegas;
     }
 }
