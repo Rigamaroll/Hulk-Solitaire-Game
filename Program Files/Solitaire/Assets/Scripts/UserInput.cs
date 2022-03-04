@@ -59,7 +59,7 @@ public class UserInput : MonoBehaviour{
             //get the object that is hit            
             clickedObject = hit.collider.gameObject;
             cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
-
+            //checks if the stockpile has been hit
             if (clickedObject.transform.parent.name.Equals("DeckButton") || clickedObject.transform.name.Equals("DeckButton"))
             {
                 isStockpileCard = true;
@@ -70,9 +70,19 @@ public class UserInput : MonoBehaviour{
             
         //check if card is face up 
         if(clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
+            float zOffSet = -0.54f;
             isDragged = true;
+            GameObject cardsInStack;
             clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
-        }
+                //Grabs the stack of cards and moves there zOffSet to the appropriate location, so they are in front of all the other cards
+                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                {
+                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+                    cardsInStack.transform.position = new Vector3(cardsInStack.transform.position.x, cardsInStack.transform.position.y, zOffSet);
+                    zOffSet -= 0.03f;       
+
+                }
+            }
 
         //testing for card click
         TheLogger.PrintLog("card clicked");
@@ -99,7 +109,7 @@ public class UserInput : MonoBehaviour{
                 {
                     cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
                     cardsInStack.transform.position = new Vector3(cardOrigin.x,
-                cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
+                    cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
                     stackYoffSet += 0.40f;
                     stackZoffSet += 0.03f;
                 }
@@ -109,7 +119,6 @@ public class UserInput : MonoBehaviour{
                 clickedObject.transform.position = cardOrigin;
             }
 
-            //clickedObject.transform.position = cardOrigin;
             return;
         }
         else{
@@ -123,7 +132,6 @@ public class UserInput : MonoBehaviour{
             case "Top1":
             case "Top2":
             case "Top3":
-                TheLogger.PrintLog("Got to Tops");
                 Foundation();
                 break;
             case "Bottom0":
@@ -133,15 +141,12 @@ public class UserInput : MonoBehaviour{
             case "Bottom4":
             case "Bottom5":
             case "Bottom6":
-                TheLogger.PrintLog("Got to Bottoms");
                 Tableau();
                 break;
             case "TalonPile":
-                TheLogger.PrintLog("Got To TalonPile");
                 Talon();
                 break;
             default:
-                TheLogger.PrintLog("got to default");
                 break;
         }
     }
