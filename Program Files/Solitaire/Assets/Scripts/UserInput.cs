@@ -178,8 +178,8 @@ public class UserInput : MonoBehaviour{
         } 
         else 
         {
-            //refresh from the talonpile
-
+            // refresh from the talonpile
+            // flips cards over if not in Vegas mode
             GameObject talonCard;
             GameObject stockPile = deckRoot.transform.GetChild(0).gameObject;
             TheLogger.PrintLog("stockPile name is " + stockPile.name);

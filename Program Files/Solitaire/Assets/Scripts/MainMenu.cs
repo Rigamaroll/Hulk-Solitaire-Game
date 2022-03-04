@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,6 +7,7 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] KeyCode pablosNewGame;
     [SerializeField] KeyCode pablosDone;
+    private bool isVegas;
 
     public void PlayGame()
     {
@@ -35,5 +36,19 @@ public class MainMenu : MonoBehaviour
             Application.Quit();
             Debug.Log("Exiting App");
         }
+    }
+
+    public void onStandard(){
+        isVegas = false;
+        print("isVegas is set to: " + isVegas);
+    }
+
+    public void onVegas(){
+        isVegas = true;
+        print("isVegas is set to: " + isVegas);
+    }
+
+    public bool getOnVegas(){
+        return isVegas;
     }
 }
