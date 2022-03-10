@@ -21,7 +21,7 @@ public class UserInput : MonoBehaviour{
         if (isDragged){
             //checks the mousePosition for moving the cards to that spot
             mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            cardMove(); 
+            CardMove(); 
           
         }
     }
@@ -185,7 +185,7 @@ public class UserInput : MonoBehaviour{
     }
 
     //checks if more than one card being moved at a time.
-    void cardMove()
+    void CardMove()
     {
        
         if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
