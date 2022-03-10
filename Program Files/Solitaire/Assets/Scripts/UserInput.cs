@@ -9,12 +9,11 @@ public class UserInput : MonoBehaviour{
     GameObject targetObject;
     bool isDragged = false;
     bool isStockpileCard = false;
-    Solitaire solitaire;
     GameObject dropLocation;
     
     //Start is called before the first frame update
     void Start(){
-        solitaire = FindObjectOfType<Solitaire>();
+  
     }
 
     //Update is called once per frame
@@ -22,24 +21,7 @@ public class UserInput : MonoBehaviour{
         if (isDragged){
             //checks the mousePosition for moving the cards to that spot
             mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-            //checks if more than one card being moved at a time.
-            if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
-            {
-                GameObject cardsInStack;
-                
-                //moves each card at a time in this for loop
-                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
-                {
-                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-                    cardsInStack.transform.Translate(mousePosition);
-           
-                }
-            }
-            //if only 1 card to move do this
-            else
-            {
-                clickedObject.transform.Translate(mousePosition);
-            }
+            cardMove(); 
           
         }
     }
@@ -91,6 +73,7 @@ public class UserInput : MonoBehaviour{
     }
 
     private void OnMouseUp(){
+        //this means the card goes to the talonpile
         if (isStockpileCard)
         {
             isStockpileCard = false;
@@ -99,12 +82,15 @@ public class UserInput : MonoBehaviour{
         isDragged = false;
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
         
+        //if location dropped is green felt
         if (GetCardPlaceLocation() == null){
+            //is the object in a stack, returns to origin
             if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
             {
                 GameObject cardsInStack;
                 float stackYoffSet = 0.00f;
                 float stackZoffSet = 0.00f;
+                //check all cards in stack
                 for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
                 {
                     cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
@@ -115,12 +101,14 @@ public class UserInput : MonoBehaviour{
                 }
             }
             else
+            //return single card to origin
             {
                 clickedObject.transform.position = cardOrigin;
             }
 
             return;
         }
+        //move to new location
         else{
             targetObject = GetCardPlaceLocation();
         }
@@ -150,10 +138,81 @@ public class UserInput : MonoBehaviour{
                 break;
         }
     }
+    private GameObject GetCardPlaceLocation()
+    {
+        GameObject cardsInStack;
+        //makes sure the cards in the stack can't be raycast, so the object underneath can be selected
+        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+        {
+            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+            cardsInStack.layer = 2;
+        }
+        //get the object to be dropped on
+        RaycastHit2D hit;
+        Rigidbody2D targetBody = null;
+        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        //get object when hits something
+        if (hit.transform != null)
+        {
+            targetBody = hit.transform.GetComponent<Rigidbody2D>();
+            TheLogger.PrintLog("we got the targetBody");
+        }
+        //hits nothing returns null
+        else
+        {
+            clickedObject.layer = 0;
+            return null;
+        }
+
+        GameObject targetLocation;
+        //find out what it's hitting is it bottom or top
+        if (targetBody.transform.parent.gameObject.name.Equals("Bottom"
+            ) || targetBody.transform.parent.gameObject.name.Equals("Top"))
+        {
+            targetLocation = targetBody.gameObject;
+        }
+        else
+        {
+            targetLocation = targetBody.gameObject.transform.parent.gameObject;
+        }
+        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+        {
+            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+            cardsInStack.layer = 0;
+        }
+
+        return targetLocation;
+    }
+
+    //checks if more than one card being moved at a time.
+    void cardMove()
+    {
+       
+        if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+        {
+            GameObject cardsInStack;
+
+            //moves each card at a time in this for loop
+            for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+            {
+                cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
+                cardsInStack.transform.Translate(mousePosition);
+
+            }
+        }
+        //if only 1 card to move do this
+        else
+        {
+            clickedObject.transform.Translate(mousePosition);
+        }
+
+    }
 
     //This is where we will call the algorithm for if Deck is touched
     void StockPile(){
+        //this is 'deck' object which contains both 'deckButton' and 'talonPile'
         GameObject deckRoot = clickedObject.transform.root.gameObject;
+        //this is 'talonPile' GameObject
         GameObject talonPile = deckRoot.transform.GetChild(1).gameObject;
         float zOffSet;
 
@@ -207,21 +266,10 @@ public class UserInput : MonoBehaviour{
        
         print("Deal 1 or 3 more cards");
     }
-
-    //This is where we will call the algorithm for if a card is selected
-    void TalonPile(){
-        print("Hit Card");
-        //select the card for moving somewhere
-        //if double clicked, and can go to top spot, go there
-        print("Pick this card up to move it somewhere");
-        print("But if double clicked, and can go to top, move it there");
-    }
-
+    
     //Call algorithm for if top spot is selected
     void Talon()
     {
-        //Get the pile that card(s) was selected from
-        GameObject parentStack = clickedObject.transform.parent.gameObject;
 
         //Get index of card selected card
         int cardIndex = clickedObject.transform.GetSiblingIndex();
@@ -334,7 +382,7 @@ public class UserInput : MonoBehaviour{
     //Call algorithm for if top spot is selected
     void Foundation() {
         //Get the pile that card(s) was selected from
-        GameObject parentStack = clickedObject.transform.parent.gameObject; 
+        //GameObject parentStack = clickedObject.transform.parent.gameObject; 
 
         //Get index of card selected card
         int cardIndex = clickedObject.transform.GetSiblingIndex();
@@ -402,7 +450,7 @@ public class UserInput : MonoBehaviour{
     void Tableau()
     {
         //Get the pile that card(s) was selected from
-        GameObject parentStack = clickedObject.transform.parent.gameObject; 
+        //GameObject parentStack = clickedObject.transform.parent.gameObject; 
 
         //Get index of card selected card
         int cardIndex = clickedObject.transform.GetSiblingIndex();
@@ -507,44 +555,7 @@ public class UserInput : MonoBehaviour{
         //print("This is the bad place");
     }
 
-    private GameObject GetCardPlaceLocation(){
-        GameObject cardsInStack;
-        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
-        {
-            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-            cardsInStack.layer = 2;
-        }
-
-        //clickedObject.layer = 2;
-        RaycastHit2D hit;
-        Rigidbody2D targetBody = null;
-        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-
-        if (hit.transform != null){
-            targetBody = hit.transform.GetComponent<Rigidbody2D>();
-            TheLogger.PrintLog("we got the targetBody");
-        } else {
-            clickedObject.layer = 0;
-            return null;
-        }
-
-        GameObject targetLocation;
-
-        if (targetBody.transform.gameObject.transform.parent.gameObject.name.Equals("Bottom"
-            ) || targetBody.transform.gameObject.transform.parent.gameObject.name.Equals("Top")){
-            targetLocation = targetBody.gameObject;
-        } else {
-            targetLocation = targetBody.gameObject.transform.parent.gameObject;
-        }
-        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
-        {
-            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-            cardsInStack.layer = 0;
-        }
-        //clickedObject.layer = 0;
-        return targetLocation;
-    }
-
+    
     public GameObject DropLocation(){
         Transform targetPosition = targetObject.transform;
         //this grabs the last child index numnber
@@ -573,7 +584,7 @@ public class UserInput : MonoBehaviour{
             if (isTop){
                 //Foundation: offset the z-index only
                 clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
+                    dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
             }
             else
             {
@@ -610,7 +621,7 @@ public class UserInput : MonoBehaviour{
                     {
                         cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
                         cardsInStack.transform.position = new Vector3(dropLocation.transform.position.x,
-                    dropLocation.transform.position.y - stackYoffSet, dropLocation.transform.position.z - stackZoffSet);
+                            dropLocation.transform.position.y - stackYoffSet, dropLocation.transform.position.z - stackZoffSet);
                         stackYoffSet += 0.40f;
                         stackZoffSet += 0.03f;
                     }
