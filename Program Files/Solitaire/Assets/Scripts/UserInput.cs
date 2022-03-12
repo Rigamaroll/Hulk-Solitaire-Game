@@ -41,7 +41,7 @@ public class UserInput : MonoBehaviour{
             //get the object that is hit            
             clickedObject = hit.collider.gameObject;
             cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
-            //checks if the stockpile has been hit
+            //checks if the stockpile has been hit (so that is will deal)
             if (clickedObject.transform.parent.name.Equals("DeckButton") || clickedObject.transform.name.Equals("DeckButton"))
             {
                 isStockpileCard = true;
@@ -138,6 +138,9 @@ public class UserInput : MonoBehaviour{
                 break;
         }
     }
+
+    // gets the location where you are trying to place the card
+    // returns null if not on a game object
     private GameObject GetCardPlaceLocation()
     {
         GameObject cardsInStack;
@@ -147,15 +150,24 @@ public class UserInput : MonoBehaviour{
             cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
             cardsInStack.layer = 2;
         }
+
         //get the object to be dropped on
         RaycastHit2D hit;
         Rigidbody2D targetBody = null;
         hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        
         //get object when hits something
         if (hit.transform != null)
         {
             targetBody = hit.transform.GetComponent<Rigidbody2D>();
-            TheLogger.PrintLog("we got the targetBody");
+         
+            TheLogger.PrintLog("we got the targetBody: " + targetBody.transform.parent.name);
+
+            // return null if hits talonpile or stock pile
+            if (targetBody.transform.parent.name.Equals("TalonPile")||targetBody.transform.parent.name.Equals("DeckButton")){
+                clickedObject.layer = 0;
+                return null;
+            }
         }
         //hits nothing returns null
         else
@@ -187,7 +199,7 @@ public class UserInput : MonoBehaviour{
     //checks if more than one card being moved at a time.
     void CardMove()
     {
-       
+        // if it is a group of cards
         if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
         {
             GameObject cardsInStack;
