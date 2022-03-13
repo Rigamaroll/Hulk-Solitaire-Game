@@ -13,7 +13,7 @@ public class UserInput : MonoBehaviour{
     
     //Start is called before the first frame update
     void Start(){
-  
+        Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
     }
 
     //Update is called once per frame
@@ -427,6 +427,8 @@ public class UserInput : MonoBehaviour{
                     //print("Card rank is one less than target card, it can be moved.");
                     UpdateLocation(true, false); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
+                    // Card moving from Foundation To Tableau Piles. Remove Points
+                    Scoring.instance.ReduceScore();
                     return;
                 }
                 //print("Card rank is incorrect and cannot be moved.");
@@ -597,6 +599,7 @@ public class UserInput : MonoBehaviour{
                 //Foundation: offset the z-index only
                 clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
                     dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
+                Scoring.instance.AddScore(); // Adds the points to the Top
             }
             else
             {
