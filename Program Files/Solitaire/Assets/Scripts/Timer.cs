@@ -37,7 +37,7 @@ public class Timer : MonoBehaviour
     {
         if ((int)time % 30 == 0 && (int)time > 0)
         {
-            Scoring.instance.TimeReduceScore();
+            // Scoring.instance.TimeReduceScore();
 
         }
     }
