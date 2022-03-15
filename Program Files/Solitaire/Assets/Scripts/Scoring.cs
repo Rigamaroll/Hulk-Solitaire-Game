@@ -38,7 +38,7 @@ public class Scoring : MonoBehaviour
     public void TimeReduceScore() // reducing the score every 30 seconds
     {
         score -= 2;
-        // CheckScore();
+        CheckScore();
         points.text = "Score: " + score.ToString();
         
     }
