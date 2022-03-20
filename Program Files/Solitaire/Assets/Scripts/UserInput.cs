@@ -5,11 +5,11 @@ using UnityEngine;
 public class UserInput : MonoBehaviour{
     Vector2 mousePosition;
     Vector3 cardOrigin; 
-    GameObject clickedObject;
-    GameObject targetObject;
+    Transform clickedObject;
+    Transform targetObject;
     bool isDragged = false;
     bool isStockpileCard = false;
-    GameObject dropLocation;
+    Transform dropLocation;
     
     //Start is called before the first frame update
     void Start(){
@@ -39,10 +39,10 @@ public class UserInput : MonoBehaviour{
         //What we will do depends on what has been clicked
         if (hit){
             //get the object that is hit            
-            clickedObject = hit.collider.gameObject;
-            cardOrigin = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y, clickedObject.transform.position.z);
+            clickedObject = hit.collider.transform;
+            cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
             //checks if the stockpile has been hit (so that is will deal)
-            if (clickedObject.transform.parent.name.Equals("DeckButton") || clickedObject.transform.name.Equals("DeckButton"))
+            if (clickedObject.parent.name.Equals("DeckButton") || clickedObject.name.Equals("DeckButton"))
             {
                 isStockpileCard = true;
                 StockPile();
@@ -54,13 +54,13 @@ public class UserInput : MonoBehaviour{
         if(clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
             float zOffSet = -0.54f;
             isDragged = true;
-            GameObject cardsInStack;
+            Transform cardsInStack;
             clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
                 //Grabs the stack of cards and moves there zOffSet to the appropriate location, so they are in front of all the other cards
-                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
                 {
-                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-                    cardsInStack.transform.position = new Vector3(cardsInStack.transform.position.x, cardsInStack.transform.position.y, zOffSet);
+                    cardsInStack = clickedObject.parent.GetChild(numMoves);
+                    cardsInStack.position = new Vector3(cardsInStack.position.x, cardsInStack.position.y, zOffSet);
                     zOffSet -= 0.03f;       
 
                 }
@@ -85,16 +85,16 @@ public class UserInput : MonoBehaviour{
         //if location dropped is green felt
         if (GetCardPlaceLocation() == null){
             //is the object in a stack, returns to origin
-            if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
             {
-                GameObject cardsInStack;
+                Transform cardsInStack;
                 float stackYoffSet = 0.00f;
                 float stackZoffSet = 0.00f;
                 //check all cards in stack
-                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
                 {
-                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-                    cardsInStack.transform.position = new Vector3(cardOrigin.x,
+                    cardsInStack = clickedObject.parent.GetChild(numMoves);
+                    cardsInStack.position = new Vector3(cardOrigin.x,
                     cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
                     stackYoffSet += 0.40f;
                     stackZoffSet += 0.03f;
@@ -103,7 +103,7 @@ public class UserInput : MonoBehaviour{
             else
             //return single card to origin
             {
-                clickedObject.transform.position = cardOrigin;
+                clickedObject.position = cardOrigin;
             }
 
             return;
@@ -115,23 +115,15 @@ public class UserInput : MonoBehaviour{
 
         dropLocation = DropLocation();
         
-        switch (clickedObject.transform.parent.gameObject.name){
-            case "Top0":
-            case "Top1":
-            case "Top2":
-            case "Top3":
+        switch (clickedObject.root.name){
+          
+            case "Top":
                 Foundation();
                 break;
-            case "Bottom0":
-            case "Bottom1":
-            case "Bottom2":
-            case "Bottom3":
-            case "Bottom4":
-            case "Bottom5":
-            case "Bottom6":
+            case "Bottom":
                 Tableau();
                 break;
-            case "TalonPile":
+            case "Deck":
                 Talon();
                 break;
             default:
@@ -139,16 +131,17 @@ public class UserInput : MonoBehaviour{
         }
     }
 
+
     // gets the location where you are trying to place the card
     // returns null if not on a game object
-    private GameObject GetCardPlaceLocation()
+    private Transform GetCardPlaceLocation()
     {
-        GameObject cardsInStack;
+        Transform cardsInStack;
         //makes sure the cards in the stack can't be raycast, so the object underneath can be selected
-        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+        for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
         {
-            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-            cardsInStack.layer = 2;
+            cardsInStack = clickedObject.parent.GetChild(numMoves);
+            cardsInStack.gameObject.layer = 2;
         }
 
         //get the object to be dropped on
@@ -161,36 +154,36 @@ public class UserInput : MonoBehaviour{
         {
             targetBody = hit.transform.GetComponent<Rigidbody2D>();
          
-            TheLogger.PrintLog("we got the targetBody: " + targetBody.transform.parent.name);
+            //TheLogger.PrintLog("we got the targetBody: " + targetBody.transform.parent.name);
 
             // return null if hits talonpile or stock pile
             if (targetBody.transform.parent.name.Equals("TalonPile")||targetBody.transform.parent.name.Equals("DeckButton")){
-                clickedObject.layer = 0;
+                clickedObject.gameObject.layer = 0;
                 return null;
             }
         }
         //hits nothing returns null
         else
         {
-            clickedObject.layer = 0;
+            clickedObject.gameObject.layer = 0;
             return null;
         }
 
-        GameObject targetLocation;
+        Transform targetLocation;
         //find out what it's hitting is it bottom or top
-        if (targetBody.transform.parent.gameObject.name.Equals("Bottom"
-            ) || targetBody.transform.parent.gameObject.name.Equals("Top"))
+        if (targetBody.transform.parent.name.Equals("Bottom"
+            ) || targetBody.transform.parent.name.Equals("Top"))
         {
-            targetLocation = targetBody.gameObject;
+            targetLocation = targetBody.transform;
         }
         else
         {
-            targetLocation = targetBody.gameObject.transform.parent.gameObject;
+            targetLocation = targetBody.transform.parent;
         }
-        for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+        for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
         {
-            cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-            cardsInStack.layer = 0;
+            cardsInStack = clickedObject.parent.GetChild(numMoves);
+            cardsInStack.gameObject.layer = 0;
         }
 
         return targetLocation;
@@ -200,22 +193,22 @@ public class UserInput : MonoBehaviour{
     void CardMove()
     {
         // if it is a group of cards
-        if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+        if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
         {
-            GameObject cardsInStack;
+            Transform cardsInStack;
 
             //moves each card at a time in this for loop
-            for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+            for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
             {
-                cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-                cardsInStack.transform.Translate(mousePosition);
+                cardsInStack = clickedObject.parent.GetChild(numMoves);
+                cardsInStack.Translate(mousePosition);
 
             }
         }
         //if only 1 card to move do this
         else
         {
-            clickedObject.transform.Translate(mousePosition);
+            clickedObject.Translate(mousePosition);
         }
 
     }
@@ -223,27 +216,27 @@ public class UserInput : MonoBehaviour{
     //This is where we will call the algorithm for if Deck is touched
     void StockPile(){
         //this is 'deck' object which contains both 'deckButton' and 'talonPile'
-        GameObject deckRoot = clickedObject.transform.root.gameObject;
+        Transform deckRoot = clickedObject.root;
         //this is 'talonPile' GameObject
-        GameObject talonPile = deckRoot.transform.GetChild(1).gameObject;
+        Transform talonPile = deckRoot.GetChild(1);
         float zOffSet;
 
         //checks to see what the zOffSet will be depending on how big the talonPile is
         if (talonPile.transform.childCount > 0)
         {
-            zOffSet = talonPile.transform.GetChild(talonPile.transform.childCount - 1).transform.position.z - 0.03f;
+            zOffSet = talonPile.GetChild(talonPile.childCount - 1).position.z - 0.03f;
         } else
         {
             zOffSet = -0.03f;
         }
        
         //checks to see if it restocks the Stockpile or flips onto the talonpile
-        if (!clickedObject.transform.name.Equals("DeckButton"))
+        if (!clickedObject.name.Equals("DeckButton"))
         {
             //move the card to the talonpile
             
-            clickedObject.transform.SetParent(talonPile.transform);
-            clickedObject.transform.position = new Vector3(talonPile.transform.position.x, talonPile.transform.position.y, talonPile.transform.position.z + zOffSet);
+            clickedObject.SetParent(talonPile);
+            clickedObject.position = new Vector3(talonPile.position.x, talonPile.position.y, talonPile.position.z + zOffSet);
             clickedObject.GetComponent<Selectable>().FlipCard();
 
         } 
@@ -251,35 +244,42 @@ public class UserInput : MonoBehaviour{
         {
             // refresh from the talonpile
             // flips cards over if not in Vegas mode
-            print("isVegas is set to: " + MainMenu.GetOnVegas());
-            if (!MainMenu.GetOnVegas()){
-                GameObject talonCard;
-                GameObject stockPile = deckRoot.transform.GetChild(0).gameObject;
-                TheLogger.PrintLog("stockPile name is " + stockPile.name);
-                TheLogger.PrintLog("StockPile Empty");
-                TheLogger.PrintLog("TalongPile name is " + talonPile.name);
-                TheLogger.PrintLog("TalonPile length is " + talonPile.transform.childCount);
-
-                zOffSet = 0.03f;
-
-                //goes through each card in the talonpile and puts it back in the stockpile
-                for (int talonLength = talonPile.transform.childCount; talonLength > 0; talonLength--)
-                {
-
-                    talonCard = talonPile.transform.GetChild(talonPile.transform.childCount - 1).transform.gameObject;
-                    talonCard.transform.SetParent(deckRoot.transform.GetChild(0).transform);
-                    talonCard.transform.position = new Vector3(stockPile.transform.position.x, stockPile.transform.position.y, stockPile.transform.position.z - zOffSet);
-                    talonCard.GetComponent<Selectable>().FlipCard();
-                    zOffSet += 0.03f;
-
-                }
-                for (int i = 0; i <= 19; i++){
-                    Scoring.instance.ReduceScore();
-                }
+            if (!MainMenu.GetOnVegas())
+            {
+                RestockDeck(deckRoot, talonPile);
             }
         }
        
         print("Deal 1 or 3 more cards");
+    }
+
+    //Restocks the stockpile from the talonpile
+    void RestockDeck(Transform deckRoot, Transform talonPile)
+    {
+      
+        //print("isVegas is set to: " + MainMenu.GetOnVegas());
+        
+            Transform talonCard;
+            Transform stockPile = deckRoot.GetChild(0);
+
+            float zOffSet = 0.03f;
+
+            //goes through each card in the talonpile and puts it back in the stockpile
+            for (int talonLength = talonPile.transform.childCount; talonLength > 0; talonLength--)
+            {
+
+                talonCard = talonPile.GetChild(talonPile.childCount - 1);
+                talonCard.SetParent(deckRoot.GetChild(0));
+                talonCard.position = new Vector3(stockPile.position.x, stockPile.position.y, stockPile.position.z - zOffSet);
+                talonCard.GetComponent<Selectable>().FlipCard();
+                zOffSet += 0.03f;
+
+            }
+            for (int i = 0; i <= 19; i++)
+            {
+                Scoring.instance.ReduceScore();
+            }
+        
     }
     
     //Call algorithm for if top spot is selected
@@ -287,19 +287,19 @@ public class UserInput : MonoBehaviour{
     {
 
         //Get index of card selected card
-        int cardIndex = clickedObject.transform.GetSiblingIndex();
+        int cardIndex = clickedObject.GetSiblingIndex();
         //print("card Index of selected card is:" + cardIndex);
 
         //Get target stack
-        GameObject targetStack;
+        Transform targetStack;
         print("target object is: " + targetObject.name);
-        if (targetObject.transform.name.Equals("DeckButton")||(targetObject.transform.name.Equals("TalonPile")))
+        if (targetObject.name.Equals("DeckButton")||(targetObject.name.Equals("TalonPile")))
         {   
             //tries to move onto the stockpile or talon pile
             UpdateLocation(false, false); // return to origin
             return;
         }
-        if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
+        if ((targetObject.parent.name.Equals("Top")) || (targetObject.parent.name.Equals("Bottom")))
         {
             //Case where we have selected an empty pile
             targetStack = targetObject;
@@ -307,10 +307,10 @@ public class UserInput : MonoBehaviour{
         else
         {
             //Case where pile is not empty
-            targetStack = targetObject.transform.parent.gameObject;
+            targetStack = targetObject.parent;
         }
 
-        if (targetStack.transform.parent.gameObject.name.Equals("Bottom"))
+        if (targetStack.parent.name.Equals("Bottom"))
         {
             //Case 1, new pile is empty, must be a king
             print("Case 1 - Moving to empty stack");
@@ -329,7 +329,7 @@ public class UserInput : MonoBehaviour{
                 return;
             }
 
-            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
 
             //Case where we have not selected an empty stack
             if (GameRules.IsAlternating(stackCard, clickedObject.name))
@@ -353,7 +353,7 @@ public class UserInput : MonoBehaviour{
             return;
         }
 
-        if (targetStack.transform.parent.gameObject.name.Equals("Top"))
+        if (targetStack.parent.name.Equals("Top"))
         {
             //Case where we have selected an empty pile
             if (GameRules.IsEmpty(targetStack))
@@ -374,7 +374,7 @@ public class UserInput : MonoBehaviour{
             //Case 2: Foundation Pile is not empty
             //print("Case 2 - moving to a stack with cards");
             //Case 2 Moving onto a foundation pile same suit and rank +1
-            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
             if (GameRules.IsSameSuit(stackCard, clickedObject.name))
             {
                 //print("Card suit is same as the target card");
@@ -404,20 +404,20 @@ public class UserInput : MonoBehaviour{
         //GameObject parentStack = clickedObject.transform.parent.gameObject; 
 
         //Get index of card selected card
-        int cardIndex = clickedObject.transform.GetSiblingIndex();
+        int cardIndex = clickedObject.GetSiblingIndex();
         //print("card Index of selected card is:" + cardIndex);
 
         //Get target stack
-        GameObject targetStack;
-        if ((targetObject.transform.parent.gameObject.name.Equals("Top"))||(targetObject.transform.parent.gameObject.name.Equals("Bottom"))){
+        Transform targetStack;
+        if ((targetObject.parent.name.Equals("Top"))||(targetObject.parent.name.Equals("Bottom"))){
             //Case where we have selected an empty pile
             targetStack = targetObject;
         } else {
             //Case where pile is not empty
-            targetStack = targetObject.transform.parent.gameObject;
+            targetStack = targetObject.parent;
         }
 
-        if (targetStack.transform.parent.gameObject.name.Equals("Bottom")){
+        if (targetStack.parent.name.Equals("Bottom")){
             //string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
 
             //Case where we have selected an empty stack
@@ -426,7 +426,7 @@ public class UserInput : MonoBehaviour{
                 UpdateLocation(false, false); // return to origin
                 return;
             }
-            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
             //Case where we have not selected an empty stack
             if (GameRules.IsAlternating(stackCard, clickedObject.name)){
                 //print("Card colour is opposite to the target card");
@@ -449,7 +449,7 @@ public class UserInput : MonoBehaviour{
             return;
         }
 
-        if (targetStack.transform.parent.gameObject.name.Equals("Top")){
+        if (targetStack.parent.name.Equals("Top")){
             //Case where we have selected an empty pile
             if (GameRules.IsEmpty(targetStack)){
                 //print("Check Rank, can only move an Ace to an empty foundation slot");
@@ -476,25 +476,25 @@ public class UserInput : MonoBehaviour{
         //GameObject parentStack = clickedObject.transform.parent.gameObject; 
 
         //Get index of card selected card
-        int cardIndex = clickedObject.transform.GetSiblingIndex();
+        int cardIndex = clickedObject.GetSiblingIndex();
         //print("card Index of selected card is:" + cardIndex);
 
         //Get number of cards to see how many have been selected
-        int numCards = clickedObject.transform.parent.gameObject.transform.childCount - cardIndex;
+        int numCards = clickedObject.parent.transform.childCount - cardIndex;
         //print("Number of cards selected is: " + numCards);
         //print("target object is " + targetObject.name);
         //Get target stack
-        GameObject targetStack;
-        if ((targetObject.transform.parent.gameObject.name.Equals("Top"))||(targetObject.transform.parent.gameObject.name.Equals("Bottom"))){
+        Transform targetStack;
+        if ((targetObject.parent.name.Equals("Top"))||(targetObject.parent.name.Equals("Bottom"))){
             //Case where we have selected an empty pile
             targetStack = targetObject;
         } else {
             //Case where pile is not empty
-            targetStack = targetObject.transform.parent.gameObject;
+            targetStack = targetObject.parent;
         }
 
         //print("targetStack name is " + targetStack.name);
-        if (targetStack.transform.parent.gameObject.name.Equals("Bottom")){
+        if (targetStack.parent.name.Equals("Bottom")){
             //print("We're moving the card to the bottom");
             
             //Case 1, new pile is empty, must be a king
@@ -514,7 +514,7 @@ public class UserInput : MonoBehaviour{
 
             print("Case 2 - moving to a stack with cards");
             //Case 2 Moving onto a tableau pile alt colours and rank -1
-            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
             if (GameRules.IsAlternating(stackCard, clickedObject.name)){
                 print("Card colour is opposite to the target card");
                 if(GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom")){
@@ -533,7 +533,7 @@ public class UserInput : MonoBehaviour{
             return;
         }
 
-        if (targetStack.transform.parent.gameObject.name.Equals("Top")){
+        if (targetStack.parent.name.Equals("Top")){
             //Make sure only one card is selected
             if (numCards != 1){
                 //print("Can only move one card to the top at a time.");
@@ -558,7 +558,7 @@ public class UserInput : MonoBehaviour{
             //Case 2: Foundation Pile is not empty
             //print("Case 2 - moving to a stack with cards");
             //Case 2 Moving onto a foundation pile same suit and rank +1
-            string stackCard = targetStack.transform.GetChild(targetStack.transform.childCount - 1).gameObject.name;
+            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
             if (GameRules.IsSameSuit(stackCard, clickedObject.name)){
                 //print("Card suit is same as the target card");
                 if(GameRules.IsRankGoood(stackCard, clickedObject.name, "top")){
@@ -579,8 +579,8 @@ public class UserInput : MonoBehaviour{
     }
 
     
-    public GameObject DropLocation(){
-        Transform targetPosition = targetObject.transform;
+    public Transform DropLocation(){
+        Transform targetPosition = targetObject;
         //this grabs the last child index numnber
         int lastChild;
 
@@ -591,12 +591,12 @@ public class UserInput : MonoBehaviour{
         }
 
         //this grabs the GameObject which is either the last child or the parent if there is no children
-        GameObject dropLocation;
+        Transform dropLocation;
         if (targetPosition.childCount == 0){
-            dropLocation = targetPosition.gameObject;
+            dropLocation = targetPosition;
         }else{
           
-            dropLocation = targetPosition.GetChild(lastChild).transform.gameObject;
+            dropLocation = targetPosition.GetChild(lastChild);
         }
        
         return dropLocation;
@@ -606,8 +606,8 @@ public class UserInput : MonoBehaviour{
         if (isMoving){
             if (isTop){
                 //Foundation: offset the z-index only
-                clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                    dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
+                clickedObject.position = new Vector3(dropLocation.position.x,
+                    dropLocation.position.y, dropLocation.position.z - 0.03f);
                 // Card moves to the top + 10 points
                 Scoring.instance.AddScore();
                 Scoring.instance.AddScore();
@@ -616,7 +616,7 @@ public class UserInput : MonoBehaviour{
             {
                 //Tableau: offset y and z-index
                 float yOffSet;
-                if (targetObject.transform.childCount != 0)
+                if (targetObject.childCount != 0)
                 {
                      yOffSet = 0.40f;
                 }
@@ -625,14 +625,14 @@ public class UserInput : MonoBehaviour{
                     yOffSet = 0.0f;
                 }
                 //checks if the selected card is the last card in the stack.  If not it gets the totals amount of cards and places all of them.
-                if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+                if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
                 {
                     float stackYoffSet;
-                    GameObject cardsInStack;
+                    Transform cardsInStack;
                     print("targetObject is " + targetObject.name);
-                    print("targetObject childcount is  " + targetObject.transform.childCount);
+                    print("targetObject childcount is  " + targetObject.childCount);
                     //if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
-                    if (targetObject.transform.childCount == 0) 
+                    if (targetObject.childCount == 0) 
                     {
                         
                         print("Got to childCount 0");
@@ -643,34 +643,34 @@ public class UserInput : MonoBehaviour{
                         stackYoffSet = 0.40f;
                     }
                     float stackZoffSet = 0.03f;
-                    for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                    for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
                     {
-                        cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-                        cardsInStack.transform.position = new Vector3(dropLocation.transform.position.x,
-                            dropLocation.transform.position.y - stackYoffSet, dropLocation.transform.position.z - stackZoffSet);
+                        cardsInStack = clickedObject.parent.GetChild(numMoves);
+                        cardsInStack.position = new Vector3(dropLocation.position.x,
+                            dropLocation.position.y - stackYoffSet, dropLocation.position.z - stackZoffSet);
                         stackYoffSet += 0.40f;
                         stackZoffSet += 0.03f;
                     }
                 }
                 else
                 {
-                    clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
-                    dropLocation.transform.position.y - yOffSet, dropLocation.transform.position.z - 0.03f);
+                    clickedObject.position = new Vector3(dropLocation.position.x,
+                    dropLocation.position.y - yOffSet, dropLocation.position.z - 0.03f);
                 }
             }
 
         }else{
             print("Card cannot move there!");
             //return the card to its original location
-            if ((clickedObject.transform.GetSiblingIndex() < clickedObject.transform.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
             {
-                GameObject cardsInStack;
+                Transform cardsInStack;
                 float stackYoffSet = 0.00f;
                 float stackZoffSet = 0.00f;
-                for (int numMoves = clickedObject.transform.GetSiblingIndex(); numMoves < clickedObject.transform.parent.childCount; numMoves++)
+                for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
                 {
-                    cardsInStack = clickedObject.transform.parent.GetChild(numMoves).gameObject;
-                    cardsInStack.transform.position = new Vector3(cardOrigin.x,
+                    cardsInStack = clickedObject.parent.GetChild(numMoves);
+                    cardsInStack.position = new Vector3(cardOrigin.x,
                 cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
                     stackYoffSet += 0.40f;
                     stackZoffSet += 0.03f;
@@ -678,7 +678,7 @@ public class UserInput : MonoBehaviour{
             }
             else
             {
-                clickedObject.transform.position = cardOrigin;
+                clickedObject.position = cardOrigin;
             }
             //clickedObject.transform.position = cardOrigin;
         }
@@ -689,28 +689,28 @@ public class UserInput : MonoBehaviour{
     {
         print("Inside update Game Objects");
         //Get the target pile type
-        GameObject ts;
+        Transform ts;
         //Check to see if the game object is a card, or an empty spot
-        if ((targetObject.transform.parent.gameObject.name.Equals("Top")) || (targetObject.transform.parent.gameObject.name.Equals("Bottom")))
+        if ((targetObject.parent.name.Equals("Top")) || (targetObject.parent.name.Equals("Bottom")))
         {
             //Case where we have selected an empty spot
-            ts = targetObject.transform.gameObject;
+            ts = targetObject;
         }
         else
         {
             //Case where pile is not empty, want to get parent pile
-            ts = targetObject.transform.parent.gameObject;
+            ts = targetObject.parent;
         }
         print("ts is : " + ts.name);
 
         //Get parent pile 
-        print("clicked object is: " + clickedObject.transform.name);
-        print("clicked object's parent is: " + clickedObject.transform.parent.gameObject.name);
-        GameObject ps = clickedObject.transform.parent.gameObject;
+        print("clicked object is: " + clickedObject.name);
+        print("clicked object's parent is: " + clickedObject.parent.name);
+        Transform ps = clickedObject.parent;
         print("ps is: " + ps.name);
 
         //Parent Game Object
-        GameObject mom = ps;
+        Transform mom = ps;
 
         print("Number of cards is: " + numCards);
         //if the card can go in the location selected remove it from the pile
@@ -718,19 +718,19 @@ public class UserInput : MonoBehaviour{
         {
             print("card index is: " + cardIndex);
             // print("moving card: " + ps.transform.GetChild(cardIndex).name);
-            ps.transform.GetChild(cardIndex).SetParent(ts.transform);
+            ps.GetChild(cardIndex).SetParent(ts);
         }
 
         //print("is not faceup: " + !mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().IsFaceUp());
-        if (mom.transform.childCount == 0)
+        if (mom.childCount == 0)
         {
             print("No cards to flip!");
             return;
         }
-        if (!mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().IsFaceUp())
+        if (!mom.GetChild(mom.childCount - 1).GetComponent<Selectable>().IsFaceUp())
         {
             print("Next card should flip!");
-            mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().FlipCard();
+            mom.GetChild(mom.childCount - 1).GetComponent<Selectable>().FlipCard();
             Scoring.instance.AddScore();
         }
     }

@@ -100,7 +100,7 @@ public class GameRules : MonoBehaviour
     }
 
     // Checks if the stack is empty (can be used for top or bottom)
-    public static bool IsEmpty(GameObject stack){
+    public static bool IsEmpty(Transform stack){
         print("stack child count is " + stack.transform.childCount);
         return (stack.transform.childCount == 0);
     }
