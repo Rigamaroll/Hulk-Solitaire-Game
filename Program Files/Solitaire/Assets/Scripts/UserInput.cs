@@ -156,11 +156,9 @@ public class UserInput : MonoBehaviour{
         }
     }
     
-    //Call algorithm for if top spot is selected
+    //Call algorithm for if TalonPile is selected
     void Talon()
     {
-        
-
         //Get target stack
         Transform targetStack;
         //print("target object is: " + targetObject.name);
@@ -186,7 +184,7 @@ public class UserInput : MonoBehaviour{
             TalonTop(targetStack);
         }
     }
-
+    //moving cards from Talonpile to the tableau
     void TalonBottom(Transform targetStack)
     {
         //Get index of card selected card
@@ -231,7 +229,7 @@ public class UserInput : MonoBehaviour{
         }
         CardToOrigin(); // return to origin
     }
-
+    //moving cards from talonpile to the foundation
     void TalonTop(Transform targetStack)
     {
         //Get index of card selected card
@@ -324,7 +322,7 @@ public class UserInput : MonoBehaviour{
             }          
         }
         if (targetStack.parent.name.Equals("Top")){
-            //Case where we have selected an empty pile
+            //Case where we have selected an empty pile and is foundation
             if (GameRules.IsEmpty(targetStack)
                 && GameRules.IsEmptyRank(clickedObject.name, "top"))
             {
@@ -542,7 +540,7 @@ public class UserInput : MonoBehaviour{
             clickedObject.position = cardOrigin;
         }
     }
-
+    //Places the transforms in the correct stacks after the GameObjects have been moved on the screen
     private void UpdateGameObjects(int cardIndex, int numCards)
     {
         //print("Inside update Game Objects");
