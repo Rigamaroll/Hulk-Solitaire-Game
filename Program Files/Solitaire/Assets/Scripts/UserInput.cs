@@ -324,15 +324,6 @@ public class UserInput : MonoBehaviour{
     //Call algorithm for if bottom spot is selected
     void Tableau()
     {
-
-        //Get index of selected card
-        int cardIndex = clickedObject.GetSiblingIndex();
-        //print("card Index of selected card is:" + cardIndex);
-
-        //Get number of cards to see how many have been selected
-        int numCards = clickedObject.parent.transform.childCount - cardIndex;
-        //print("Number of cards selected is: " + numCards);
-        //print("target object is " + targetObject.name);
         //Get target stack which is where we're placing the card
         Transform targetStack;
         if ((targetObject.parent.name.Equals("Top"))||(targetObject.parent.name.Equals("Bottom"))){
@@ -342,90 +333,118 @@ public class UserInput : MonoBehaviour{
             //Case where pile is not empty
             targetStack = targetObject.parent;
         }
+        //check to see if top or bottom
+        switch(targetStack.parent.name)
+        {
+            case "Bottom":
+                TableauBottom(targetStack);
+                break;
+            case "Top":
+                TableauTop(targetStack);
+                break;
+        }
+      
+        //print("This is the bad place");
+    }
 
-        //print("targetStack name is " + targetStack.name);
-        if (targetStack.parent.name.Equals("Bottom")){
-            //print("We're moving the card to the bottom");
-            
-            //Case 1, new pile is empty, must be a king
-            //print("Case 1 - Moving to empty stack");
-            if (GameRules.IsEmpty(targetStack)){
+    private void TableauBottom(Transform targetStack)
+    {
+        //Get index of selected card
+        int cardIndex = clickedObject.GetSiblingIndex();
+        //print("card Index of selected card is:" + cardIndex);
+
+        //Get number of cards to see how many have been selected
+        int numCards = clickedObject.parent.transform.childCount - cardIndex;
+        //print("We're moving the card to the bottom");
+
+        //Case 1, new pile is empty, must be a king
+        //print("Case 1 - Moving to empty stack");
+        switch (GameRules.IsEmpty(targetStack))
+        {
+            case true:
+
                 //print("Target stack is empty");
-                if(GameRules.IsEmptyRank(clickedObject.name, "bottom")){
+                if (GameRules.IsEmptyRank(clickedObject.name, "bottom"))
+                {
                     //print("Card is a King and can be moved");
                     CardToTableau(); //move, not to the top
                     UpdateGameObjects(cardIndex, numCards);
                     return;
-                }
-                //print("Card is not a King, cannot be moved here");
-                CardToOrigin(); // return to origin
-                return;
-            }
+                }            
+                break;
 
-            print("Case 2 - moving to a stack with cards");
-            //Case 2 Moving onto a tableau pile alt colours and rank -1
-            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
-            if (GameRules.IsAlternating(stackCard, clickedObject.name)){
-                print("Card colour is opposite to the target card");
-                if(GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom")){
-                   //print("clickedObject's name is " + clickedObject.name);
-                   //print("Card rank is one less than target card, it can be moved.");
-                    CardToTableau(); //move, not to the top
-                    UpdateGameObjects(cardIndex, numCards);
-                    return;
-                }
-               //print("Card rank is incorrect and cannot be moved.");
-                CardToOrigin(); // return to origin
-                return;
-            }
-           //print("Card colour is incorrect and cannot be moved.");
+            case false:
+
+                print("Case 2 - moving to a stack with cards");
+                //Case 2 Moving onto a tableau pile alt colours and rank -1
+                string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
+                if (GameRules.IsAlternating(stackCard, clickedObject.name))
+                {
+                    print("Card colour is opposite to the target card");
+                    if (GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom"))
+                    {
+                        //print("clickedObject's name is " + clickedObject.name);
+                        //print("Card rank is one less than target card, it can be moved.");
+                        CardToTableau(); //move, not to the top
+                        UpdateGameObjects(cardIndex, numCards);
+                        return;
+                    }
+                }             
+                break;
+        }
+        CardToOrigin(); // return to origin
+    }
+
+    private void TableauTop(Transform targetStack)
+    {
+        //Get index of selected card
+        int cardIndex = clickedObject.GetSiblingIndex();
+        //print("card Index of selected card is:" + cardIndex);
+
+        //Get number of cards to see how many have been selected
+        int numCards = clickedObject.parent.transform.childCount - cardIndex;
+        //Make sure only one card is selected
+        if (numCards != 1)
+        {
+            //print("Can only move one card to the top at a time.");
             CardToOrigin(); // return to origin
             return;
         }
 
-        if (targetStack.parent.name.Equals("Top")){
-            //Make sure only one card is selected
-            if (numCards != 1){
-                //print("Can only move one card to the top at a time.");
-                CardToOrigin(); // return to origin
-                return;
-            }
-
+        switch(GameRules.IsEmpty(targetStack))
+        {
             // Case 1: Foundation Pile is empty
-            if (GameRules.IsEmpty(targetStack)){
+            case true:
                 //print("Target stack is empty");
-                if(GameRules.IsEmptyRank(clickedObject.name, "top")){
+                if (GameRules.IsEmptyRank(clickedObject.name, "top"))
+                {
                     //print("Card is an Ace and can be moved");
                     CardToFoundation(); //move, to the top
                     UpdateGameObjects(cardIndex, numCards);
                     return;
                 }
                 //print("Card is not an Ace, cannot be moved here");
-                CardToOrigin(); // return to origin
-                return;
-            }
+                break;
 
             //Case 2: Foundation Pile is not empty
-            //print("Case 2 - moving to a stack with cards");
-            //Case 2 Moving onto a foundation pile same suit and rank +1
-            string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
-            if (GameRules.IsSameSuit(stackCard, clickedObject.name)){
-                //print("Card suit is same as the target card");
-                if(GameRules.IsRankGoood(stackCard, clickedObject.name, "top")){
-                    //print("Card rank is one more than target card, it can be moved.");
-                    CardToFoundation(); //move, to the top
-                    UpdateGameObjects(cardIndex, numCards);
-                    return;
+            case false:
+                string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
+                if (GameRules.IsSameSuit(stackCard, clickedObject.name))
+                {
+                    //print("Card suit is same as the target card");
+                    if (GameRules.IsRankGoood(stackCard, clickedObject.name, "top"))
+                    {
+                        //Case 2 Moving onto a foundation pile same suit and rank +1
+                        //print("Card rank is one more than target card, it can be moved.");
+                        CardToFoundation(); //move, to the top
+                        UpdateGameObjects(cardIndex, numCards);
+                        return;
+                    }
                 }
-                //print("Card rank is incorrect and cannot be moved.");
-                CardToOrigin(); // return to origin
-                return;
-            }
-            //print("Card suit is incorrect and cannot be moved.");
-            CardToOrigin(); // return to origin
-            return;
+                break;
+
         }
-        //print("This is the bad place");
+        CardToOrigin();//return to origin 
     }
 
     //Move card to tableau
