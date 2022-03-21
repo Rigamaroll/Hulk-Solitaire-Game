@@ -355,12 +355,11 @@ public class UserInput : MonoBehaviour{
 
         //Get number of cards to see how many have been selected
         int numCards = clickedObject.parent.transform.childCount - cardIndex;
-        //print("We're moving the card to the bottom");
 
-        //Case 1, new pile is empty, must be a king
-        //print("Case 1 - Moving to empty stack");
+        //check if Stack is empty
         switch (GameRules.IsEmpty(targetStack))
         {
+            //Case 1, new pile is empty, must be a king
             case true:
 
                 //print("Target stack is empty");
@@ -442,7 +441,6 @@ public class UserInput : MonoBehaviour{
                     }
                 }
                 break;
-
         }
         CardToOrigin();//return to origin 
     }
