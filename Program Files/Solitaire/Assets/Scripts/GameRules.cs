@@ -8,24 +8,8 @@ public class GameRules : MonoBehaviour
     void Start(){
         
     }
+
     // SOL 9 - Rank of cards must be functional as per rules
-    public static bool IsRankGoood(List<string> stack, string card, string pos)
-    {
-        int cardRank = int.Parse(card.Substring(1, card.Length - 1));
-        string stackCard = stack[stack.Count - 1];
-        int stackRank = int.Parse(stackCard.Substring(1, stackCard.Length - 1));
-
-        switch (pos)
-        {
-            case "top":
-                return (cardRank - stackRank == 1);
-            case "bottom":
-                return (stackRank - cardRank == 1);
-        }
-        // This is the bad place
-        return false;
-    }
-
     public static bool IsRankGoood(string stackCard, string selectedCard, string pos)
     {
         int cardRank = int.Parse(selectedCard.Substring(1, selectedCard.Length - 1));
@@ -43,26 +27,6 @@ public class GameRules : MonoBehaviour
     }
 
     // SOL 12 - Tableau cards can only be stacked in alternating colors
-    public static bool IsAlternating(List<string> stack, string card)
-    {
-        string cardSuit = card.Substring(0, 1);
-        string stackSuit = stack[stack.Count - 1].Substring(0, 1);
-
-        switch (stackSuit)
-        {
-            // Black suits need red underneath
-            case "C":
-            case "S":
-                return (cardSuit == "D" || cardSuit == "H");
-            // Red suits need black underneath
-            case "D":
-            case "H":
-                return (cardSuit == "C" || cardSuit == "S");
-        }
-        // This is the bad place
-        return false;
-    }
-
     public static bool IsAlternating(string stackCard, string selectedCard)
     {
         string cardSuit = selectedCard.Substring(0, 1);
@@ -84,13 +48,6 @@ public class GameRules : MonoBehaviour
     }
 
     // Checks if suit is the same
-    public static bool IsSameSuit(List<string> stack, string card){
-        string cardSuit = card.Substring(0, 1);
-        string stackSuit = stack[stack.Count - 1].Substring(0, 1);
- 
-        return stackSuit == cardSuit;
-    }
-
     public static bool IsSameSuit(string stackCard, string selectedCard)
     {
         string cardSuit = selectedCard.Substring(0, 1);
@@ -103,10 +60,6 @@ public class GameRules : MonoBehaviour
     public static bool IsEmpty(Transform stack){
         print("stack child count is " + stack.transform.childCount);
         return (stack.transform.childCount == 0);
-    }
-
-    public static bool IsEmpty(List<string> stack){
-        return (stack.Count == 0);
     }
 
     // SOL 13 - Empty Tableau spots can only be filled with a king
@@ -122,10 +75,5 @@ public class GameRules : MonoBehaviour
 
         // This is the bad place
         return false;
-    }
-
-    // Update is called once per frame
-    void Update(){
-        
     }
 }
