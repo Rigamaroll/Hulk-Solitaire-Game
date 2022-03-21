@@ -27,19 +27,12 @@ public class UserInput : MonoBehaviour{
     }
 
     private void OnMouseDown(){
-        //To store the mouse's position
-        mousePosition = Camera.main.ScreenToWorldPoint(
-                               new Vector2(Input.mousePosition.x,
-                               Input.mousePosition.y));
-        //https://docs.unity3d.com/ScriptReference/RaycastHit-collider.html 
-        RaycastHit2D hit;
-
-        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-        
+        //get what's been clicked
+        clickedObject = getTargetBody();
         //What we will do depends on what has been clicked
-        if (hit){
+        if (clickedObject != null){
             //get the object that is hit            
-            clickedObject = hit.collider.transform;
+            //clickedObject = hit.collider.transform;
             cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
             //checks if the stockpile has been hit (so that is will deal)
             if (clickedObject.parent.name.Equals("DeckButton") || clickedObject.name.Equals("DeckButton"))
@@ -85,7 +78,7 @@ public class UserInput : MonoBehaviour{
         //if location dropped is green felt
         if (GetCardPlaceLocation() == null){
             //is the object in a stack, returns to origin
-            if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            if (IsStack())
             {
                 Transform cardsInStack;
                 float stackYoffSet = 0.00f;
@@ -115,6 +108,7 @@ public class UserInput : MonoBehaviour{
 
         dropLocation = DropLocation();
         
+        //checks where the card was clicked and runs the appropriate method
         switch (clickedObject.root.name){
           
             case "Top":
@@ -131,6 +125,24 @@ public class UserInput : MonoBehaviour{
         }
     }
 
+    //Checks if the clicked card is in a stack
+    private bool IsStack()
+    {
+        return ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()));
+
+    }
+    //Raycast to get a clicked card
+    Transform getTargetBody()
+    {  //https://docs.unity3d.com/ScriptReference/RaycastHit-collider.html 
+       //get the object to be dropped on
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        Transform targetBody = null;
+        if(hit.transform != null)
+        {
+            targetBody = hit.transform;
+        }
+        return targetBody;
+    }
 
     // gets the location where you are trying to place the card
     // returns null if not on a game object
@@ -144,20 +156,16 @@ public class UserInput : MonoBehaviour{
             cardsInStack.gameObject.layer = 2;
         }
 
-        //get the object to be dropped on
-        RaycastHit2D hit;
-        Rigidbody2D targetBody = null;
-        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        //get where the card is trying to go
+        Transform targetBody = getTargetBody();
         
         //get object when hits something
-        if (hit.transform != null)
-        {
-            targetBody = hit.transform.GetComponent<Rigidbody2D>();
-         
+        if (targetBody != null)
+        {        
             //TheLogger.PrintLog("we got the targetBody: " + targetBody.transform.parent.name);
 
             // return null if hits talonpile or stock pile
-            if (targetBody.transform.parent.name.Equals("TalonPile")||targetBody.transform.parent.name.Equals("DeckButton")){
+            if (targetBody.root.name.Equals("Deck")){
                 clickedObject.gameObject.layer = 0;
                 return null;
             }
@@ -171,14 +179,14 @@ public class UserInput : MonoBehaviour{
 
         Transform targetLocation;
         //find out what it's hitting is it bottom or top
-        if (targetBody.transform.parent.name.Equals("Bottom"
-            ) || targetBody.transform.parent.name.Equals("Top"))
+        if (targetBody.parent.name.Equals("Bottom"
+            ) || targetBody.parent.name.Equals("Top"))
         {
-            targetLocation = targetBody.transform;
+            targetLocation = targetBody;
         }
         else
         {
-            targetLocation = targetBody.transform.parent;
+            targetLocation = targetBody.parent;
         }
         for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
         {
@@ -193,7 +201,7 @@ public class UserInput : MonoBehaviour{
     void CardMove()
     {
         // if it is a group of cards
-        if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+        if (IsStack())
         {
             Transform cardsInStack;
 
@@ -625,7 +633,7 @@ public class UserInput : MonoBehaviour{
                     yOffSet = 0.0f;
                 }
                 //checks if the selected card is the last card in the stack.  If not it gets the totals amount of cards and places all of them.
-                if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+                if (IsStack())
                 {
                     float stackYoffSet;
                     Transform cardsInStack;
@@ -662,7 +670,7 @@ public class UserInput : MonoBehaviour{
         }else{
             print("Card cannot move there!");
             //return the card to its original location
-            if ((clickedObject.GetSiblingIndex() < clickedObject.parent.childCount - 1) && (clickedObject.GetComponent<Selectable>().IsFaceUp()))
+            if (IsStack())
             {
                 Transform cardsInStack;
                 float stackYoffSet = 0.00f;
@@ -734,4 +742,5 @@ public class UserInput : MonoBehaviour{
             Scoring.instance.AddScore();
         }
     }
+   
 }
