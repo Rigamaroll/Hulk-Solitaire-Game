@@ -585,5 +585,28 @@ public class UserInput : MonoBehaviour{
             mom.GetChild(mom.childCount - 1).GetComponent<Selectable>().FlipCard();
             Scoring.instance.AddScore(1);
         }
-    } 
+        if (IsGameOver())
+        {
+            print("You Won WOOT!");
+        }
+    }
+    public bool IsGameOver()
+    {
+        bool isT0Full = GameObject.Find("Top0").transform.childCount == 13;
+        bool isT1Full = GameObject.Find("Top1").transform.childCount == 13;
+        bool isT2Full = GameObject.Find("Top2").transform.childCount == 13;
+        bool isT3Full = GameObject.Find("Top3").transform.childCount == 13;
+        if (isT0Full && isT1Full && isT2Full && isT3Full)
+        {
+            //Turn off raycast for all tableaus (layer = 2)
+            for (int i = 0; i < GameObject.Find("Bottom").transform.childCount; i++)
+            {
+                GameObject.Find("Bottom").transform.GetChild(i).gameObject.layer = 2;
+            }
+
+            return true;
+
+        }
+        return false;
+    }
 }
