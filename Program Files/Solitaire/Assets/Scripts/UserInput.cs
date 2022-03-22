@@ -9,6 +9,7 @@ public class UserInput : MonoBehaviour{
     Transform targetObject;
     bool isDragged = false;
     bool isStockpileCard = false;
+    bool isEmptyFound = false;
     Transform dropLocation;
     LocationRetriever locationRetriever;
     float firstClick;
@@ -33,11 +34,12 @@ public class UserInput : MonoBehaviour{
         //get what's been clicked
         //get the object that is hit   
         clickedObject = locationRetriever.GetTargetBody();
-               
+     
         //What we will do depends on what has been clicked
         if (clickedObject != null){
-            
+            print(clickedObject.parent.name);
             cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
+           
             //checks if the stockpile has been hit (so that it will deal)
             if (clickedObject.parent.name.Equals("DeckButton") || clickedObject.name.Equals("DeckButton"))
             {
@@ -46,6 +48,13 @@ public class UserInput : MonoBehaviour{
                 //TheLogger.PrintLog("Hit Stockpile");
                 return;
             } 
+
+            //check to see if empty foundation is hit (unselect)
+            if (clickedObject.parent.name.Equals("Top")){
+                print("Don't click here");
+                isEmptyFound = true;
+                return;
+            }
 
             //check if card is face up 
             if (clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
@@ -74,6 +83,11 @@ public class UserInput : MonoBehaviour{
         if (isStockpileCard)
         {
             isStockpileCard = false;
+            return;
+        }
+        //case where empty foundation was clicked
+        if (isEmptyFound){
+            isEmptyFound = false;
             return;
         }
         isDragged = false;
