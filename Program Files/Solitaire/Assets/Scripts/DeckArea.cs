@@ -49,7 +49,7 @@ public class DeckArea : MonoBehaviour
             }
         }
 
-        print("Deal 1 or 3 more cards");
+        //print("Deal 1 or 3 more cards");
     }
 
     //Restocks the stockpile from the talonpile

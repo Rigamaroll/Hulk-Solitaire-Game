@@ -11,10 +11,13 @@ public class UserInput : MonoBehaviour{
     bool isStockpileCard = false;
     Transform dropLocation;
     LocationRetriever locationRetriever;
-    
+    bool isDoubleClicked = false;
+    bool isClicked = false;
+    float firstClick;
+
     //Start is called before the first frame update
     void Start(){
-        Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
+        //Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
         locationRetriever = FindObjectOfType<LocationRetriever>();
     }
 
@@ -28,23 +31,28 @@ public class UserInput : MonoBehaviour{
     }
 
     private void OnMouseDown(){
+       
         //get what's been clicked
+
+        //get the object that is hit   
+
         clickedObject = locationRetriever.GetTargetBody();
+               
         //What we will do depends on what has been clicked
         if (clickedObject != null){
-            //get the object that is hit            
+            
             cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
-            //checks if the stockpile has been hit (so that is will deal)
+            //checks if the stockpile has been hit (so that it will deal)
             if (clickedObject.parent.name.Equals("DeckButton") || clickedObject.name.Equals("DeckButton"))
             {
                 isStockpileCard = true;
                 FindObjectOfType<DeckArea>().StockPile(clickedObject);
                 //TheLogger.PrintLog("Hit Stockpile");
-                return;          
-            }
-            
-        //check if card is face up 
-        if(clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
+                return;
+            } 
+
+            //check if card is face up 
+            if (clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
             float zOffSet = -0.54f;
             isDragged = true;
             Transform cardsInStack;
@@ -55,7 +63,6 @@ public class UserInput : MonoBehaviour{
                     cardsInStack = clickedObject.parent.GetChild(numMoves);
                     cardsInStack.position = new Vector3(cardsInStack.position.x, cardsInStack.position.y, zOffSet);
                     zOffSet -= 0.03f;       
-
                 }
             }
 
@@ -66,6 +73,7 @@ public class UserInput : MonoBehaviour{
     }
 
     private void OnMouseUp(){
+        
         //this means the card goes to the talonpile
         if (isStockpileCard)
         {
@@ -73,10 +81,37 @@ public class UserInput : MonoBehaviour{
             return;
         }
         isDragged = false;
+
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
-        
-        //if location dropped is green felt
+
+        float secondClick;
+
+        if (isClicked)
+        {
+            secondClick = Time.time;
+            string checkDiff = (secondClick - firstClick).ToString();
+            TheLogger.PrintLog(checkDiff);
+            if (secondClick - firstClick < 0.250)
+            {
+                isDoubleClicked = true;
+            }
+                
+            isClicked = false;
+        }
+        else
+        {
+            isClicked = true;
+            firstClick = Time.time;
+        }
+        //if location dropped is green felt or on the Deck
         if (locationRetriever.GetCardPlaceLocation(clickedObject) == null){
+            //if it's a doubleclick confirm if it could be a GoodFoundationMove
+            if (clickedObject.parent.name.Equals("TalonPile") && isDoubleClicked)
+            {
+                GoodFoundationMove();
+                return;
+            }
+            TheLogger.PrintLog("Getting into the null section of OnMouseUp");
             //is the object in a stack, returns to origin
             if (IsStack())
             {
@@ -98,31 +133,75 @@ public class UserInput : MonoBehaviour{
             {
                 clickedObject.position = cardOrigin;
             }
-
-            return;
         }
         //move to new location
-        else{
-            targetObject = locationRetriever.GetCardPlaceLocation(clickedObject);
-        }
+        else
+        {
+            //TheLogger.PrintLog("Value of doubleClick before GoodFoundation is " + isDoubleClicked);
+            if (isDoubleClicked)
+            {
+                
+                GoodFoundationMove();
+            
+            } else 
+            {           
+                targetObject = locationRetriever.GetCardPlaceLocation(clickedObject);
+                dropLocation = locationRetriever.DropLocation(targetObject);
+                //checks where the card was clicked and runs the appropriate method
+                switch (clickedObject.root.name)
+                {
 
-        dropLocation = locationRetriever.DropLocation(targetObject);
-        
-        //checks where the card was clicked and runs the appropriate method
-        switch (clickedObject.root.name){
-          
-            case "Top":
-                Foundation();
-                break;
-            case "Bottom":
-                Tableau();
-                break;
-            case "Deck":
-                Talon();
-                break;
-            default:
-                break;
+                    case "Top":
+                        Foundation();
+                        break;
+                    case "Bottom":
+                        Tableau();
+                        break;
+                    case "Deck":
+                        Talon();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
+        isDoubleClicked = false;
+    }
+    //checks if the card is already clicked
+   
+    void GoodFoundationMove()
+    {
+        Transform topObject;
+        for (int i= 0; i < 4; i++)
+        {
+            topObject = GameObject.Find("Top" + i).transform;
+            if (topObject.childCount < 1)
+            {
+                
+                targetObject = topObject;
+            } 
+            else
+            {
+                targetObject = topObject.transform.GetChild(topObject.childCount - 1);
+            }
+            dropLocation = locationRetriever.DropLocation(targetObject);
+            if(clickedObject.parent.name.Equals("TalonPile"))
+            {
+                //print("Got to Talon double");
+                if(Talon())
+                {                
+                    return;
+                }
+            }
+            else
+            {
+                if (Tableau())
+                {                
+                    return;
+                };
+            }
+        }
+        
     }
 
     //Checks if the clicked card is in a stack
@@ -157,7 +236,7 @@ public class UserInput : MonoBehaviour{
     }
     
     //Call algorithm for if TalonPile is selected
-    void Talon()
+    bool Talon()
     {
         //Get target stack
         Transform targetStack;
@@ -176,16 +255,17 @@ public class UserInput : MonoBehaviour{
 
         if (targetStack.parent.name.Equals("Bottom"))
         {
-            TalonBottom(targetStack);
+            return TalonBottom(targetStack);
         }
 
         if (targetStack.parent.name.Equals("Top"))
         {
-            TalonTop(targetStack);
+            return TalonTop(targetStack);
         }
+        return false;
     }
     //moving cards from Talonpile to the tableau
-    void TalonBottom(Transform targetStack)
+    bool TalonBottom(Transform targetStack)
     {
         //Get index of card selected card
         int cardIndex = clickedObject.GetSiblingIndex();
@@ -199,12 +279,12 @@ public class UserInput : MonoBehaviour{
                 //print("Target stack is empty");
                 if (GameRules.IsEmptyRank(clickedObject.name, "bottom"))
                 {
-                    print("Card is a King and can be moved");
+                    //print("Card is a King and can be moved");
                     CardToTableau(); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
                     // Add 5 points for moving to the tableau from the Talon
                     Scoring.instance.AddScore(1);
-                    return;
+                    return true;
                 }
                 //print("Card is not a King, cannot be moved here");
                
@@ -222,15 +302,17 @@ public class UserInput : MonoBehaviour{
                     UpdateGameObjects(cardIndex, 1);
                     // Add 5 points for moving to the tableau from the Talon
                     Scoring.instance.AddScore(1);
-                    return;
+                    return true;
                     //print("Card rank or colour is incorrect and cannot be moved.");
                 }            
                 break;
         }
+
         CardToOrigin(); // return to origin
+        return false;
     }
     //moving cards from talonpile to the foundation
-    void TalonTop(Transform targetStack)
+    bool TalonTop(Transform targetStack)
     {
         //Get index of card selected card
         int cardIndex = clickedObject.GetSiblingIndex();
@@ -246,7 +328,7 @@ public class UserInput : MonoBehaviour{
                     //print("Card is an Ace, movingto new slot.");
                     CardToFoundation(); //move, to the top
                     UpdateGameObjects(cardIndex, 1);
-                    return;
+                    return true;
                 }
                 break;
 
@@ -262,12 +344,13 @@ public class UserInput : MonoBehaviour{
                     //print("Card rank is one more than target card, it can be moved.");
                     CardToFoundation(); //move, to the top
                     UpdateGameObjects(cardIndex, 1);
-                    return;
+                    return true;
                 }             
                 break;
 
         }
         CardToOrigin(); // return to origin      
+        return false;
     }
 
     //Call algorithm for if top spot is selected
@@ -338,7 +421,7 @@ public class UserInput : MonoBehaviour{
     }
 
     //Call algorithm for if bottom spot is selected
-    void Tableau()
+    bool Tableau()
     {
         //Get target stack which is where we're placing the card
         Transform targetStack;
@@ -353,17 +436,17 @@ public class UserInput : MonoBehaviour{
         switch(targetStack.parent.name)
         {
             case "Bottom":
-                TableauBottom(targetStack);
-                break;
+                return TableauBottom(targetStack);
+                
             case "Top":
-                TableauTop(targetStack);
-                break;
+                return TableauTop(targetStack);
+               
         }
-      
+        return false;
         //print("This is the bad place");
     }
     //Moving cards to the tableau from the tableau
-    private void TableauBottom(Transform targetStack)
+    bool TableauBottom(Transform targetStack)
     {
         //Get index of selected card
         int cardIndex = clickedObject.GetSiblingIndex();
@@ -384,7 +467,7 @@ public class UserInput : MonoBehaviour{
                     //print("Card is a King and can be moved");
                     CardToTableau(); //move, not to the top
                     UpdateGameObjects(cardIndex, numCards);
-                    return;
+                    return true;
                 }            
                 break;
 
@@ -393,7 +476,7 @@ public class UserInput : MonoBehaviour{
                 //print("Case 2 - moving to a stack with cards");
                 //Case 2 Moving onto a tableau pile alt colours and rank -1
                 string stackCard = targetStack.GetChild(targetStack.childCount - 1).name;
-                TheLogger.PrintLog("stack card is " + stackCard + " and clickedCard is " + clickedObject.name);
+                //TheLogger.PrintLog("stack card is " + stackCard + " and clickedCard is " + clickedObject.name);
                 if (GameRules.IsAlternating(stackCard, clickedObject.name)
                     && GameRules.IsRankGoood(stackCard, clickedObject.name, "bottom"))
                 {
@@ -402,15 +485,18 @@ public class UserInput : MonoBehaviour{
                     //print("Card rank is one less than target card, it can be moved.");
                     CardToTableau(); //move, not to the top
                     UpdateGameObjects(cardIndex, numCards);
-                    return;                 
+                    return true;                 
                 }             
                 break;
         }
         CardToOrigin(); // return to origin
+        return false;
     }
     //moving cards to the foundation from the Tableau
-    private void TableauTop(Transform targetStack)
+    private bool TableauTop(Transform targetStack)
     {
+        //print("Got to tableauTop");
+
         //Get index of selected card
         int cardIndex = clickedObject.GetSiblingIndex();
         //print("card Index of selected card is:" + cardIndex);
@@ -422,7 +508,7 @@ public class UserInput : MonoBehaviour{
         {
             //print("Can only move one card to the top at a time.");
             CardToOrigin(); // return to origin
-            return;
+            return false;
         }
 
         switch(GameRules.IsEmpty(targetStack))
@@ -434,8 +520,9 @@ public class UserInput : MonoBehaviour{
                 {
                     //print("Card is an Ace and can be moved");
                     CardToFoundation(); //move, to the top
-                    UpdateGameObjects(cardIndex, numCards);
-                    return;
+                    //print("cardIndex is " + cardIndex);
+                    UpdateGameObjects(cardIndex, 1);
+                    return true;
                 }
                 //print("Card is not an Ace, cannot be moved here");
                 break;
@@ -450,12 +537,13 @@ public class UserInput : MonoBehaviour{
                     //Case 2 Moving onto a foundation pile same suit and rank +1
                     //print("Card rank is one more than target card, it can be moved.");
                     CardToFoundation(); //move, to the top
-                    UpdateGameObjects(cardIndex, numCards);
-                    return;                  
+                    UpdateGameObjects(cardIndex, 1);
+                    return true;                  
                 }
                 break;
         }
         CardToOrigin();//return to origin 
+        return false;
     }
 
     //Move card to tableau

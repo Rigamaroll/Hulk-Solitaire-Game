@@ -170,7 +170,7 @@ public class Solitaire : MonoBehaviour
      //creates the Stockpile
      public void CreateStockPile()
      {
-         TheLogger.PrintLog("CreateStockPile");
+         //TheLogger.PrintLog("CreateStockPile");
          float zOffset = -0.02f;
          GameObject newCard = null;
          stockPile = GameObject.FindGameObjectWithTag("Deck");
