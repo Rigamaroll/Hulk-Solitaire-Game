@@ -96,7 +96,7 @@ public class UserInput : MonoBehaviour{
         //checks if the time between clicks is fast enough for a double click
         bool isDoubleClicked;
         float secondClick = Time.time;
-        if ((secondClick - firstClick < 0.250) && (secondClick - firstClick > 0))
+        if ((secondClick - firstClick < 0.35f) && (secondClick - firstClick > 0))
         {
             isDoubleClicked = true;
         }
