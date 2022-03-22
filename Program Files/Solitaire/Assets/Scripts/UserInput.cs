@@ -11,13 +11,11 @@ public class UserInput : MonoBehaviour{
     bool isStockpileCard = false;
     Transform dropLocation;
     LocationRetriever locationRetriever;
-    bool isDoubleClicked = false;
-    bool isClicked = false;
     float firstClick;
 
     //Start is called before the first frame update
     void Start(){
-        //Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
+        Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
         locationRetriever = FindObjectOfType<LocationRetriever>();
     }
 
@@ -33,9 +31,7 @@ public class UserInput : MonoBehaviour{
     private void OnMouseDown(){
        
         //get what's been clicked
-
         //get the object that is hit   
-
         clickedObject = locationRetriever.GetTargetBody();
                
         //What we will do depends on what has been clicked
@@ -83,26 +79,21 @@ public class UserInput : MonoBehaviour{
         isDragged = false;
 
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
-
-        float secondClick;
-
-        if (isClicked)
+        //checks if the time between clicks is fast enough for a double click
+        bool isDoubleClicked;
+        float secondClick = Time.time;
+        if ((secondClick - firstClick < 0.250) && (secondClick - firstClick > 0))
         {
-            secondClick = Time.time;
-            string checkDiff = (secondClick - firstClick).ToString();
-            TheLogger.PrintLog(checkDiff);
-            if (secondClick - firstClick < 0.250)
-            {
-                isDoubleClicked = true;
-            }
-                
-            isClicked = false;
+            isDoubleClicked = true;
         }
         else
         {
-            isClicked = true;
-            firstClick = Time.time;
+            isDoubleClicked = false;
         }
+       /* string checkDiff = (secondClick - firstClick).ToString();
+        TheLogger.PrintLog(checkDiff);*/
+        firstClick = Time.time;
+        
         //if location dropped is green felt or on the Deck
         if (locationRetriever.GetCardPlaceLocation(clickedObject) == null){
             //if it's a doubleclick confirm if it could be a GoodFoundationMove
@@ -111,7 +102,8 @@ public class UserInput : MonoBehaviour{
                 GoodFoundationMove();
                 return;
             }
-            TheLogger.PrintLog("Getting into the null section of OnMouseUp");
+            
+            //TheLogger.PrintLog("Getting into the null section of OnMouseUp");
             //is the object in a stack, returns to origin
             if (IsStack())
             {
@@ -165,7 +157,6 @@ public class UserInput : MonoBehaviour{
                 }
             }
         }
-        isDoubleClicked = false;
     }
     //checks if the card is already clicked
    
