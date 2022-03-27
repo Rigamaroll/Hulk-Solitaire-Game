@@ -93,20 +93,9 @@ public class UserInput : MonoBehaviour{
         isDragged = false;
 
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
+
         //checks if the time between clicks is fast enough for a double click
         bool isDoubleClicked = IsDoubleClick();
-        /*float secondClick = Time.time;
-        if ((secondClick - firstClick < 0.35f) && (secondClick - firstClick > 0))
-        {
-            isDoubleClicked = true;
-        }
-        else
-        {
-            isDoubleClicked = false;
-        }
-       *//* string checkDiff = (secondClick - firstClick).ToString();
-        TheLogger.PrintLog(checkDiff);*//*
-        firstClick = Time.time;*/
         
         //if location dropped is green felt or on the Deck
         if (locationRetriever.GetCardPlaceLocation(clickedObject) == null){
