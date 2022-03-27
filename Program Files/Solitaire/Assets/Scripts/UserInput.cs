@@ -58,7 +58,7 @@ public class UserInput : MonoBehaviour{
 
             //check if card is face up 
             if (clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
-            float zOffSet = -0.54f;
+            float zOffSet = -0.72f;
             isDragged = true;
             Transform cardsInStack;
             clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
@@ -94,8 +94,8 @@ public class UserInput : MonoBehaviour{
 
         clickedObject.GetComponent<SpriteRenderer>().color = Color.white;
         //checks if the time between clicks is fast enough for a double click
-        bool isDoubleClicked;
-        float secondClick = Time.time;
+        bool isDoubleClicked = IsDoubleClick();
+        /*float secondClick = Time.time;
         if ((secondClick - firstClick < 0.35f) && (secondClick - firstClick > 0))
         {
             isDoubleClicked = true;
@@ -104,9 +104,9 @@ public class UserInput : MonoBehaviour{
         {
             isDoubleClicked = false;
         }
-       /* string checkDiff = (secondClick - firstClick).ToString();
-        TheLogger.PrintLog(checkDiff);*/
-        firstClick = Time.time;
+       *//* string checkDiff = (secondClick - firstClick).ToString();
+        TheLogger.PrintLog(checkDiff);*//*
+        firstClick = Time.time;*/
         
         //if location dropped is green felt or on the Deck
         if (locationRetriever.GetCardPlaceLocation(clickedObject) == null){
@@ -172,8 +172,25 @@ public class UserInput : MonoBehaviour{
             }
         }
     }
-    //checks if the card is already clicked
-   
+
+    //does the doubleclick check
+    bool IsDoubleClick()
+    {
+        float secondClick = Time.time;
+        if ((secondClick - firstClick < 0.35f) && (secondClick - firstClick > 0))
+        {
+            firstClick = Time.time;
+            return true;
+        }
+        else
+        {
+            firstClick = Time.time;
+            return false;
+        }
+    }
+
+
+    //checks if the card is already clicked 
     void GoodFoundationMove()
     {
         Transform topObject;
@@ -181,8 +198,7 @@ public class UserInput : MonoBehaviour{
         {
             topObject = GameObject.Find("Top" + i).transform;
             if (topObject.childCount < 1)
-            {
-                
+            {               
                 targetObject = topObject;
             } 
             else
@@ -450,6 +466,7 @@ public class UserInput : MonoBehaviour{
         return false;
         //print("This is the bad place");
     }
+
     //Moving cards to the tableau from the tableau
     bool TableauBottom(Transform targetStack)
     {
@@ -497,6 +514,7 @@ public class UserInput : MonoBehaviour{
         CardToOrigin(); // return to origin
         return false;
     }
+
     //moving cards to the foundation from the Tableau
     private bool TableauTop(Transform targetStack)
     {
@@ -633,6 +651,7 @@ public class UserInput : MonoBehaviour{
             clickedObject.position = cardOrigin;
         }
     }
+
     //Places the transforms in the correct stacks after the GameObjects have been moved on the screen
     private void UpdateGameObjects(int cardIndex, int numCards)
     {

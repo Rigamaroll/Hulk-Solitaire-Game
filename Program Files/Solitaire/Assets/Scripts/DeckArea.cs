@@ -4,6 +4,7 @@ using UnityEngine;
 //Class which looks after Deck related functions
 public class DeckArea : MonoBehaviour
 {
+    int vegasCounter = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,23 +34,25 @@ public class DeckArea : MonoBehaviour
         if (!clickedObject.name.Equals("DeckButton"))
         {
             //move the card to the talonpile
-
-            clickedObject.SetParent(talonPile);
-            clickedObject.position = new Vector3(talonPile.position.x, talonPile.position.y, talonPile.position.z + zOffSet);
-            clickedObject.GetComponent<Selectable>().FlipCard();
-
+            if (MainMenu.GetDealThree())
+            {
+                DealThree(clickedObject, talonPile, zOffSet);
+            }
+            else
+            {
+                DealOne(clickedObject, talonPile, zOffSet);
+            }
         }
         else
         {
             // refresh from the talonpile
             // flips cards over if not in Vegas mode
-            if (!MainMenu.GetOnVegas())
+            if (!MainMenu.GetOnVegas() || (MainMenu.GetOnVegas() && MainMenu.GetDealThree() && vegasCounter < 3))
             {
                 RestockDeck(deckRoot, talonPile);
+                vegasCounter += 1;
             }
         }
-
-        //print("Deal 1 or 3 more cards");
     }
 
     //Restocks the stockpile from the talonpile
@@ -66,14 +69,63 @@ public class DeckArea : MonoBehaviour
         //goes through each card in the talonpile and puts it back in the stockpile
         for (int talonLength = talonPile.transform.childCount; talonLength > 0; talonLength--)
         {
-
             talonCard = talonPile.GetChild(talonPile.childCount - 1);
             talonCard.SetParent(deckRoot.GetChild(0));
             talonCard.position = new Vector3(stockPile.position.x, stockPile.position.y, stockPile.position.z - zOffSet);
             talonCard.GetComponent<Selectable>().FlipCard();
+            
             zOffSet += 0.03f;
-
         } 
         Scoring.instance.ReduceScore(20);  
     }
+
+    //deal three cards if playing deal three option
+    void DealThree(Transform clickedObject, Transform talonPile, float zOffSet)
+    {
+
+        float thisZOffSet = zOffSet;
+        float xOffSet = 0;
+        
+        //the card being moved
+        Transform currentCard;
+        Transform deck = talonPile.parent.GetChild(0);
+        
+        for (int i = 0; i < talonPile.childCount; i++)
+        {
+            talonPile.GetChild(i).position = new Vector3(talonPile.position.x, talonPile.GetChild(i).position.y, talonPile.GetChild(i).position.z);
+        }
+
+        //cards to deal
+        int cards = 3;
+
+        //checks how many cards are left in stockpile
+        if (clickedObject.parent.childCount < 3)
+        {          
+            cards = clickedObject.parent.childCount;
+        }
+
+        //goes through each card and moves it to talonpile and flips it
+        for (int card = 0; card < cards; card++)
+        {
+            currentCard = deck.GetChild(deck.childCount - 1);
+            currentCard.SetParent(talonPile);
+            currentCard.position = new Vector3(talonPile.position.x + xOffSet, talonPile.position.y, talonPile.position.z + thisZOffSet);
+
+            currentCard.GetComponent<Selectable>().FlipCard();
+              
+            thisZOffSet -= 0.03f;
+            xOffSet += 0.4f;
+        }
+    }
+
+    //deal one card for one card play from stockpile
+    void DealOne(Transform clickedObject, Transform talonPile, float zOffSet)
+    {
+
+        clickedObject.SetParent(talonPile);
+        clickedObject.position = new Vector3(talonPile.position.x, talonPile.position.y, talonPile.position.z + zOffSet);
+        clickedObject.GetComponent<Selectable>().FlipCard();
+
+    }
 }
+

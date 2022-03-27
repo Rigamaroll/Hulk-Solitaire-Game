@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] KeyCode pablosDone;
     [SerializeField] KeyCode pablosMenu;
     static bool isVegas = false;
+    static bool isDealThree = false;
 
     public static void PlayGame()
     {
@@ -56,4 +57,22 @@ public class MainMenu : MonoBehaviour
     public static bool GetOnVegas(){
         return MainMenu.isVegas;
     }
+
+    public static void OnDealThree()
+    {
+        print("Dealing three Cards");
+        isDealThree = true;
+    }
+
+    public static void OnDealOne()
+    {
+        print("Dealing One Card");
+        isDealThree = false;
+    }
+
+    public static bool GetDealThree()
+    {    
+        return isDealThree;
+    }
+        
 }

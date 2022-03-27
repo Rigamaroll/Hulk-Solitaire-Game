@@ -17,8 +17,13 @@ public class LocationRetriever : MonoBehaviour
        //get the object to be dropped on
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
         Transform targetBody = null;
-        if (hit.transform != null)
+        if (hit.transform != null)            
         {
+            //checks if the talonpile card is the top one which can be selected otherwise returns null so can't click it
+            if ((hit.transform.parent.name.Equals("TalonPile") && hit.transform.GetSiblingIndex() != hit.transform.parent.childCount - 1))
+            {
+                return null;
+            }
             targetBody = hit.transform;
         }
         return targetBody;
