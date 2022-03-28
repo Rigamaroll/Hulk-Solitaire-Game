@@ -58,7 +58,7 @@ public class DeckArea : MonoBehaviour
             // When it gets to 3 change o to x
             if (vegasCounter == 3){
                 GameObject.Find("o").GetComponent<SpriteRenderer>().enabled = false;
-                GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = true;m
+                GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = true;
             }
         }
     }
