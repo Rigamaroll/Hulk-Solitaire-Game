@@ -55,11 +55,6 @@ public class DeckArea : MonoBehaviour
                 RestockDeck(deckRoot, talonPile);
                 vegasCounter += 1;
             }
-            // When it gets to 3 change o to x
-            if (vegasCounter == 3){
-                GameObject.Find("o").GetComponent<SpriteRenderer>().enabled = false;
-                GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = true;
-            }
         }
     }
 
@@ -124,6 +119,11 @@ public class DeckArea : MonoBehaviour
             thisZOffSet -= 0.03f;
             xOffSet += 0.4f;
         }
+            // When it gets to 3 change o to x
+            if (vegasCounter == 3 && MainMenu.GetOnVegas()){
+                GameObject.Find("o").GetComponent<SpriteRenderer>().enabled = false;
+                GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = true;
+            }
     }
 
     //deal one card for one card play from stockpile
