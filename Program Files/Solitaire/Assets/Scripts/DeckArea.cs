@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 //Class which looks after Deck related functions
 public class DeckArea : MonoBehaviour
 {
     int vegasCounter = 1;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameObject.Find("o").GetComponent<SpriteRenderer>().enabled = true;
+        GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = false;
     }
 
     //This is where we will call the algorithm for if Deck is touched
@@ -51,6 +54,11 @@ public class DeckArea : MonoBehaviour
             {
                 RestockDeck(deckRoot, talonPile);
                 vegasCounter += 1;
+            }
+            // When it gets to 3 change o to x
+            if (vegasCounter == 3){
+                GameObject.Find("o").GetComponent<SpriteRenderer>().enabled = false;
+                GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = true;m
             }
         }
     }
@@ -125,6 +133,11 @@ public class DeckArea : MonoBehaviour
         clickedObject.SetParent(talonPile);
         clickedObject.position = new Vector3(talonPile.position.x, talonPile.position.y, talonPile.position.z + zOffSet);
         clickedObject.GetComponent<Selectable>().FlipCard();
+
+        if (MainMenu.GetOnVegas()){
+            GameObject.Find("o").GetComponent<SpriteRenderer>().enabled = false;
+            GameObject.Find("x").GetComponent<SpriteRenderer>().enabled = true;
+        }
 
     }
 }
