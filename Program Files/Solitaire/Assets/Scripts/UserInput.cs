@@ -13,7 +13,7 @@ public class UserInput : MonoBehaviour{
     
     //Start is called before the first frame update
     void Start(){
-  
+        Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
     }
 
     //Update is called once per frame
@@ -273,6 +273,9 @@ public class UserInput : MonoBehaviour{
                     zOffSet += 0.03f;
 
                 }
+                for (int i = 0; i <= 19; i++){
+                    Scoring.instance.ReduceScore();
+                }
             }
         }
        
@@ -317,6 +320,8 @@ public class UserInput : MonoBehaviour{
                     print("Card is a King and can be moved");
                     UpdateLocation(true, false); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
+                    // Add 5 points for moving to the tableau from the Talon
+                    Scoring.instance.AddScore();
                     return;
                 }
                 print("Card is not a King, cannot be moved here");
@@ -335,6 +340,8 @@ public class UserInput : MonoBehaviour{
                     //print("Card rank is one less than target card, it can be moved.");
                     UpdateLocation(true, false); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
+                    // Add 5 points for moving to the tableau from the Talon
+                    Scoring.instance.AddScore();
                     return;
                 }
                 //print("Card rank is incorrect and cannot be moved.");
@@ -427,6 +434,10 @@ public class UserInput : MonoBehaviour{
                     //print("Card rank is one less than target card, it can be moved.");
                     UpdateLocation(true, false); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
+                    // Card moving from Foundation To Tableau Piles. Remove Points
+                    Scoring.instance.ReduceScore();
+                    Scoring.instance.ReduceScore();
+                    Scoring.instance.ReduceScore();
                     return;
                 }
                 //print("Card rank is incorrect and cannot be moved.");
@@ -597,6 +608,9 @@ public class UserInput : MonoBehaviour{
                 //Foundation: offset the z-index only
                 clickedObject.transform.position = new Vector3(dropLocation.transform.position.x,
                     dropLocation.transform.position.y, dropLocation.transform.position.z - 0.03f);
+                // Card moves to the top + 10 points
+                Scoring.instance.AddScore();
+                Scoring.instance.AddScore();
             }
             else
             {
@@ -717,6 +731,7 @@ public class UserInput : MonoBehaviour{
         {
             print("Next card should flip!");
             mom.transform.GetChild(mom.transform.childCount - 1).GetComponent<Selectable>().FlipCard();
+            Scoring.instance.AddScore();
         }
     }
 }
