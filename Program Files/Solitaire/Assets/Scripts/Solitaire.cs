@@ -76,11 +76,6 @@ public class Solitaire : MonoBehaviour
         //Demo2.TestSol16(bottom0);
     }
 
-    // Update is called once per frame
-    void Update(){
-        
-    }
-
     // Generate the deck from the two array lists
     public static List<string> GenerateDeck() {
         // Create a list to store the card (Suit/Value) in
@@ -172,66 +167,23 @@ public class Solitaire : MonoBehaviour
         }
         CreateStockPile();
     }
-
+     //creates the Stockpile
      public void CreateStockPile()
      {
-         TheLogger.PrintLog("CreateStockPile");
+         //TheLogger.PrintLog("CreateStockPile");
          float zOffset = -0.02f;
-         //float yOffset = 3f;
          GameObject newCard = null;
          stockPile = GameObject.FindGameObjectWithTag("Deck");
-         //stockPileArray = new List<GameObject>();
 
+         //goes through the remainder of the deck and instantiates the cards into the stockpile
          for (int i = 0; i < deck.Count; i++)
          {
              newCard = Instantiate(cardPrefab, new Vector3(stockPile.transform.position.x, stockPile.transform.position.y, zOffset), Quaternion.identity,
                  stockPile.transform);
              newCard.name = deck[i];
              zOffset -= 0.02f;
-            //yOffset -= 0.005f;
-            //stockPileArray.Add(newCard);
-            //newCard.GetComponent<Selectable>().FlipCard();
             //TheLogger.PrintLog(stockPileArray[i].name);
             newCard.transform.SetParent(stockPile.transform);
          }
-
-
      }
-
-    // Update display lists
-    public void UpdatePositions(List<string> cardsSelected, string parentStackType, int parentStackNo, string targetStackType, int targetStackNo){
-        for (int i = 0; i < cardsSelected.Count; i ++){
-            //find the card by its name and rank then pull the card and put it into new stack
-                // Get the original location
-                // Get the target location
-                // Remove from original array
-                // put the card into the new location array
-        }
-    }
-
-    // 
-    public List<GameObject> GetStockPileArray(){
-        return stockPileArray;
-    }
-
-    public void SetStockPileArray (List<GameObject> newStockPile){
-        this.stockPileArray = newStockPile;
-    }
-
-    public List<string>[] GetFoundations(){
-        return tops;
-    }
-
-    public void setFoundations (List<string>[] newFoundations){
-        this.tops = newFoundations;
-    }
-
-    public List<string>[] GetTableaus(){
-        return bottoms;
-    }
-
-    public void setTableaus (List<string>[] newTableaus){
-        this.bottoms = newTableaus;
-    }
-
 }

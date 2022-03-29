@@ -21,16 +21,17 @@ public class Scoring : MonoBehaviour
         points.text = "Score: " + score.ToString(); //showing the score on the screen at the top
     }
 
-    // Adding to the score value
-    public void AddScore()
+    // Adding to the score value multiplier is how many times 5 score is reduced
+    public void AddScore(int multiplier)
     {
-        score += 5; // scoring value goes up
+        score += 5 * multiplier; // scoring value goes up
         points.text = "Score: " + score.ToString(); // updates the score value on the screen
     }
 
-    public void ReduceScore()
+    //Reducing the score value, multiplier is how many times score reduced by 5
+    public void ReduceScore(int multiplier)
     {
-        score -= 5; // Scoring value goes down
+        score -= 5 * multiplier; // Scoring value goes down
         CheckScore();
         points.text = "Score: " + score.ToString(); // updates the score value on the scree
     }
@@ -38,7 +39,7 @@ public class Scoring : MonoBehaviour
     public void TimeReduceScore() // reducing the score every 30 seconds
     {
         score -= 2;
-        // CheckScore();
+        CheckScore();
         points.text = "Score: " + score.ToString();
         
     }

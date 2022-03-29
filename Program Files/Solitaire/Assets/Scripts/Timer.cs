@@ -10,15 +10,15 @@ public class Timer : MonoBehaviour
     int min;
     int seconds;
     float time;
+    int nextUpdate = 1;
 
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+     void Update()
     {
         time += Time.deltaTime;
         min = (int)time / 60;
@@ -31,13 +31,20 @@ public class Timer : MonoBehaviour
         {
             timer.text = "Time: " + min + ":" + seconds;
         }
+
+        if (Time.time >= nextUpdate){
+            nextUpdate = (int)time + 1;
+            CheckScore();
+        }
+
+
     }
 
-    private void FixedUpdate()
+    private void CheckScore()
     {
         if ((int)time % 30 == 0 && (int)time > 0)
         {
-            // Scoring.instance.TimeReduceScore();
+            Scoring.instance.TimeReduceScore();
 
         }
     }
