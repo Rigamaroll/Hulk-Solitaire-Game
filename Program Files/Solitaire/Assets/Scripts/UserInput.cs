@@ -690,25 +690,24 @@ public class UserInput : MonoBehaviour{
         }
         if (IsGameOver())
         {
-            StartCoroutine(GameEndSequence());
+            GameEndSequence();
         }
     }
     public bool IsGameOver()
     {
-        bool isT0Full = GameObject.Find("Top0").transform.childCount == 1;
-        bool isT1Full = GameObject.Find("Top1").transform.childCount == 0;
-        bool isT2Full = GameObject.Find("Top2").transform.childCount == 0;
-        bool isT3Full = GameObject.Find("Top3").transform.childCount == 0;
+        bool isT0Full = GameObject.Find("Top0").transform.childCount == 13;
+        bool isT1Full = GameObject.Find("Top1").transform.childCount == 13;
+        bool isT2Full = GameObject.Find("Top2").transform.childCount == 13;
+        bool isT3Full = GameObject.Find("Top3").transform.childCount == 13;
         if (isT0Full && isT1Full && isT2Full && isT3Full)
-        {
-          
+        {         
             return true;
-
         }
         return false;
     }
 
-    public IEnumerator GameEndSequence()
+    //Sets end of game state
+    public void GameEndSequence()
     {
         //Turn off raycast for all tableaus (layer = 2)
         for (int i = 0; i < GameObject.Find("Bottom").transform.childCount; i++)
@@ -716,16 +715,19 @@ public class UserInput : MonoBehaviour{
             GameObject.Find("Bottom").transform.GetChild(i).gameObject.layer = 2;
             Timer.instance.StopScore();
         }
-        // Find DaBounce
-        // DaBounce.transform.
-        // Make the cards dynamic with gravity 1
+        StartCoroutine(CardBouncing());     
+    }
+
+    //Cards bounce at end of game
+    IEnumerator CardBouncing()
+    {
+        //get an array of all the cards and set their Rigidbodies to dynamic
         GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
         for (int i = 0; i < 52; i++)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
             cards[i].transform.SetParent(null);
             cards[i].GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-
         }
     }
 }
