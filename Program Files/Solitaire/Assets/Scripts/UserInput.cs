@@ -693,6 +693,8 @@ public class UserInput : MonoBehaviour{
             GameEndSequence();
         }
     }
+
+    //checks to see if the foundations are full
     public bool IsGameOver()
     {
         bool isT0Full = GameObject.Find("Top0").transform.childCount == 13;
@@ -723,11 +725,29 @@ public class UserInput : MonoBehaviour{
     {
         //get an array of all the cards and set their Rigidbodies to dynamic
         GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
+        //Dictionary AKA Map to hold the cards to be accessible by name
+        Dictionary<string, GameObject> cardMap = new Dictionary<string, GameObject>();
+
+        //load the Dictionary
         for (int i = 0; i < 52; i++)
         {
-            yield return new WaitForSeconds(0.25f);
-            cards[i].transform.SetParent(null);
-            cards[i].GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            cardMap.Add(cards[i].name, cards[i]);             
+        }
+
+        //getting the correct cards to bounce in order
+        string[] suits = { "C", "D", "H", "S" };
+
+        for (int i = 13; i > 0; i--)
+        {
+            for (int s = 0; s < suits.Length; s++)
+            {
+                yield return new WaitForSeconds(0.75f);
+                //get the card from the dictionary that corresponds to the next card to make bounce
+                cardMap.TryGetValue(suits[s] + i, out GameObject dropCard);
+                //preventing the cards from being selected and making them bounce
+                dropCard.transform.SetParent(null);
+                dropCard.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            }
         }
     }
 }
