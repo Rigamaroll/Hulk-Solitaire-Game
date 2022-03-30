@@ -695,10 +695,10 @@ public class UserInput : MonoBehaviour{
     }
     public bool IsGameOver()
     {
-        bool isT0Full = GameObject.Find("Top0").transform.childCount == 13;
-        bool isT1Full = GameObject.Find("Top1").transform.childCount == 13;
-        bool isT2Full = GameObject.Find("Top2").transform.childCount == 13;
-        bool isT3Full = GameObject.Find("Top3").transform.childCount == 13;
+        bool isT0Full = GameObject.Find("Top0").transform.childCount == 1;
+        bool isT1Full = GameObject.Find("Top1").transform.childCount == 0;
+        bool isT2Full = GameObject.Find("Top2").transform.childCount == 0;
+        bool isT3Full = GameObject.Find("Top3").transform.childCount == 0;
         if (isT0Full && isT1Full && isT2Full && isT3Full)
         {
           
@@ -722,7 +722,7 @@ public class UserInput : MonoBehaviour{
         GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
         for (int i = 0; i < 52; i++)
         {
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.5f);
             cards[i].transform.SetParent(null);
             cards[i].GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
