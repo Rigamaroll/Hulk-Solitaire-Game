@@ -695,10 +695,10 @@ public class UserInput : MonoBehaviour{
     }
     public bool IsGameOver()
     {
-        bool isT0Full = GameObject.Find("Top0").transform.childCount == 13;
-        bool isT1Full = GameObject.Find("Top1").transform.childCount == 13;
-        bool isT2Full = GameObject.Find("Top2").transform.childCount == 13;
-        bool isT3Full = GameObject.Find("Top3").transform.childCount == 13;
+        bool isT0Full = GameObject.Find("Top0").transform.childCount == 1;
+        bool isT1Full = GameObject.Find("Top1").transform.childCount == 0;
+        bool isT2Full = GameObject.Find("Top2").transform.childCount == 0;
+        bool isT3Full = GameObject.Find("Top3").transform.childCount == 0;
         if (isT0Full && isT1Full && isT2Full && isT3Full)
         {
             //Turn off raycast for all tableaus (layer = 2)
@@ -707,7 +707,19 @@ public class UserInput : MonoBehaviour{
                 GameObject.Find("Bottom").transform.GetChild(i).gameObject.layer = 2;
                 Timer.instance.StopScore();
             }
-
+            // Find DaBounce
+            // DaBounce.transform.
+            // Make the cards dynamic with gravity 1
+            GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
+            for(int i = 0; i < 52; i++)
+            {
+                // cards[i].transform.SetPositionAndRotation(new Vector3(cards[i].transform.position.x, cards[i].transform.position.y, 0), Quaternion.identity);
+                // cards[i].transform.Translate(new Vector3(cards[i].transform.position.x, cards[i].transform.position.y, 0));
+                // cards[i].GetComponent<BoxCollider2D>().bounds.SetMinMax(new Vector3(cards[i].transform.position.x, cards[i].transform.position.y, -5),
+                // new Vector3(cards[i].transform.position.x, cards[i].transform.position.y, 5));
+                cards[i].transform.TransformPoint(new Vector3(cards[i].transform.position.x, cards[i].transform.position.y, GameObject.Find("DaBounce").transform.position.z));
+                cards[i].GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            }
             return true;
 
         }
