@@ -690,9 +690,11 @@ public class UserInput : MonoBehaviour{
         }
         if (IsGameOver())
         {
-            print("You Won WOOT!");
+            GameEndSequence();
         }
     }
+
+    //checks to see if the foundations are full
     public bool IsGameOver()
     {
         bool isT0Full = GameObject.Find("Top0").transform.childCount == 13;
@@ -700,17 +702,52 @@ public class UserInput : MonoBehaviour{
         bool isT2Full = GameObject.Find("Top2").transform.childCount == 13;
         bool isT3Full = GameObject.Find("Top3").transform.childCount == 13;
         if (isT0Full && isT1Full && isT2Full && isT3Full)
-        {
-            //Turn off raycast for all tableaus (layer = 2)
-            for (int i = 0; i < GameObject.Find("Bottom").transform.childCount; i++)
-            {
-                GameObject.Find("Bottom").transform.GetChild(i).gameObject.layer = 2;
-                Timer.instance.StopScore();
-            }
-
+        {         
             return true;
-
         }
         return false;
+    }
+
+    //Sets end of game state
+    public void GameEndSequence()
+    {
+        //Turn off raycast for all tableaus (layer = 2)
+        for (int i = 0; i < GameObject.Find("Bottom").transform.childCount; i++)
+        {
+            GameObject.Find("Bottom").transform.GetChild(i).gameObject.layer = 2;
+            Timer.instance.StopScore();
+        }
+        StartCoroutine(CardBouncing());     
+    }
+
+    //Cards bounce at end of game
+    IEnumerator CardBouncing()
+    {
+        //get an array of all the cards and set their Rigidbodies to dynamic
+        GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
+        //Dictionary AKA Map to hold the cards to be accessible by name
+        Dictionary<string, GameObject> cardMap = new Dictionary<string, GameObject>();
+
+        //load the Dictionary
+        for (int i = 0; i < 52; i++)
+        {
+            cardMap.Add(cards[i].name, cards[i]);             
+        }
+
+        //getting the correct cards to bounce in order
+        string[] suits = { "C", "D", "H", "S" };
+
+        for (int i = 13; i > 0; i--)
+        {
+            for (int s = 0; s < suits.Length; s++)
+            {
+                yield return new WaitForSeconds(0.75f);
+                //get the card from the dictionary that corresponds to the next card to make bounce
+                cardMap.TryGetValue(suits[s] + i, out GameObject dropCard);
+                //preventing the cards from being selected and making them bounce
+                dropCard.transform.SetParent(null);
+                dropCard.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            }
+        }
     }
 }

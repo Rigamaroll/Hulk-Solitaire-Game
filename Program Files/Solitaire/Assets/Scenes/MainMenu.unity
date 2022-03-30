@@ -1099,7 +1099,17 @@ MonoBehaviour:
 
     In the tableau, cards are stacked in descending order and
     alternating suit colour. They can be moved individually or by stacks. Cards can
-    be moved from the talon pile directly to the foundation or to the tableau.'
+    be moved from the talon pile directly to the foundation or to the tableau.
+
+
+    Hot
+    Keys:
+
+    M - Main Menu
+
+    N - New Game
+
+    Q - Quit Game'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

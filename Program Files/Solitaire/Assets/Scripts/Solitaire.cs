@@ -9,8 +9,6 @@ public class Solitaire : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject[] bottomPos;
     public GameObject[] topPos;
-    public GameObject stockPile;
-    private List<GameObject> stockPileArray;
     
     // Suits Clubs / Diamonds / Hearts / Spades
     public static string[] suits = new string[] {"C", "D", "H", "S"};
@@ -18,7 +16,6 @@ public class Solitaire : MonoBehaviour
     public static string[] values = new string[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"};
    
     private List<string>[] bottoms;
-    private List<string>[] tops;
 
     private List<string> bottom0 = new List<string>();
     private List<string> bottom1 = new List<string>();
@@ -28,19 +25,12 @@ public class Solitaire : MonoBehaviour
     private List<string> bottom5 = new List<string>();
     private List<string> bottom6 = new List<string>();
 
-    private List<string> top0 = new List<string>();
-    private List<string> top1 = new List<string>();
-    private List<string> top2 = new List<string>();
-    private List<string> top3 = new List<string>();
-
     public List<string> deck;
 
     // Start is called before the first frame update
     void Start() {
         // Initialize the bottoms array with each of the piles
         bottoms = new List<string>[] { bottom0, bottom1, bottom2, bottom3, bottom4, bottom5, bottom6 };
-        // Initialize the tops array with the empty top piles
-        tops = new List<string>[] { top0, top1, top2, top3 };
 
         // Generate the deck 
         deck = GenerateDeck();
@@ -128,7 +118,7 @@ public class Solitaire : MonoBehaviour
         float zOffset = 0.03f;
 
         // define Game object newCard
-        GameObject newCard = null;
+        GameObject newCard;
 
        // for each card position, deal a card
         for (int row = 0; row < 7; row++){
@@ -149,7 +139,6 @@ public class Solitaire : MonoBehaviour
                                 bottomPos[pile].transform.position.z - zOffset), 
                     Quaternion.identity, // rotation = 0
                     bottomPos[pile].transform);
-                Rigidbody2D cardbody = newCard.GetComponent<Rigidbody2D>();
                 
                 // Assign the value of the new card to the current card    
                 newCard.name = bottoms[pile][row];
@@ -161,8 +150,8 @@ public class Solitaire : MonoBehaviour
             }
 
         // Increase the offset with each card added
-        yOffset = yOffset + 0.4f;
-        zOffset = zOffset + 0.03f;
+        yOffset += 0.4f;
+        zOffset += 0.03f;
         
         }
         CreateStockPile();
@@ -172,8 +161,8 @@ public class Solitaire : MonoBehaviour
      {
          //TheLogger.PrintLog("CreateStockPile");
          float zOffset = -0.02f;
-         GameObject newCard = null;
-         stockPile = GameObject.FindGameObjectWithTag("Deck");
+         GameObject newCard;
+         GameObject stockPile = GameObject.FindGameObjectWithTag("Deck");
 
          //goes through the remainder of the deck and instantiates the cards into the stockpile
          for (int i = 0; i < deck.Count; i++)
