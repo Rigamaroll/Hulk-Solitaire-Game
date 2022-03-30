@@ -11,11 +11,17 @@ public class MainMenu : MonoBehaviour
     [SerializeField] KeyCode pablosMenu;
     static bool isVegas = false;
     static bool isDealThree = false;
+    // private GameMode gameMode;
     // public Text gameMode;
 
     public Dropdown dropdown;
     List<string> gameOptions = new List<string>(){ "Standard - Deal 1", "Standard - Deal 3", 
         "Vegas - Deal 1", "Vegas - Deal 3" };
+
+    // void awake()
+    // {
+    //     gameMode = GameObject.FindObjectOfType<GameMode>();
+    // }
 
     public void Start(){
         SetGameOptions();
@@ -85,6 +91,7 @@ public class MainMenu : MonoBehaviour
             // gameMode.text = gameOptions[3];
         }
         // gameMode.text = gameOptions[dropdown.value];
+        // gameMode.updateGameMode(dropdown.value);
     }
 
     // Add Game Options
@@ -114,6 +121,7 @@ public class MainMenu : MonoBehaviour
             MainMenu.isVegas = true;
             isDealThree = true;
         }
+        // gameMode.updateGameMode(dropdown.value);
         // GameMode.instance.updateGameMode(index);
         // gameMode.text = gameOptions[index];
     }

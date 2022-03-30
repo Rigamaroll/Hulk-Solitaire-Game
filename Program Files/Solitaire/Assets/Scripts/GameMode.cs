@@ -8,12 +8,33 @@ public class GameMode : MonoBehaviour
     public Text gameMode;
     public static GameMode instance;
 
-    public void updateGameMode(int index)
+    private void Awake()
+    {
+        instance = this;
+        
+    }
+
+    public void updateGameMode()
     {
         List<string> gameOptions = new List<string>(){ "Standard - Deal 1", "Standard - Deal 3", 
         "Vegas - Deal 1", "Vegas - Deal 3" };
 
-        gameMode.text = gameOptions[index];
         print("made it");
+        if (!MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
+        {
+            gameMode.text = gameOptions[0];
+        }
+        if (!MainMenu.GetOnVegas() && MainMenu.GetDealThree())
+        {
+            gameMode.text = gameOptions[1];
+        }
+        if (MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
+        {
+            gameMode.text = gameOptions[2];
+        }
+        if (MainMenu.GetOnVegas() && MainMenu.GetDealThree())
+        {
+            gameMode.text = gameOptions[3];
+        }
     }
 }

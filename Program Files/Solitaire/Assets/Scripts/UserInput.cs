@@ -16,7 +16,9 @@ public class UserInput : MonoBehaviour{
 
     //Start is called before the first frame update
     void Start(){
+        GameMode.instance.updateGameMode();
         Scoring.instance.ResetScore(); // Resets the score whenever User starts a new game
+        Timer.instance.StartScore();
         locationRetriever = FindObjectOfType<LocationRetriever>();
     }
 
@@ -703,6 +705,7 @@ public class UserInput : MonoBehaviour{
             for (int i = 0; i < GameObject.Find("Bottom").transform.childCount; i++)
             {
                 GameObject.Find("Bottom").transform.GetChild(i).gameObject.layer = 2;
+                Timer.instance.StopScore();
             }
 
             return true;
