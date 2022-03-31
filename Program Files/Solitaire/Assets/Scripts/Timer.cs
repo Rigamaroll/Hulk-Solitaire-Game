@@ -50,9 +50,13 @@ public class Timer : MonoBehaviour
 
     private IEnumerator DoTimerReduceScore()
     {
-        
+
         yield return new WaitForSeconds(30);
         CheckScore();
+        if (isTiming)
+        {
+            StartCoroutine(DoTimerReduceScore());
+        }
     }
 
     private void CheckScore()
