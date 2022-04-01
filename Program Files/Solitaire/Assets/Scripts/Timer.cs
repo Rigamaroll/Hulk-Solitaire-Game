@@ -11,7 +11,6 @@ public class Timer : MonoBehaviour
     int min;
     int seconds;
     float time;
-    int nextUpdate = 1;
     bool isTiming;
 
     // Start is called before the first frame update
@@ -20,30 +19,44 @@ public class Timer : MonoBehaviour
         instance = this;
     }
 
-    // Update is called once per frame
-     void Update()
+    private void Start()
     {
-        if (isTiming){
-            time += Time.deltaTime;
-            min = (int)time / 60;
-            seconds = (int)time % 60;
-            if (seconds < 10)
-            {
-                timer.text = "Time: " + min + ":0" + seconds;
-            }
-            else
-            {
-                timer.text = "Time: " + min + ":" + seconds;
-            }
+        StartCoroutine(DoTimerReduceScore());
+    }
 
-            if (Time.time >= nextUpdate){
-                nextUpdate = (int)time + 1;
-                CheckScore();
-            }
+    // Update is called once per frame
+    void Update()
+    {
+        if (isTiming)
+        {
+            DoTimer();
         }
+    }
 
+    private void DoTimer()
+    {
+        time += Time.deltaTime;
+        min = (int)time / 60;
+        seconds = (int)time % 60;
+        if (seconds < 10)
+        {
+            timer.text = "Time: " + min + ":0" + seconds;
+        }
+        else
+        {
+            timer.text = "Time: " + min + ":" + seconds;
+        }
+    }
 
+    private IEnumerator DoTimerReduceScore()
+    {
 
+        yield return new WaitForSeconds(30);
+        CheckScore();
+        if (isTiming)
+        {
+            StartCoroutine(DoTimerReduceScore());
+        }
     }
 
     private void CheckScore()
