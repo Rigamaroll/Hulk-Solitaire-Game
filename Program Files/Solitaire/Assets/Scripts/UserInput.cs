@@ -162,6 +162,8 @@ public class UserInput : MonoBehaviour{
                 }
             }
         }
+        // Autocomplete.instance.MakeVisible();
+        Autocomplete.instance.CanBeAutoCompleted();
     }
 
     //does the doubleclick check
@@ -182,7 +184,7 @@ public class UserInput : MonoBehaviour{
 
 
     //checks if the card is already clicked 
-    void GoodFoundationMove()
+    public void GoodFoundationMove()
     {
         Transform topObject;
         for (int i= 0; i < 4; i++)
@@ -756,16 +758,8 @@ public class UserInput : MonoBehaviour{
     //Cards bounce at end of game
     IEnumerator CardBouncing()
     {
-        //get an array of all the cards and set their Rigidbodies to dynamic
-        GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
-        //Dictionary AKA Map to hold the cards to be accessible by name
-        Dictionary<string, GameObject> cardMap = new Dictionary<string, GameObject>();
-
-        //load the Dictionary
-        for (int i = 0; i < 52; i++)
-        {
-            cardMap.Add(cards[i].name, cards[i]);             
-        }
+        //get an array of all the cards 
+        Dictionary<string, GameObject> cardMap = MakeCardMap();
 
         //getting the correct cards to bounce in order
         string[] suits = { "C", "D", "H", "S" };
@@ -779,8 +773,28 @@ public class UserInput : MonoBehaviour{
                 cardMap.TryGetValue(suits[s] + i, out GameObject dropCard);
                 //preventing the cards from being selected and making them bounce
                 dropCard.transform.SetParent(null);
+                //set their Rigidbodies to dynamic
                 dropCard.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             }
         }
+    }
+
+    public Dictionary<string, GameObject> MakeCardMap(){
+        //get an array of all the cards 
+        GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
+        //Dictionary AKA Map to hold the cards to be accessible by name
+        Dictionary<string, GameObject> cardMap = new Dictionary<string, GameObject>();
+
+        //load the Dictionary
+        for (int i = 0; i < 52; i++)
+        {
+            cardMap.Add(cards[i].name, cards[i]);             
+        }
+        return cardMap;
+    }
+
+    public void SetClickedObject(Transform clicky){
+        clickedObject = clicky;
+        print(clickedObject.name);
     }
 }
