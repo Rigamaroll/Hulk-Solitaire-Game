@@ -79,7 +79,11 @@ public class DeckArea : MonoBehaviour
             
             zOffSet += 0.03f;
         } 
-        Scoring.instance.ReduceScore(20);  
+        // Reduce the score when the deck is flipped in standard mode
+        if (!MainMenu.GetOnVegas()){
+            Scoring.instance.ReduceScore(20);  
+        }
+        
     }
 
     //deal three cards if playing deal three option

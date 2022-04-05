@@ -295,7 +295,10 @@ public class UserInput : MonoBehaviour{
                     CardToTableau(); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
                     // Add 5 points for moving to the tableau from the Talon
-                    Scoring.instance.AddScore(1);
+                    // unless its in Vegas mode
+                    if (!MainMenu.GetOnVegas()){
+                        Scoring.instance.AddScore(1);
+                    }
                     return true;
                 }
                 //print("Card is not a King, cannot be moved here");
@@ -313,7 +316,10 @@ public class UserInput : MonoBehaviour{
                     CardToTableau(); //move, not to the top
                     UpdateGameObjects(cardIndex, 1);
                     // Add 5 points for moving to the tableau from the Talon
-                    Scoring.instance.AddScore(1);
+                    // unless its in Vegas mode
+                    if (!MainMenu.GetOnVegas()){
+                        Scoring.instance.AddScore(1);
+                    }
                     return true;
                     //print("Card rank or colour is incorrect and cannot be moved.");
                 }            
@@ -393,7 +399,15 @@ public class UserInput : MonoBehaviour{
                         //print("Card is a King and can be moved");
                         CardToTableau(); //move, not to the top
                         UpdateGameObjects(cardIndex, 1);
+                    // Standard Mode - Moving Foundation to Tableau
+                    if (!MainMenu.GetOnVegas()){
                         Scoring.instance.ReduceScore(3);
+                    // Vegas Mode - Moving Foundation to Tableau
+                    }else
+                    {
+                        Scoring.instance.ReduceScore(1);
+                    }
+                        
                         return;
                     }
                     break;
@@ -409,8 +423,14 @@ public class UserInput : MonoBehaviour{
                         //print("Card rank is one less than target card, it can be moved.");
                         CardToTableau(); //move, not to the top
                         UpdateGameObjects(cardIndex, 1);
-                        // Card moving from Foundation To Tableau Piles. Remove Points
-                        Scoring.instance.ReduceScore(3);
+                        // Standard Mode - Moving Foundation to Tableau
+                        if (!MainMenu.GetOnVegas()){
+                            Scoring.instance.ReduceScore(3);
+                        // Vegas Mode - Moving Foundation to Tableau
+                        }else
+                        {
+                            Scoring.instance.ReduceScore(1);
+                        }
                         return;                       
                     }
                     break;
@@ -615,7 +635,15 @@ public class UserInput : MonoBehaviour{
         clickedObject.position = new Vector3(dropLocation.position.x,
             dropLocation.position.y, dropLocation.position.z - 0.03f);
         // Card moves to the top + 10 points
-        Scoring.instance.AddScore(2);
+        if (!MainMenu.GetOnVegas())
+        {
+            Scoring.instance.AddScore(2);
+        }else
+        // Vegas mode, only + 5
+        {
+            Scoring.instance.AddScore(1);
+        }
+        
     }
 
     //returns cards to origin
@@ -686,7 +714,12 @@ public class UserInput : MonoBehaviour{
         {
             //print("Next card should flip!");
             mom.GetChild(mom.childCount - 1).GetComponent<Selectable>().FlipCard();
-            Scoring.instance.AddScore(1);
+            // 5 points for turning over a card unless in Vegas mode
+            if (!MainMenu.GetOnVegas())
+            {
+                Scoring.instance.AddScore(1);
+            }
+            
         }
         if (IsGameOver())
         {
