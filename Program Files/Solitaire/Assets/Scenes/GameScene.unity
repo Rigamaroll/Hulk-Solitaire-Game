@@ -2829,7 +2829,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1275497367}
         m_TargetAssemblyTypeName: Autocomplete, GameAssembly
-        m_MethodName: SolveGame
+        m_MethodName: SolveGameButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

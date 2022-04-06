@@ -51,15 +51,20 @@ public class Autocomplete : MonoBehaviour
         }
 
         print("Can be autocompleted");
-        MakeVisible();
+        SetVisible(true);
     }
 
-    public void MakeVisible()
+    public void SetVisible(bool isVisible )
     {
-        Solve.gameObject.SetActive(true);
+        Solve.gameObject.SetActive(isVisible);
     }
 
-    public static void SolveGame()
+    public void SolveGameButton()
+    {
+        StartCoroutine(SolveGame());
+    }
+
+    public IEnumerator SolveGame()
     {
         print("Button pushed");
         
@@ -90,9 +95,10 @@ public class Autocomplete : MonoBehaviour
                 if (card.transform.root.name.Equals("Bottom")){
                     userInput.SetClickedObject(card.transform);
                     userInput.GoodFoundationMove();
+                    yield return new WaitForSeconds(0.02f);
                 }
             }
         }
-        Solve.gameObject.SetActive(false);
+    SetVisible(false);
     }
 }
