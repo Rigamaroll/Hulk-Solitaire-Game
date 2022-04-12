@@ -10,14 +10,13 @@ public class HamburgerMenu : MonoBehaviour
     public Button Menu;
     public Button NewGame;
     public Button Quit;
+    
     // public Button Resume;
 
     // Start is called before the first frame update
     void Awake()
     {
-        Time.timeScale = 1f;
         Hamburger.gameObject.SetActive(true);
-        // Resume.gameObject.SetActive(false);
         Menu.gameObject.SetActive(false);
         NewGame.gameObject.SetActive(false);
         Quit.gameObject.SetActive(false);
@@ -32,24 +31,21 @@ public class HamburgerMenu : MonoBehaviour
     public void OpenHamburgerMenu()
     {
         print("opening hamburger menu");
-        // Resume.gameObject.SetActive(true);
         Menu.gameObject.SetActive(true);
         NewGame.gameObject.SetActive(true);
         Quit.gameObject.SetActive(true);
         Hamburger.gameObject.SetActive(false);
-        Time.timeScale = 0f;
+        PauseGame.instance.Pause();
     }
 
     public void CloseHamburgerMenu()
     {
         print("closing hamburger menu");
-        Time.timeScale = 1f;
         Hamburger.gameObject.SetActive(true);
-        // Resume.gameObject.SetActive(false);
         Menu.gameObject.SetActive(false);
         NewGame.gameObject.SetActive(false);
         Quit.gameObject.SetActive(false);
-
+        PauseGame.instance.ResumeGame();
     }
 
     public void PressMainMenu()
