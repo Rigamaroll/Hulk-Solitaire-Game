@@ -19,7 +19,7 @@ public class GameMode : MonoBehaviour
         List<string> gameOptions = new List<string>(){ "Standard - Deal 1", "Standard - Deal 3", 
         "Vegas - Deal 1", "Vegas - Deal 3" };
 
-        print("made it");
+        // print("made it");
         if (!MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
         {
             gameMode.text = gameOptions[0];

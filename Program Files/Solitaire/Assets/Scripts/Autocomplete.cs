@@ -7,6 +7,7 @@ public class Autocomplete : MonoBehaviour
 {
     public static Autocomplete instance;
     public Button Solve;
+    
     // Start is called before the first frame update
     private void Awake()
     {

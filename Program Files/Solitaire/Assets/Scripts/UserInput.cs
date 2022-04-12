@@ -39,7 +39,7 @@ public class UserInput : MonoBehaviour{
      
         //What we will do depends on what has been clicked
         if (clickedObject != null){
-            print(clickedObject.parent.name);
+            // print(clickedObject.parent.name);
             cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
            
             //checks if the stockpile has been hit (so that it will deal)
