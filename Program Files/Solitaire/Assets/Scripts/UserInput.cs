@@ -32,50 +32,59 @@ public class UserInput : MonoBehaviour{
     }
 
     private void OnMouseDown(){
-       
-        //get what's been clicked
-        //get the object that is hit   
-        clickedObject = locationRetriever.GetTargetBody();
-     
-        //What we will do depends on what has been clicked
-        if (clickedObject != null){
-            // print(clickedObject.parent.name);
-            cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
-           
-            //checks if the stockpile has been hit (so that it will deal)
-            if (clickedObject.parent.name.Equals("DeckButton") || clickedObject.name.Equals("DeckButton"))
+
+        if(Time.timeScale == 0f) //checks if the time is frozen, meaning checking for when the game is paused
+        {
+            return; //return nothing meaning clickign will do no action when the game is paused
+        }
+        else //runs the following code when the time is not frozen so everything is clickable
+        {
+            //get what's been clicked
+            //get the object that is hit   
+            clickedObject = locationRetriever.GetTargetBody();
+
+            //What we will do depends on what has been clicked
+            if (clickedObject != null)
             {
-                isStockpileCard = true;
-                FindObjectOfType<DeckArea>().StockPile(clickedObject);
-                //TheLogger.PrintLog("Hit Stockpile");
-                return;
-            } 
+                // print(clickedObject.parent.name);
+                cardOrigin = new Vector3(clickedObject.position.x, clickedObject.position.y, clickedObject.position.z);
 
-            //check to see if empty foundation is hit (unselect)
-            if (clickedObject.parent.name.Equals("Top")){
-                print("Don't click here");
-                isEmptyFound = true;
-                return;
-            }
-
-            //check if card is face up 
-            if (clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard){
-            float zOffSet = -0.72f;
-            isDragged = true;
-            Transform cardsInStack;
-            clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
-                //Grabs the stack of cards and moves there zOffSet to the appropriate location, so they are in front of all the other cards
-                for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
+                //checks if the stockpile has been hit (so that it will deal)
+                if (clickedObject.parent.name.Equals("DeckButton") || clickedObject.name.Equals("DeckButton"))
                 {
-                    cardsInStack = clickedObject.parent.GetChild(numMoves);
-                    cardsInStack.position = new Vector3(cardsInStack.position.x, cardsInStack.position.y, zOffSet);
-                    zOffSet -= 0.03f;       
+                    isStockpileCard = true;
+                    FindObjectOfType<DeckArea>().StockPile(clickedObject);
+                    //TheLogger.PrintLog("Hit Stockpile");
+                    return;
                 }
+
+                //check to see if empty foundation is hit (unselect)
+                if (clickedObject.parent.name.Equals("Top"))
+                {
+                    print("Don't click here");
+                    isEmptyFound = true;
+                    return;
+                }
+
+                //check if card is face up 
+                if (clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard)
+                {
+                    float zOffSet = -0.72f;
+                    isDragged = true;
+                    Transform cardsInStack;
+                    clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
+                    //Grabs the stack of cards and moves there zOffSet to the appropriate location, so they are in front of all the other cards
+                    for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
+                    {
+                        cardsInStack = clickedObject.parent.GetChild(numMoves);
+                        cardsInStack.position = new Vector3(cardsInStack.position.x, cardsInStack.position.y, zOffSet);
+                        zOffSet -= 0.03f;
+                    }
+                }
+
+                //testing for card click
+                //TheLogger.PrintLog("card clicked");
             }
-
-        //testing for card click
-        //TheLogger.PrintLog("card clicked");
-
         }
     }
 
