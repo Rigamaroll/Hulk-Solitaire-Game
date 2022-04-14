@@ -51,6 +51,9 @@ public class HamburgerMenu : MonoBehaviour
     public void PressMainMenu()
     {
         print("Pressed Main Menu");
+        if ((MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) || (MainMenu.GetOnVegas() && MainMenu.GetDealThree())) {
+            SaveHighScore.instance.CheckHighScore();
+        }
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -58,6 +61,10 @@ public class HamburgerMenu : MonoBehaviour
     {
         print("Pressed New Game");
         SceneManager.LoadScene("GameScene");
+        if ((MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) || (MainMenu.GetOnVegas() && MainMenu.GetDealThree()))
+        {
+            SaveHighScore.instance.CheckHighScore();
+        }
     }
 
     public void PressQuit()

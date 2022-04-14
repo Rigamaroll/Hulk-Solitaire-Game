@@ -18,6 +18,7 @@ public class GameOver : MonoBehaviour
     public void GameOverScreen()
     {
         gameOverUI.SetActive(true); //loads the game over screen
+        SaveHighScore.instance.CheckHighScore(); //Updates the high score
     }
 
     //method to load the new game
@@ -26,6 +27,8 @@ public class GameOver : MonoBehaviour
         Debug.Log("Pressed New Game"); //print out statement for testing
         gameOverUI.SetActive(false); //unloads the game over screen
         SceneManager.LoadScene("GameScene"); //loads the Game Scene
+        /*** TEST ***/
+        //SaveHighScore.instance.CheckHighScore(); //updates the high score 
     }
 
     //method to load the main menu screen
@@ -34,6 +37,8 @@ public class GameOver : MonoBehaviour
         Debug.Log("Pressed Main Menu"); //print out statement for testing
         gameOverUI.SetActive(false); //unloads the game over screen
         SceneManager.LoadScene("MainMenu"); //loads the Main Menu game scene
+        /*** TEST ***/
+        //SaveHighScore.instance.CheckHighScore(); //updates the high score
     }
 
     //method to quit the game

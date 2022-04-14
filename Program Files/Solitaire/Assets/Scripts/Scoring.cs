@@ -11,6 +11,7 @@ public class Scoring : MonoBehaviour
 
     // int score = 0;
     int score;
+    public int updateScore;
 
     private void Awake()
     {
@@ -39,8 +40,10 @@ public class Scoring : MonoBehaviour
         score += 5 * multiplier; // scoring value goes up
         if (MainMenu.GetOnVegas()){
             points.text = "Score: $ " + score.ToString();
+            updateScore = score; //this is to update highscore on main menu
         }else{
             points.text = "Score: " + score.ToString(); //showing the score on the screen at the top
+            updateScore = score; //this is to update highscore on main menu
         }
         // points.text = "Score: " + score.ToString(); // updates the score value on the screen
     }
@@ -52,8 +55,11 @@ public class Scoring : MonoBehaviour
         CheckScore();
         if (MainMenu.GetOnVegas()){
             points.text = "Score: $ " + score.ToString();
-        }else{
+            updateScore = score; //this is to update highscore on main menu
+        }
+        else{
             points.text = "Score: " + score.ToString(); //showing the score on the screen at the top
+            updateScore = score; //this is to update highscore on main menu
         }
         // points.text = "Score: " + score.ToString(); // updates the score value on the scree
     }
@@ -63,8 +69,8 @@ public class Scoring : MonoBehaviour
         if (!MainMenu.GetOnVegas()){
             score -= 2;
             CheckScore();
-            
             points.text = "Score: " + score.ToString();
+            updateScore = score; //this is to update highscore on main menu
         }
     }
 
@@ -82,9 +88,12 @@ public class Scoring : MonoBehaviour
         if (MainMenu.GetOnVegas()){
             score = -52;
             points.text = "Score: $ " + score.ToString();
-        }else{
+            //updateScore = score; //this is to update highscore on main menu
+        }
+        else{
             score = 0;
             points.text = "Score: " + score.ToString();
+            //updateScore = score; //this is to update highscore on main menu
         }
         // score = 0; // score value sets back to 0
          // updates the score value on the screen
