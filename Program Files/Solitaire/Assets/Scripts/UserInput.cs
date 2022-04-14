@@ -777,6 +777,8 @@ public class UserInput : MonoBehaviour{
                 dropCard.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             }
         }
+        //Calling Game over screen Method to show the game over screen.
+        GameOver.instance.GameOverScreen();
     }
 
     public Dictionary<string, GameObject> MakeCardMap(){
