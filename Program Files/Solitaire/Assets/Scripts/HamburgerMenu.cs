@@ -52,7 +52,7 @@ public class HamburgerMenu : MonoBehaviour
     {
         print("Pressed Main Menu");
         //***Test code for Vegas 3 and vegas deal 1
-        if ((MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) || (MainMenu.GetOnVegas() && MainMenu.GetDealThree())) {
+        if (MainMenu.GetOnVegas()) {
             Debug.Log("Main Menu: saving High Score for Vegas Deal");
             SaveHighScore.instance.CheckHighScore();
         }
@@ -63,7 +63,7 @@ public class HamburgerMenu : MonoBehaviour
     {
         print("Pressed New Game");
         //***Test code for Vegas 3 and vegas deal 1
-        if ((MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) || (MainMenu.GetOnVegas() && MainMenu.GetDealThree()))
+        if (MainMenu.GetOnVegas())
         {
             Debug.Log("New Game: saving High Score for Vegas Deal");
             SaveHighScore.instance.CheckHighScore();

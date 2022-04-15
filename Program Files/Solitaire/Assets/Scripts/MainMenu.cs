@@ -51,10 +51,20 @@ public class MainMenu : MonoBehaviour
     {
         if (Input.GetKey(pablosNewGame)){
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            if (MainMenu.GetOnVegas())
+            {
+                Debug.Log("New Game: saving High Score for Vegas Deal");
+                SaveHighScore.instance.CheckHighScore();
+            }
         }
         else if(Input.GetKey(pablosMenu)){
             SceneManager.LoadScene("MainMenu");
             Debug.Log("Exiting App");
+            if (MainMenu.GetOnVegas())
+            {
+                Debug.Log("New Game: saving High Score for Vegas Deal");
+                SaveHighScore.instance.CheckHighScore();
+            }            
         }
         else if(Input.GetKey(pablosDone)){
             Application.Quit();

@@ -1762,7 +1762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.028301895, g: 0.027634397, b: 0.027634397, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1805,6 +1805,10 @@ MonoBehaviour:
   vDeal3: {fileID: 618443336}
   score: 0
   highScore: 0
+  highScore1: 0
+  highScore2: 0
+  highScore3: 0
+  highScore4: 0
 --- !u!1 &612870288
 GameObject:
   m_ObjectHideFlags: 0
