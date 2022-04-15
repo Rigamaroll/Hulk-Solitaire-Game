@@ -62,12 +62,6 @@ public class SaveHighScore : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void CheckHighScore()
     {
         if (highScore1 < Scoring.instance.updateScore)
