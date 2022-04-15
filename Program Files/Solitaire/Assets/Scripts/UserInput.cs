@@ -89,6 +89,10 @@ public class UserInput : MonoBehaviour{
     }
 
     private void OnMouseUp(){
+        if(Time.timeScale == 0f) //checks if the time is frozen, meaning checking for when the game is paused
+        {
+            return; //return nothing meaning clickign will do no action when the game is paused
+        }
         
         //this means the card goes to the talonpile
         if (isStockpileCard)
