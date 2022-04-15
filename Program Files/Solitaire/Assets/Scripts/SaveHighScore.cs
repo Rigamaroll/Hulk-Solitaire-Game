@@ -31,27 +31,35 @@ public class SaveHighScore : MonoBehaviour
         highScore3 = PlayerPrefs.GetInt("vDeal1HS", 0);
         highScore4 = PlayerPrefs.GetInt("vDeal3HS", 0);
 
-        if (!MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) //standard deal 1
-        {
-            PlayerPrefs.SetInt("sDeal1HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
-        }
-        if (!MainMenu.GetOnVegas() && MainMenu.GetDealThree())
-        {
-            PlayerPrefs.SetInt("sDeal3HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
-        }
-        if (MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
-        {
-            PlayerPrefs.SetInt("vDeal1HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
-        }
-        if (MainMenu.GetOnVegas() && MainMenu.GetDealThree())
-        {
-            PlayerPrefs.SetInt("vDeal3HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
-        }
+        sDeal1.text = "Standard - Deal 1: " + highScore1.ToString();
+        sDeal3.text = "Standard - Deal 3: " + highScore2.ToString();
+        vDeal1.text = "Vegas - Deal 1: " + highScore3.ToString();
+        vDeal3.text = "Vegas - Deal 3: " + highScore4.ToString();
 
-        //sDeal1.text = "Standard - Deal 1: " + highScore.ToString();
-        //sDeal3.text = "Standard - Deal 3: " + highScore.ToString();
-        //vDeal1.text = "Vegas - Deal 1: " + highScore.ToString();
-        //vDeal3.text = "Vegas - Deal 3: " + highScore.ToString();
+
+        //******************DO NOT DELETE!!
+        //if (!MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) //standard deal 1
+        //{
+        //    highScore1 = PlayerPrefs.GetInt("sDeal1HS", 0);
+        //    sDeal1.text = "Standard - Deal 1: " + highScore1.ToString();
+        //}
+        //if (!MainMenu.GetOnVegas() && MainMenu.GetDealThree())
+        //{
+        //    highScore2 = PlayerPrefs.GetInt("sDeal3HS", 0);
+        //    sDeal3.text = "Standard - Deal 3: " + highScore2.ToString();
+        //}
+        //if (MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
+        //{
+        //    highScore3 = PlayerPrefs.GetInt("vDeal1HS", 0);
+        //    vDeal1.text = "Vegas - Deal 1: " + highScore3.ToString();
+        //}
+        //if (MainMenu.GetOnVegas() && MainMenu.GetDealThree())
+        //{
+        //    highScore4 = PlayerPrefs.GetInt("vDeal3HS", 0);
+        //    vDeal3.text = "Vegas - Deal 3: " + highScore4.ToString();
+        //    //PlayerPrefs.SetInt("vDeal3HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
+        //}
+
     }
 
     // Update is called once per frame
@@ -64,9 +72,10 @@ public class SaveHighScore : MonoBehaviour
     {
         if (highScore1 < Scoring.instance.updateScore)
         {
+            
             if (!MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) //standard deal 1
             {
-
+                Debug.Log("saving High Score for Standard Deal 1");
                 PlayerPrefs.SetInt("sDeal1HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
             }
         }
@@ -74,20 +83,23 @@ public class SaveHighScore : MonoBehaviour
         {
             if (!MainMenu.GetOnVegas() && MainMenu.GetDealThree())
             {
+                Debug.Log("saving High Score for Standard Deal 3");
                 PlayerPrefs.SetInt("sDeal3HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
             }
         }
-        if (highScore3 < Scoring.instance.updateScore)
+        if (highScore3 > Scoring.instance.updateScore)
         {
             if (MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
             {
+                Debug.Log("saving High Score for Vegas Deal 1");
                 PlayerPrefs.SetInt("vDeal1HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
             }
         }
-        if (highScore4 < Scoring.instance.updateScore)
+        if (highScore4 > Scoring.instance.updateScore)
         {
             if (MainMenu.GetOnVegas() && MainMenu.GetDealThree())
             {
+                Debug.Log("saving High Score for Vegas Deal 3");
                 PlayerPrefs.SetInt("vDeal3HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
             }
         }

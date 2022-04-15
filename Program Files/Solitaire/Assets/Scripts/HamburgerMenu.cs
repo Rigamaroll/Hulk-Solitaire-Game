@@ -51,7 +51,9 @@ public class HamburgerMenu : MonoBehaviour
     public void PressMainMenu()
     {
         print("Pressed Main Menu");
+        //***Test code for Vegas 3 and vegas deal 1
         if ((MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) || (MainMenu.GetOnVegas() && MainMenu.GetDealThree())) {
+            Debug.Log("Main Menu: saving High Score for Vegas Deal");
             SaveHighScore.instance.CheckHighScore();
         }
         SceneManager.LoadScene("MainMenu");
@@ -60,11 +62,13 @@ public class HamburgerMenu : MonoBehaviour
     public void PressNewGame()
     {
         print("Pressed New Game");
-        SceneManager.LoadScene("GameScene");
+        //***Test code for Vegas 3 and vegas deal 1
         if ((MainMenu.GetOnVegas() && !MainMenu.GetDealThree()) || (MainMenu.GetOnVegas() && MainMenu.GetDealThree()))
         {
+            Debug.Log("New Game: saving High Score for Vegas Deal");
             SaveHighScore.instance.CheckHighScore();
         }
+        SceneManager.LoadScene("GameScene");
     }
 
     public void PressQuit()
