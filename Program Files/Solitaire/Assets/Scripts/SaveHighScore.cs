@@ -16,8 +16,8 @@ public class SaveHighScore : MonoBehaviour
     public int highScore = 0;
     public int highScore1 = 0;
     public int highScore2 = 0;
-    public int highScore3 = 0;
-    public int highScore4 = 0;
+    public int highScore3 = -52;
+    public int highScore4 = -52;
 
     private void Awake()
     {
@@ -28,8 +28,8 @@ public class SaveHighScore : MonoBehaviour
     {
         highScore1 = PlayerPrefs.GetInt("sDeal1HS", 0);
         highScore2 = PlayerPrefs.GetInt("sDeal3HS", 0);
-        highScore3 = PlayerPrefs.GetInt("vDeal1HS", 0);
-        highScore4 = PlayerPrefs.GetInt("vDeal3HS", 0);
+        highScore3 = PlayerPrefs.GetInt("vDeal1HS", -52);
+        highScore4 = PlayerPrefs.GetInt("vDeal3HS", -52);
 
         sDeal1.text = "Standard - Deal 1: " + highScore1.ToString();
         sDeal3.text = "Standard - Deal 3: " + highScore2.ToString();
@@ -81,7 +81,7 @@ public class SaveHighScore : MonoBehaviour
                 PlayerPrefs.SetInt("sDeal3HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
             }
         }
-        if (highScore3 > Scoring.instance.updateScore)
+        if (highScore3 < Scoring.instance.updateScore)
         {
             if (MainMenu.GetOnVegas() && !MainMenu.GetDealThree())
             {
@@ -89,7 +89,7 @@ public class SaveHighScore : MonoBehaviour
                 PlayerPrefs.SetInt("vDeal1HS", Scoring.instance.updateScore); //if the current score is higher than previous high score then it will update the variable
             }
         }
-        if (highScore4 > Scoring.instance.updateScore)
+        if (highScore4 < Scoring.instance.updateScore)
         {
             if (MainMenu.GetOnVegas() && MainMenu.GetDealThree())
             {
