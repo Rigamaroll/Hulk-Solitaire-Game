@@ -33,8 +33,8 @@ public class SaveHighScore : MonoBehaviour
 
         sDeal1.text = "Standard - Deal 1: " + highScore1.ToString();
         sDeal3.text = "Standard - Deal 3: " + highScore2.ToString();
-        vDeal1.text = "Vegas - Deal 1: " + highScore3.ToString();
-        vDeal3.text = "Vegas - Deal 3: " + highScore4.ToString();
+        vDeal1.text = "Vegas - Deal 1: $ " + highScore3.ToString();
+        vDeal3.text = "Vegas - Deal 3: $ " + highScore4.ToString();
 
 
         //******************DO NOT DELETE!!
