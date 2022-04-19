@@ -154,7 +154,15 @@ public class UserInput : MonoBehaviour{
                 targetObject = locationRetriever.GetCardPlaceLocation(clickedObject);
                 dropLocation = locationRetriever.DropLocation(targetObject);
                 //checks where the card was clicked and runs the appropriate method
-                switch (clickedObject.root.name)
+                string theParent = clickedObject.parent.name.Substring(0, clickedObject.parent.name.Length -1);
+                if (theParent.Contains("Dec") || theParent.Contains("Tal"))
+                {
+                    theParent = "Deck";
+                }
+
+                print(theParent);
+
+                switch (theParent)
                 {
 
                     case "Top":

@@ -18,7 +18,7 @@ public class DeckArea : MonoBehaviour
     public void StockPile(Transform clickedObject)
     {
         //this is 'deck' object which contains both 'deckButton' and 'talonPile'
-        Transform deckRoot = clickedObject.root;
+        Transform deckRoot = GameObject.Find("Deck").transform;
         //this is 'talonPile' GameObject
         Transform talonPile = deckRoot.GetChild(1);
         float zOffSet;

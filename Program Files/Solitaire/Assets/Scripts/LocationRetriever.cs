@@ -50,7 +50,7 @@ public class LocationRetriever : MonoBehaviour
             //TheLogger.PrintLog("we got the targetBody: " + targetBody.transform.parent.name);
 
             // return null if hits talonpile or stock pile
-            if (targetBody.root.name.Equals("Deck"))
+            if (targetBody.parent.name.Contains("Deck") || targetBody.parent.name.Contains("Talon"))
             {
                 clickedObject.gameObject.layer = 0;
                 return null;

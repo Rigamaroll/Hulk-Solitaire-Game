@@ -93,7 +93,7 @@ public class Autocomplete : MonoBehaviour
                 cardMap.TryGetValue(suits[s] + i, out card);
                 // print(card.name);
                 //if so, move to foundation
-                if (card.transform.root.name.Equals("Bottom")){
+                if (card.transform.parent.name.Contains("Bottom")){
                     userInput.SetClickedObject(card.transform);
                     userInput.GoodFoundationMove();
                     yield return new WaitForSeconds(0.02f);
