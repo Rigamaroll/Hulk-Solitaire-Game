@@ -130,7 +130,7 @@ public class UserInput : MonoBehaviour{
                     cardsInStack = clickedObject.parent.GetChild(numMoves);
                     cardsInStack.position = new Vector3(cardOrigin.x,
                     cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
-                    stackYoffSet += 0.80f;
+                    stackYoffSet += 1.0f;
                     stackZoffSet += 0.03f;
                 }
             }
@@ -628,7 +628,7 @@ public class UserInput : MonoBehaviour{
             else
             {
                 //print("Got to childCount not 0");
-                stackYoffSet = 0.80f;
+                stackYoffSet = 1.00f;
             }
             float stackZoffSet = 0.03f;
             for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
@@ -636,7 +636,7 @@ public class UserInput : MonoBehaviour{
                 cardsInStack = clickedObject.parent.GetChild(numMoves);
                 cardsInStack.position = new Vector3(dropLocation.position.x,
                     dropLocation.position.y - stackYoffSet, dropLocation.position.z - stackZoffSet);
-                stackYoffSet += 0.80f;
+                stackYoffSet += 1.00f;
                 stackZoffSet += 0.03f;
             }
         }
@@ -680,7 +680,7 @@ public class UserInput : MonoBehaviour{
                 cardsInStack = clickedObject.parent.GetChild(numMoves);
                 cardsInStack.position = new Vector3(cardOrigin.x,
                     cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
-                stackYoffSet += 0.80f;
+                stackYoffSet += 1.00f;
                 stackZoffSet += 0.03f;
             }
         }
