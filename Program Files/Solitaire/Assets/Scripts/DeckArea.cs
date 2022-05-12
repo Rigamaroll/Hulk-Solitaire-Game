@@ -121,7 +121,7 @@ public class DeckArea : MonoBehaviour
             currentCard.GetComponent<Selectable>().FlipCard();
               
             thisZOffSet -= 0.03f;
-            xOffSet += 0.4f;
+            xOffSet += 0.96f;
         }
             // When it gets to 3 change o to x
             if (vegasCounter == 3 && MainMenu.GetOnVegas()){

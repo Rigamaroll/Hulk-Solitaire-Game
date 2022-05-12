@@ -70,7 +70,7 @@ public class UserInput : MonoBehaviour{
                 //check if card is face up 
                 if (clickedObject.GetComponent<Selectable>().IsFaceUp() && !isStockpileCard)
                 {
-                    float zOffSet = -0.72f;
+                    float zOffSet = -0.96f;
                     isDragged = true;
                     Transform cardsInStack;
                     clickedObject.GetComponent<SpriteRenderer>().color = Color.grey;
@@ -131,7 +131,7 @@ public class UserInput : MonoBehaviour{
                     cardsInStack = clickedObject.parent.GetChild(numMoves);
                     cardsInStack.position = new Vector3(cardOrigin.x,
                     cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
-                    stackYoffSet += 0.4f;
+                    stackYoffSet += 1.05f;
                     stackZoffSet += 0.03f;
                 }
             }
@@ -607,7 +607,7 @@ public class UserInput : MonoBehaviour{
         float yOffSet;
         if (targetObject.childCount != 0)
         {
-            yOffSet = 0.4f;
+            yOffSet = 1.05f;
         }
         else
         {
@@ -629,7 +629,7 @@ public class UserInput : MonoBehaviour{
             else
             {
                 //print("Got to childCount not 0");
-                stackYoffSet = 0.4f;
+                stackYoffSet = 1.05f;
             }
             float stackZoffSet = 0.03f;
             for (int numMoves = clickedObject.GetSiblingIndex(); numMoves < clickedObject.parent.childCount; numMoves++)
@@ -637,7 +637,7 @@ public class UserInput : MonoBehaviour{
                 cardsInStack = clickedObject.parent.GetChild(numMoves);
                 cardsInStack.position = new Vector3(dropLocation.position.x,
                     dropLocation.position.y - stackYoffSet, dropLocation.position.z - stackZoffSet);
-                stackYoffSet += 0.4f;
+                stackYoffSet += 1.05f;
                 stackZoffSet += 0.03f;
             }
         }
@@ -681,7 +681,7 @@ public class UserInput : MonoBehaviour{
                 cardsInStack = clickedObject.parent.GetChild(numMoves);
                 cardsInStack.position = new Vector3(cardOrigin.x,
                     cardOrigin.y - stackYoffSet, cardOrigin.z - stackZoffSet);
-                stackYoffSet += 0.4f;
+                stackYoffSet += 1.05f;
                 stackZoffSet += 0.03f;
             }
         }

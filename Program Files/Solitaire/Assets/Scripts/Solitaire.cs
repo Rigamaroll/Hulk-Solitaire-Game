@@ -128,7 +128,7 @@ public class Solitaire : MonoBehaviour
             }
 
         // Increase the offset with each card added
-        yOffset += 0.4f;
+        yOffset += 1.05f;
         zOffset += 0.03f;
         
         }
