@@ -24,7 +24,7 @@ public class GameOver : MonoBehaviour
     //method to load the new game
     public void RestartGame()
     {
-        Debug.Log("Pressed New Game"); //print out statement for testing
+        //Debug.Log("Pressed New Game"); //print out statement for testing
         gameOverUI.SetActive(false); //unloads the game over screen
         SceneManager.LoadScene("GameScene"); //loads the Game Scene
         /*** TEST ***/
@@ -34,7 +34,7 @@ public class GameOver : MonoBehaviour
     //method to load the main menu screen
     public void MainMenuScreen()
     {
-        Debug.Log("Pressed Main Menu"); //print out statement for testing
+        //Debug.Log("Pressed Main Menu"); //print out statement for testing
         gameOverUI.SetActive(false); //unloads the game over screen
         SceneManager.LoadScene("MainMenu"); //loads the Main Menu game scene
         /*** TEST ***/
@@ -44,7 +44,7 @@ public class GameOver : MonoBehaviour
     //method to quit the game
     public void QuitGame()
     {
-        Debug.Log("Quitting Game...");
+        //Debug.Log("Quitting Game...");
         Application.Quit(); //quits the application
     }
 }

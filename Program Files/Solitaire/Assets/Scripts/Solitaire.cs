@@ -37,33 +37,11 @@ public class Solitaire : MonoBehaviour
         // Call shuffle the deck
         Shuffle(deck);
         Shuffle(deck);
-
-        // // Test Cards are shuffled
-        // Demo1.TestSol10(deck);
  
         // Deal the card onto the board and display them
         // StartCoroutine is for enum out to deal one at a time. So fancy.
         StartCoroutine(DealCards());
-        
-        
 
-        // // Test that cards are removed from deck when dealt out
-        // Demo1.TestSol11(deck);
-
-        // // Test card rank against bottom/top of foundation/tableau
-        // Demo1.TestSol9(bottom0); 
-        // // Test that cards are alternating colours
-        // Demo1.TestSol12(bottom0);
-        // // Test that card is King for going in empty tableau spot
-        // Demo1.TestSol13();
-        // // Test that card is Ace for going into empty foundation spot
-        // Demo1.TestSol14();
-
-        // Test that foundations are stacked by matching suits
-        //Demo2.TestSol15(bottom0);
-
-        // Test that foundations are stacked in ascending order
-        //Demo2.TestSol16(bottom0);
     }
 
     // Generate the deck from the two array lists
@@ -150,7 +128,7 @@ public class Solitaire : MonoBehaviour
             }
 
         // Increase the offset with each card added
-        yOffset += 1.0f;
+        yOffset += 0.4f;
         zOffset += 0.03f;
         
         }
@@ -159,7 +137,7 @@ public class Solitaire : MonoBehaviour
      //creates the Stockpile
      public void CreateStockPile()
      {
-         //TheLogger.PrintLog("CreateStockPile");
+         
          float zOffset = -0.02f;
          GameObject newCard;
          GameObject stockPile = GameObject.FindGameObjectWithTag("Deck");
@@ -171,7 +149,7 @@ public class Solitaire : MonoBehaviour
                  stockPile.transform);
              newCard.name = deck[i];
              zOffset -= 0.02f;
-            //TheLogger.PrintLog(stockPileArray[i].name);
+
             newCard.transform.SetParent(stockPile.transform);
          }
      }

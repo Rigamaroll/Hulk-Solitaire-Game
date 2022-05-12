@@ -26,6 +26,7 @@ public class Scoring : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        points = GameObject.Find("Canvas").GetComponent<Scoring>().points;
         if (MainMenu.GetOnVegas()){
             points.text = "Score: $ " + score.ToString();
         }else{

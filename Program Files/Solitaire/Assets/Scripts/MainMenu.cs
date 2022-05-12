@@ -18,12 +18,9 @@ public class MainMenu : MonoBehaviour
     List<string> gameOptions = new List<string>(){ "Standard - Deal 1", "Standard - Deal 3", 
         "Vegas - Deal 1", "Vegas - Deal 3" };
 
-    // void awake()
-    // {
-    //     gameMode = GameObject.FindObjectOfType<GameMode>();
-    // }
-
     public void Start(){
+
+        dropdown = GameObject.Find("GameOptions").GetComponent<Dropdown>();
         SetGameOptions();
         SetSelected();
         
@@ -31,14 +28,14 @@ public class MainMenu : MonoBehaviour
     public static void PlayGame()
     {
         SceneManager.LoadScene("GameScene");
-        Debug.Log("Loading Game Scene");
+        //Debug.Log("Loading Game Scene");
         // gameMode.text = gameOptions[dropdown.value];
     }
 
     public static void QuitGame()
     {
         Application.Quit();
-        Debug.Log("Exiting App");
+        //Debug.Log("Exiting App");
     }
 
     public static void HomeButton()
@@ -53,22 +50,22 @@ public class MainMenu : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             if (MainMenu.GetOnVegas())
             {
-                Debug.Log("New Game: saving High Score for Vegas Deal");
+                //Debug.Log("New Game: saving High Score for Vegas Deal");
                 SaveHighScore.instance.CheckHighScore();
             }
         }
         else if(Input.GetKey(pablosMenu)){
             SceneManager.LoadScene("MainMenu");
-            Debug.Log("Exiting App");
+            //Debug.Log("Exiting App");
             if (MainMenu.GetOnVegas())
             {
-                Debug.Log("New Game: saving High Score for Vegas Deal");
+                //Debug.Log("New Game: saving High Score for Vegas Deal");
                 SaveHighScore.instance.CheckHighScore();
             }            
         }
         else if(Input.GetKey(pablosDone)){
             Application.Quit();
-            Debug.Log("Exiting App");
+            //Debug.Log("Exiting App");
         }
     }
 
@@ -107,59 +104,33 @@ public class MainMenu : MonoBehaviour
     // Add Game Options
     public void GameOptionSelected(int index)
     {
-        if (index == 0)
+        switch(index)
         {
-            print("Standard 1");
-            MainMenu.isVegas = false;
-            isDealThree = false;
+            case 0:
+                MainMenu.isVegas = false;
+                isDealThree = false;
+                break;
+            case 1:
+                MainMenu.isVegas = false;
+                isDealThree = true;
+                break;
+            case 2:
+                MainMenu.isVegas = true;
+                isDealThree = false;
+                break;
+            case 3:
+                MainMenu.isVegas = true;
+                isDealThree = true;
+                break;
         }
-        if (index == 1)
-        {
-            print("Standard 3");
-            MainMenu.isVegas = false;
-            isDealThree = true;
-        }
-        if (index == 2)
-        {
-            print("Vegas 1");
-            MainMenu.isVegas = true;
-            isDealThree = false;
-        }
-        if (index == 3)
-        {
-            print("Vegas 3");
-            MainMenu.isVegas = true;
-            isDealThree = true;
-        }
+
         // gameMode.updateGameMode(dropdown.value);
         // GameMode.instance.updateGameMode(index);
         // gameMode.text = gameOptions[index];
     }
 
-    public static void OnStandard(){
-        MainMenu.isVegas = false;
-        print("isVegas is set to: " + MainMenu.isVegas);
-    }
-
-    public static void OnVegas(){
-        MainMenu.isVegas = true;
-        print("isVegas is set to: " + MainMenu.isVegas);
-    }
-
     public static bool GetOnVegas(){
         return MainMenu.isVegas;
-    }
-
-    public static void OnDealThree()
-    {
-        print("Dealing three Cards");
-        isDealThree = true;
-    }
-
-    public static void OnDealOne()
-    {
-        print("Dealing One Card");
-        isDealThree = false;
     }
 
     public static bool GetDealThree()

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PauseGame : MonoBehaviour
 {
-    public Button Resume;
+   // public Button Resume;
     public GameObject panel;
     public static PauseGame instance;
 
@@ -14,7 +14,8 @@ public class PauseGame : MonoBehaviour
     {
         instance = this;
         Time.timeScale = 1f;
-        Resume.gameObject.SetActive(false);
+        panel = GameObject.Find("PausePanel");
+       // Resume.gameObject.SetActive(false);
         panel.SetActive(false);
     }
 
@@ -27,14 +28,14 @@ public class PauseGame : MonoBehaviour
     public void Pause()
     {
         Time.timeScale = 0f;
-        Resume.gameObject.SetActive(true);
+        //Resume.gameObject.SetActive(true);
         panel.SetActive(true);
     }
 
     public void ResumeGame()
     {
         Time.timeScale = 1f;
-        Resume.gameObject.SetActive(false);
+        //Resume.gameObject.SetActive(false);
         panel.SetActive(false);
         
     }

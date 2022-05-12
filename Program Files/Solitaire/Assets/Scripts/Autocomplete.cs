@@ -12,7 +12,7 @@ public class Autocomplete : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        print("Auto Complete here");
+        //print("Auto Complete here");
         Solve.gameObject.SetActive(false);
     }
     
@@ -27,17 +27,18 @@ public class Autocomplete : MonoBehaviour
     }
 
     public void CanBeAutoCompleted(){
-        // Talon Pile is Empty
-        if (GameObject.Find("TalonPile").transform.childCount > 0)
+        // Talon Pile or Stock Pile is Empty
+        if (GameObject.Find("TalonPile").transform.childCount > 0 ||
+            GameObject.Find("DeckButton").transform.childCount > 0)
         {
             return;
         }
 
         // Stock Pile is empty
-        if (GameObject.Find("DeckButton").transform.childCount > 0)
+        /*if (GameObject.Find("DeckButton").transform.childCount > 0)
         {
             return;
-        }
+        }*/
 
         // Check if All Tableau Cards are turned over
         // get an array of all the cards 
@@ -51,7 +52,7 @@ public class Autocomplete : MonoBehaviour
             }
         }
 
-        print("Can be autocompleted");
+        //print("Can be autocompleted");
         SetVisible(true);
     }
 
@@ -67,7 +68,7 @@ public class Autocomplete : MonoBehaviour
 
     public IEnumerator SolveGame()
     {
-        print("Button pushed");
+        //print("Button pushed");
         
         //get an array of all the cards 
         GameObject[] cards = GameObject.FindGameObjectsWithTag("Card");
