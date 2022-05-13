@@ -180,8 +180,6 @@ public class UserInput : MonoBehaviour{
                 }
             }
         }
-        // Autocomplete.instance.MakeVisible();
-        Autocomplete.instance.CanBeAutoCompleted();
     }
 
     //does the doubleclick check
@@ -741,6 +739,10 @@ public class UserInput : MonoBehaviour{
             }
             
         }
+        
+        // Autocomplete.instance.MakeVisible();
+        Autocomplete.instance.CanBeAutoCompleted();
+
         if (IsGameOver())
         {
             GameEndSequence();
